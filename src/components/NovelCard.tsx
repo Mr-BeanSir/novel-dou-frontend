@@ -140,19 +140,23 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
               </div>
             )}
 
-            {/* 基础统计信息 */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-theme-text-secondary mb-2">
-              <span>{novel.word_count_formatted || `${formatNumber(novel.word_count)}字`}</span>
-              <span>{novel.chapter_count}章</span>
-              <span className={getStatusColor(novel.status)}>
-                {getStatusText()}
-              </span>
-            </div>
+            {/* 统计信息 - 网格对齐布局 */}
+            <div className="grid grid-cols-3 gap-2 text-xs text-theme-text-secondary">
+              {/* 第一行 */}
+              <div className="text-left">
+                <span>{novel.word_count_formatted || `${formatNumber(novel.word_count)}字`}</span>
+              </div>
+              <div className="text-center">
+                <span>{novel.chapter_count}章</span>
+              </div>
+              <div className="text-right">
+                <span className={getStatusColor(novel.status)}>
+                  {getStatusText()}
+                </span>
+              </div>
 
-            {/* 互动统计 */}
-            <div className="flex items-center gap-3 text-xs text-theme-text-secondary">
-              {/* 浏览量 */}
-              <div className="flex items-center gap-1">
+              {/* 第二行 */}
+              <div className="flex items-center justify-start gap-1">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -162,8 +166,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
                 <span>{formatNumber(novel.view_count)}</span>
               </div>
 
-              {/* 收藏量 */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center justify-center gap-1">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -171,17 +174,20 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
                 <span>{formatNumber(novel.bookmark_count)}</span>
               </div>
 
-              {/* 评分 */}
-              {parseFloat(novel.rating) > 0 && (
-                <div className="flex items-center gap-1 text-yellow-500">
-                  <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                  <span className="text-theme-text-secondary">
-                    {novel.rating} ({formatNumber(novel.rating_count)})
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center justify-end gap-1">
+                {parseFloat(novel.rating) > 0 ? (
+                  <>
+                    <svg className="w-3 h-3 fill-current text-yellow-500" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                    <span>
+                      {novel.rating} ({formatNumber(novel.rating_count)})
+                    </span>
+                  </>
+                ) : (
+                  <span>暂无评分</span>
+                )}
+              </div>
             </div>
 
 
