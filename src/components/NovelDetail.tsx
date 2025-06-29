@@ -40,6 +40,50 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
     return colorMap[status] || 'text-gray-500';
   };
 
+  // 格式化更新时间
+  const formatUpdateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    if (diffMinutes < 1) {
+      return '刚刚更新';
+    } else if (diffMinutes < 60) {
+      return `${diffMinutes}分钟前更新`;
+    } else if (diffHours < 24) {
+      return `${diffHours}小时前更新`;
+    } else if (diffDays === 1) {
+      return '昨天更新';
+    } else if (diffDays < 7) {
+      return `${diffDays}天前更新`;
+    } else {
+      return date.toLocaleDateString('zh-CN') + ' 更新';
+    }
+  };
+
+  // 获取上次阅读章节
+  const getLastReadChapter = (): string => {
+    // 检查是否在客户端环境
+    if (typeof window === 'undefined') {
+      return '暂无阅读记录';
+    }
+
+    // 从本地存储获取阅读进度
+    try {
+      const readingProgress = localStorage.getItem(`novel_${novel.id}_progress`);
+      if (readingProgress) {
+        const progress = JSON.parse(readingProgress);
+        return progress.chapterTitle || '暂无阅读记录';
+      }
+    } catch (error) {
+      console.error('Error parsing reading progress:', error);
+    }
+    return '暂无阅读记录';
+  };
+
   // 加载章节列表
   useEffect(() => {
     const loadChapters = async () => {
@@ -216,8 +260,30 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                 </div>
               </div>
 
-              {/* 操作按钮 */}
-              <div className="mt-auto pt-4">
+              {/* 更新时间和阅读进度 */}
+              <div className="mt-auto pt-4 space-y-3">
+                <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary space-y-2">
+                  <div className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-light-accent dark:text-dark-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="font-medium">更新时间:</span>
+                    <span className="ml-2">
+                      {novel.updated_at ? formatUpdateTime(novel.updated_at) : '暂无更新'}
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-4 h-4 mr-2 text-light-accent dark:text-dark-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span className="font-medium">上次阅读章节:</span>
+                    <span className="ml-2">
+                      {getLastReadChapter()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 操作按钮 */}
                 <ActionButtons novel={novel} />
               </div>
             </div>

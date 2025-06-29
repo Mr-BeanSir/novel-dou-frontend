@@ -23,12 +23,12 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
     try {
       setIsLoading(true);
       const response = await NovelService.getNovelChapters(novelId, page, 50);
-      
+
       // 根据排序顺序处理数据
-      const sortedChapters = order === 'desc' 
-        ? [...response.data].reverse() 
+      const sortedChapters = order === 'desc'
+        ? [...response.data].reverse()
         : response.data;
-      
+
       setChapters(sortedChapters);
       setCurrentPage(response.current_page);
       setTotalPages(response.last_page);
@@ -53,20 +53,20 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
     }
   };
 
-  // 格式化章节标题
+  // 格式化章节标题 - 直接使用后端返回的标题
   const formatChapterTitle = (chapter: NovelChapter): string => {
-    return `第${chapter.chapter_number}章 ${chapter.title}`;
+    return chapter.title;
   };
 
   // 格式化发布时间
   const formatPublishTime = (dateString?: string): string => {
     if (!dateString) return '';
-    
+
     const date = new Date(dateString);
     const now = new Date();
     const diffTime = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) {
       return '今天';
     } else if (diffDays === 1) {
@@ -80,12 +80,12 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
 
   if (chapters.length === 0) {
     return (
-      <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary 
-                      border border-light-border dark:border-dark-border 
+      <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary
+                      border border-light-border dark:border-dark-border
                       rounded-lg p-8 text-center">
-        <svg className="w-16 h-16 mx-auto text-light-text-secondary dark:text-dark-text-secondary mb-4" 
+        <svg className="w-16 h-16 mx-auto text-light-text-secondary dark:text-dark-text-secondary mb-4"
              fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
         <p className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -96,8 +96,8 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
   }
 
   return (
-    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary 
-                    border border-light-border dark:border-dark-border 
+    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary
+                    border border-light-border dark:border-dark-border
                     rounded-lg overflow-hidden">
       {/* 章节列表头部 */}
       <div className="flex items-center justify-between p-4 border-b border-light-border dark:border-dark-border">
@@ -112,17 +112,17 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
         </div>
         <button
           onClick={handleSortToggle}
-          className="flex items-center space-x-2 px-3 py-1 rounded-md 
-                     bg-light-accent/10 dark:bg-dark-accent/10 
-                     text-light-accent dark:text-dark-accent 
-                     hover:bg-light-accent/20 dark:hover:bg-dark-accent/20 
+          className="flex items-center space-x-2 px-3 py-1 rounded-md
+                     bg-light-accent/10 dark:bg-dark-accent/10
+                     text-light-accent dark:text-dark-accent
+                     hover:bg-light-accent/20 dark:hover:bg-dark-accent/20
                      transition-colors text-sm"
         >
           <span>{sortOrder === 'asc' ? '正序' : '倒序'}</span>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                  d={sortOrder === 'asc' 
-                    ? "M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d={sortOrder === 'asc'
+                    ? "M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
                     : "M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"} />
           </svg>
         </button>
@@ -139,17 +139,17 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
             <Link
               key={chapter.id}
               href={`/novel/${novelId}/chapter/${chapter.id}`}
-              className="block p-4 hover:bg-light-bg dark:hover:bg-dark-bg 
+              className="block p-4 hover:bg-light-bg dark:hover:bg-dark-bg
                          transition-colors group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-light-text dark:text-dark-text 
-                               group-hover:text-light-accent dark:group-hover:text-dark-accent 
+                  <h3 className="text-light-text dark:text-dark-text
+                               group-hover:text-light-accent dark:group-hover:text-dark-accent
                                transition-colors truncate">
                     {formatChapterTitle(chapter)}
                   </h3>
-                  <div className="flex items-center space-x-4 mt-1 text-xs 
+                  <div className="flex items-center space-x-4 mt-1 text-xs
                                 text-light-text-secondary dark:text-dark-text-secondary">
                     <span>{chapter.word_count} 字</span>
                     {chapter.published_at && (
@@ -162,13 +162,13 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex-shrink-0 ml-4">
-                  <svg className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary 
-                                 group-hover:text-light-accent dark:group-hover:text-dark-accent 
-                                 transition-colors" 
+                  <svg className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary
+                                 group-hover:text-light-accent dark:group-hover:text-dark-accent
+                                 transition-colors"
                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                           d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -191,15 +191,15 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 rounded-md border border-light-border dark:border-dark-border 
-                       text-light-text dark:text-dark-text 
-                       hover:bg-light-bg dark:hover:bg-dark-bg 
-                       disabled:opacity-50 disabled:cursor-not-allowed 
+            className="px-3 py-1 rounded-md border border-light-border dark:border-dark-border
+                       text-light-text dark:text-dark-text
+                       hover:bg-light-bg dark:hover:bg-dark-bg
+                       disabled:opacity-50 disabled:cursor-not-allowed
                        transition-colors"
           >
             上一页
           </button>
-          
+
           <div className="flex items-center space-x-1">
             {(() => {
               const pages = [];
@@ -264,14 +264,14 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
               return pages;
             })()}
           </div>
-          
+
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 rounded-md border border-light-border dark:border-dark-border 
-                       text-light-text dark:text-dark-text 
-                       hover:bg-light-bg dark:hover:bg-dark-bg 
-                       disabled:opacity-50 disabled:cursor-not-allowed 
+            className="px-3 py-1 rounded-md border border-light-border dark:border-dark-border
+                       text-light-text dark:text-dark-text
+                       hover:bg-light-bg dark:hover:bg-dark-bg
+                       disabled:opacity-50 disabled:cursor-not-allowed
                        transition-colors"
           >
             下一页
