@@ -10,6 +10,7 @@ import type {
   NovelBookmark,
   NovelComment,
   NovelRating,
+  NovelRatingStatistics,
   ReadingHistory,
   ApiResponse,
   PaginatedResponse,
@@ -155,10 +156,67 @@ export class NovelService {
   }
 
   /**
-   * 评分小说
+   * 提交/更新评分
    */
-  static async rateNovel(novelId: number, rating: number, review?: string): Promise<void> {
-    await post(API_CONFIG.ENDPOINTS.NOVELS.RATING(novelId), { rating, review });
+  static async submitRating(novelId: number, rating: number, review?: string): Promise<NovelRating> {
+    const response = await post<{ rating: NovelRating }>(API_CONFIG.ENDPOINTS.NOVELS.RATING(novelId), { rating, review });
+    return response.rating;
+  }
+
+  /**
+   * 获取用户评分
+   */
+  static async getUserRating(novelId: number): Promise<NovelRating | null> {
+    try {
+      const response = await get<{ rating: NovelRating | null }>(API_CONFIG.ENDPOINTS.NOVELS.USER_RATING(novelId));
+      return response.rating;
+    } catch (error) {
+      // 如果用户未评分，返回null
+      return null;
+    }
+  }
+
+  /**
+   * 删除评分
+   */
+  static async deleteRating(novelId: number): Promise<void> {
+    await del(API_CONFIG.ENDPOINTS.NOVELS.RATING(novelId));
+  }
+
+  /**
+   * 获取评分列表
+   */
+  static async getRatings(
+    novelId: number,
+    page: number = 1,
+    perPage: number = 15,
+    withReview?: boolean,
+    rating?: number
+  ): Promise<PaginatedResponse<NovelRating>> {
+    const params: any = { per_page: perPage };
+    if (withReview !== undefined) params.with_review = withReview;
+    if (rating !== undefined) params.rating = rating;
+
+    const queryString = buildQueryString(params);
+    const response = await get<{ ratings: NovelRating[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RATINGS(novelId)}${queryString}`, false);
+
+    return {
+      data: response.ratings,
+      current_page: response.pagination.current_page,
+      last_page: response.pagination.last_page,
+      per_page: response.pagination.per_page,
+      total: response.pagination.total,
+      from: response.pagination.from,
+      to: response.pagination.to,
+    };
+  }
+
+  /**
+   * 获取评分统计
+   */
+  static async getRatingStatistics(novelId: number): Promise<NovelRatingStatistics> {
+    const response = await get<{ statistics: NovelRatingStatistics }>(API_CONFIG.ENDPOINTS.NOVELS.RATING_STATISTICS(novelId), false);
+    return response.statistics;
   }
 
   /**

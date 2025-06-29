@@ -1,19 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import type { NovelComment } from '@/types/novel';
+import type { NovelComment, NovelRating } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import { useAuth } from '@/hooks/useAuth';
+import StarRating from '../rating/StarRating';
 
 interface CommentSectionProps {
   novelId: number;
   comments: NovelComment[];
+  ratings: NovelRating[];
+  userRating?: NovelRating | null;
+  onRatingUpdate?: () => void;
 }
 
-export default function CommentSection({ novelId, comments: initialComments }: CommentSectionProps) {
+export default function CommentSection({
+  novelId,
+  comments: initialComments,
+  ratings,
+  userRating,
+  onRatingUpdate
+}: CommentSectionProps) {
   const { user, isAuthenticated } = useAuth();
   const [comments, setComments] = useState<NovelComment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
+  const [rating, setRating] = useState(userRating?.rating || 0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState('');
@@ -40,30 +51,42 @@ export default function CommentSection({ novelId, comments: initialComments }: C
     }
   };
 
-  // 提交评论
+  // 提交评论和评分
   const handleSubmitComment = async () => {
     if (!isAuthenticated) {
       alert('请先登录');
       return;
     }
 
-    if (!newComment.trim()) {
-      alert('请输入评论内容');
+    if (!newComment.trim() && rating === 0) {
+      alert('请输入评论内容或选择评分');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await NovelService.addComment(novelId, newComment.trim());
-      
+
+      // 如果有评分，先提交评分
+      if (rating > 0) {
+        await NovelService.submitRating(novelId, rating, newComment.trim() || undefined);
+      } else if (newComment.trim()) {
+        // 如果只有评论没有评分，提交评论
+        await NovelService.addComment(novelId, newComment.trim());
+      }
+
       // 重新加载评论列表
       const response = await NovelService.getComments(novelId, 1, 10);
       setComments(response.data);
       setNewComment('');
-      alert('评论发表成功！');
+      setRating(0);
+
+      // 通知父组件更新评分数据
+      onRatingUpdate?.();
+
+      alert('发表成功！');
     } catch (error) {
-      console.error('Error submitting comment:', error);
-      alert('评论发表失败，请重试');
+      console.error('Error submitting comment/rating:', error);
+      alert('发表失败，请重试');
     } finally {
       setIsSubmitting(false);
     }
@@ -144,15 +167,27 @@ export default function CommentSection({ novelId, comments: initialComments }: C
               </div>
             </div>
             <div className="flex-1">
+              {/* 评分选择 */}
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
+                  为这本小说评分（可选）
+                </label>
+                <StarRating
+                  rating={rating}
+                  onRatingChange={setRating}
+                  showText
+                />
+              </div>
+
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="写下你的想法..."
-                className="w-full p-3 border border-light-border dark:border-dark-border 
-                         rounded-md bg-light-bg dark:bg-dark-bg 
-                         text-light-text dark:text-dark-text 
-                         placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
-                         focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent 
+                className="w-full p-3 border border-light-border dark:border-dark-border
+                         rounded-md bg-light-bg dark:bg-dark-bg
+                         text-light-text dark:text-dark-text
+                         placeholder-light-text-secondary dark:placeholder-dark-text-secondary
+                         focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent
                          resize-none"
                 rows={3}
                 maxLength={1000}
@@ -163,13 +198,13 @@ export default function CommentSection({ novelId, comments: initialComments }: C
                 </span>
                 <button
                   onClick={handleSubmitComment}
-                  disabled={isSubmitting || !newComment.trim()}
-                  className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover 
-                           dark:bg-dark-accent dark:hover:bg-dark-accent-hover 
-                           text-white rounded-md transition-colors 
+                  disabled={isSubmitting || (!newComment.trim() && rating === 0)}
+                  className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover
+                           dark:bg-dark-accent dark:hover:bg-dark-accent-hover
+                           text-white rounded-md transition-colors
                            disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? '发表中...' : '发表评论'}
+                  {isSubmitting ? '发表中...' : '发表评价'}
                 </button>
               </div>
             </div>
@@ -194,17 +229,52 @@ export default function CommentSection({ novelId, comments: initialComments }: C
         </div>
       )}
 
-      {/* 评论列表 */}
+      {/* 评论和评分列表 */}
       <div className="divide-y divide-light-border dark:divide-dark-border">
-        {comments.length === 0 ? (
+        {/* 先显示评分列表 */}
+        {ratings.map((rating) => (
+          <div key={`rating-${rating.id}`} className="p-6">
+            <div className="flex space-x-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent
+                              rounded-full flex items-center justify-center">
+                  <span className="text-white font-medium">
+                    {rating.user.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="font-medium text-light-text dark:text-dark-text">
+                    {rating.user.name}
+                  </span>
+                  <StarRating rating={rating.rating} readonly size="sm" showText />
+                  <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
+                    {formatTime(rating.created_at)}
+                  </span>
+                </div>
+
+                {rating.review && (
+                  <p className="text-light-text dark:text-dark-text mb-3 whitespace-pre-wrap">
+                    {rating.review}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {/* 然后显示普通评论 */}
+        {comments.length === 0 && ratings.length === 0 ? (
           <div className="p-8 text-center">
-            <svg className="w-16 h-16 mx-auto text-light-text-secondary dark:text-dark-text-secondary mb-4" 
+            <svg className="w-16 h-16 mx-auto text-light-text-secondary dark:text-dark-text-secondary mb-4"
                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             <p className="text-light-text-secondary dark:text-dark-text-secondary">
-              暂无评论，快来发表第一条评论吧！
+              暂无评价，快来发表第一条评价吧！
             </p>
           </div>
         ) : (

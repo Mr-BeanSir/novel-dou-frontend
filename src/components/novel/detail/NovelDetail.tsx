@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Novel, NovelChapter, NovelComment } from '@/types/novel';
+import type { Novel, NovelChapter, NovelComment, NovelRating, NovelRatingStatistics } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import ChapterList from '../chapter/ChapterList';
 import CommentSection from '../comment/CommentSection';
 import ActionButtons from './ActionButtons';
 import LoadingSpinner from '../../layout/LoadingSpinner';
-import RatingDistribution from '../rating/RatingDistribution';
+import RatingStatistics from '../rating/RatingStatistics';
 
 interface NovelDetailProps {
   novel: Novel;
@@ -18,8 +18,12 @@ interface NovelDetailProps {
 export default function NovelDetail({ novel }: NovelDetailProps) {
   const [chapters, setChapters] = useState<NovelChapter[]>([]);
   const [comments, setComments] = useState<NovelComment[]>([]);
+  const [ratings, setRatings] = useState<NovelRating[]>([]);
+  const [userRating, setUserRating] = useState<NovelRating | null>(null);
+  const [ratingStatistics, setRatingStatistics] = useState<NovelRatingStatistics | null>(null);
   const [isLoadingChapters, setIsLoadingChapters] = useState(true);
   const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const [isLoadingRating, setIsLoadingRating] = useState(true);
 
   // 格式化数字显示
   const formatNumber = (num: number): string => {
@@ -117,6 +121,52 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
 
     loadComments();
   }, [novel.id]);
+
+  // 加载评分数据
+  useEffect(() => {
+    const loadRatingData = async () => {
+      try {
+        setIsLoadingRating(true);
+        console.log('Loading rating data for novel:', novel.id);
+
+        // 并行加载用户评分、评分统计和评分列表
+        const [userRatingData, statisticsData, ratingsData] = await Promise.all([
+          NovelService.getUserRating(novel.id).catch(() => null),
+          NovelService.getRatingStatistics(novel.id),
+          NovelService.getRatings(novel.id, 1, 20, true) // 只显示有评价内容的评分
+        ]);
+
+        console.log('Rating data loaded:', { userRatingData, statisticsData, ratingsData });
+        setUserRating(userRatingData);
+        setRatingStatistics(statisticsData);
+        setRatings(ratingsData.data);
+      } catch (error) {
+        console.error('Error loading rating data:', error);
+      } finally {
+        setIsLoadingRating(false);
+      }
+    };
+
+    loadRatingData();
+  }, [novel.id]);
+
+  // 处理评分更新
+  const handleRatingUpdate = async () => {
+    try {
+      // 重新加载所有评分相关数据
+      const [userRatingData, statisticsData, ratingsData] = await Promise.all([
+        NovelService.getUserRating(novel.id).catch(() => null),
+        NovelService.getRatingStatistics(novel.id),
+        NovelService.getRatings(novel.id, 1, 20, true)
+      ]);
+
+      setUserRating(userRatingData);
+      setRatingStatistics(statisticsData);
+      setRatings(ratingsData.data);
+    } catch (error) {
+      console.error('Error updating rating data:', error);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -288,10 +338,20 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
               </div>
             </div>
 
-            {/* 右侧：评分分布 */}
+            {/* 右侧：评分统计 */}
             <div className="w-full lg:w-80 flex-shrink-0">
               <div className="lg:border-l lg:border-light-border lg:dark:border-dark-border lg:pl-6">
-                <RatingDistribution novel={novel} />
+                {isLoadingRating ? (
+                  <div className="flex justify-center py-8">
+                    <LoadingSpinner />
+                  </div>
+                ) : ratingStatistics ? (
+                  <RatingStatistics statistics={ratingStatistics} />
+                ) : (
+                  <div className="text-center py-8 text-light-text-secondary dark:text-dark-text-secondary">
+                    暂无评分数据
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -323,17 +383,23 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
         )}
       </div>
 
-      {/* 评论区域 */}
+      {/* 评论和评分区域 */}
       <div>
         <h2 className="text-xl font-semibold text-light-text dark:text-dark-text mb-4">
-          读者评论 ({novel.comment_count})
+          读者评价 ({novel.comment_count + (ratingStatistics?.total_ratings || 0)})
         </h2>
-        {isLoadingComments ? (
+        {isLoadingComments || isLoadingRating ? (
           <div className="flex justify-center py-8">
             <LoadingSpinner />
           </div>
         ) : (
-          <CommentSection novelId={novel.id} comments={comments} />
+          <CommentSection
+            novelId={novel.id}
+            comments={comments}
+            ratings={ratings}
+            userRating={userRating}
+            onRatingUpdate={handleRatingUpdate}
+          />
         )}
       </div>
     </div>

@@ -49,6 +49,7 @@ export interface Novel {
   is_finished: boolean;
   is_recommended: boolean;
   is_active: boolean;
+  latest_chapter?: NovelChapter;
   created_at: string;
   updated_at: string;
 }
@@ -59,10 +60,12 @@ export interface NovelChapter {
   title: string;
   chapter_number: number;
   content?: string;
-  content_file_path?: string;
+  file_path?: string;
   word_count: number;
+  word_count_formatted: string;
+  view_count: number;
   is_vip: boolean;
-  is_published: boolean;
+  is_active: boolean;
   published_at?: string;
   created_at: string;
   updated_at: string;
@@ -97,6 +100,35 @@ export interface NovelComment {
   replies?: NovelComment[];
   created_at: string;
   updated_at: string;
+}
+
+export interface NovelRating {
+  id: number;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at?: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  novel_id: number;
+  rating: number;
+  rating_text: string;
+  review?: string;
+  has_review: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NovelRatingStatistics {
+  total_ratings: number;
+  average_rating: number;
+  rating_distribution: {
+    [key: string]: number;
+  };
+  reviews_count: number;
 }
 
 export interface NovelRating {
