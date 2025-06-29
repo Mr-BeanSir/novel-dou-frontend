@@ -83,7 +83,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
         <div className="flex flex-col lg:flex-row gap-6 lg:items-stretch">
           {/* 封面图片 */}
           <div className="flex-shrink-0 lg:self-stretch">
-            <div className="relative w-48 h-64 lg:h-full mx-auto lg:mx-0">
+            <div className="relative w-56 h-72 lg:h-full mx-auto lg:mx-0">
               {novel.cover_image ? (
                 <Image
                   src={novel.cover_image}
@@ -130,92 +130,97 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
           {/* 小说信息和评分 */}
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-6">
             {/* 左侧：小说信息 */}
-            <div className="flex-1 min-w-0">
-              {/* 标题和作者 */}
-              <div className="mb-4">
-                <h1 className="text-2xl lg:text-3xl font-bold text-light-text dark:text-dark-text mb-2">
-                  {novel.title}
-                </h1>
-                <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary">
-                  作者：{novel.author}
-                </p>
-              </div>
+            <div className="flex-1 min-w-0 flex flex-col justify-between lg:h-full">
+              {/* 上部分：标题、作者、分类、标签、统计信息 */}
+              <div className="space-y-4">
+                {/* 标题和作者 */}
+                <div>
+                  <h1 className="text-2xl lg:text-3xl font-bold text-light-text dark:text-dark-text mb-2">
+                    {novel.title}
+                  </h1>
+                  <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary">
+                    作者：{novel.author}
+                  </p>
+                </div>
 
-            {/* 分类和状态 */}
-            <div className="flex flex-wrap items-center gap-4 mb-4">
-              {novel.category && (
-                <Link
-                  href={`/category/${novel.category.slug}`}
-                  className="px-3 py-1 bg-light-accent/20 dark:bg-dark-accent/20 
-                           text-light-accent dark:text-dark-accent rounded-md 
-                           hover:bg-light-accent/30 dark:hover:bg-dark-accent/30 
-                           transition-colors text-sm"
-                >
-                  {novel.category.name}
-                </Link>
-              )}
-              <span className={`text-sm font-medium ${getStatusColor(novel.status)}`}>
-                {novel.status_text}
-              </span>
-            </div>
-
-            {/* 标签 */}
-            {novel.tags && novel.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {novel.tags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="px-3 py-1 text-xs rounded-full font-medium text-white"
-                    style={{
-                      backgroundColor: tag.color || '#c49e65',
-                      boxShadow: `0 2px 4px ${tag.color || '#c49e65'}20`
-                    }}
-                  >
-                    {tag.name}
+                {/* 分类和状态 */}
+                <div className="flex flex-wrap items-center gap-4">
+                  {novel.category && (
+                    <Link
+                      href={`/category/${novel.category.slug}`}
+                      className="px-3 py-1 bg-light-accent/20 dark:bg-dark-accent/20
+                               text-light-accent dark:text-dark-accent rounded-md
+                               hover:bg-light-accent/30 dark:hover:bg-dark-accent/30
+                               transition-colors text-sm"
+                    >
+                      {novel.category.name}
+                    </Link>
+                  )}
+                  <span className={`text-sm font-medium ${getStatusColor(novel.status)}`}>
+                    {novel.status_text}
                   </span>
-                ))}
-              </div>
-            )}
+                </div>
 
-            {/* 统计信息 */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <div className="text-center">
-                <div className="text-xl font-semibold text-light-text dark:text-dark-text">
-                  {novel.word_count_formatted || `${formatNumber(novel.word_count)}字`}
-                </div>
-                <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  字数
+                {/* 标签 */}
+                {novel.tags && novel.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {novel.tags.map((tag) => (
+                      <span
+                        key={tag.id}
+                        className="px-3 py-1 text-xs rounded-full font-medium text-white"
+                        style={{
+                          backgroundColor: tag.color || '#c49e65',
+                          boxShadow: `0 2px 4px ${tag.color || '#c49e65'}20`
+                        }}
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* 统计信息 */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-light-text dark:text-dark-text">
+                      {novel.word_count_formatted || `${formatNumber(novel.word_count)}字`}
+                    </div>
+                    <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                      字数
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-light-text dark:text-dark-text">
+                      {novel.chapter_count}
+                    </div>
+                    <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                      章节
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-light-text dark:text-dark-text">
+                      {formatNumber(novel.view_count)}
+                    </div>
+                    <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                      阅读
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-xl font-semibold text-light-text dark:text-dark-text">
+                      {formatNumber(novel.bookmark_count)}
+                    </div>
+                    <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                      收藏
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-light-text dark:text-dark-text">
-                  {novel.chapter_count}
-                </div>
-                <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  章节
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-light-text dark:text-dark-text">
-                  {formatNumber(novel.view_count)}
-                </div>
-                <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  阅读
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-xl font-semibold text-light-text dark:text-dark-text">
-                  {formatNumber(novel.bookmark_count)}
-                </div>
-                <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                  收藏
-                </div>
+
+              {/* 操作按钮 */}
+              <div className="mt-auto pt-4">
+                <ActionButtons novel={novel} />
               </div>
             </div>
-
-            {/* 操作按钮 */}
-            <ActionButtons novel={novel} />
-          </div>
 
             {/* 右侧：评分分布 */}
             <div className="w-full lg:w-80 flex-shrink-0">
