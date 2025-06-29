@@ -86,39 +86,30 @@ export default function RatingSection({ novel }: RatingSectionProps) {
       </h2>
 
       <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-        {/* 当前评分展示 */}
+        {/* 评分分布 */}
         <div className="flex-1">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-light-text dark:text-dark-text">
-                {currentRating.toFixed(1)}
-              </div>
-              <div className="flex justify-center mb-1">
-                {renderStars(Math.round(currentRating))}
-              </div>
-              <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                {novel.rating_count} 人评分
-              </div>
-            </div>
-            
-            {/* 评分分布（简化版） */}
-            <div className="flex-1 max-w-xs">
-              {[5, 4, 3, 2, 1].map((star) => (
-                <div key={star} className="flex items-center space-x-2 mb-1">
-                  <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary w-8">
-                    {star}星
-                  </span>
-                  <div className="flex-1 bg-light-border dark:bg-dark-border rounded-full h-2">
-                    <div 
-                      className="bg-yellow-500 h-2 rounded-full"
-                      style={{ 
-                        width: `${Math.random() * 100}%` // 这里应该是真实的分布数据
-                      }}
-                    />
-                  </div>
+          <h3 className="text-md font-medium text-light-text dark:text-dark-text mb-4">
+            评分分布
+          </h3>
+          <div className="max-w-xs">
+            {[5, 4, 3, 2, 1].map((star) => (
+              <div key={star} className="flex items-center space-x-2 mb-2">
+                <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary w-8">
+                  {star}星
+                </span>
+                <div className="flex-1 bg-light-border dark:bg-dark-border rounded-full h-2">
+                  <div
+                    className="bg-yellow-500 h-2 rounded-full"
+                    style={{
+                      width: `${Math.random() * 100}%` // 这里应该是真实的分布数据
+                    }}
+                  />
                 </div>
-              ))}
-            </div>
+                <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary w-8">
+                  {Math.floor(Math.random() * 100)}%
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 

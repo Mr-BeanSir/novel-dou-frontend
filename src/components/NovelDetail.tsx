@@ -10,6 +10,8 @@ import CommentSection from './CommentSection';
 import RatingSection from './RatingSection';
 import ActionButtons from './ActionButtons';
 import LoadingSpinner from './LoadingSpinner';
+import RatingDisplay from './RatingDisplay';
+import RatingDistribution from './RatingDistribution';
 
 interface NovelDetailProps {
   novel: Novel;
@@ -80,10 +82,10 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
       <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary 
                       border border-light-border dark:border-dark-border 
                       rounded-lg p-6 mb-8">
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-6 lg:items-stretch">
           {/* 封面图片 */}
-          <div className="flex-shrink-0">
-            <div className="relative w-48 h-64 mx-auto lg:mx-0">
+          <div className="flex-shrink-0 lg:self-stretch">
+            <div className="relative w-48 h-64 lg:h-full mx-auto lg:mx-0">
               {novel.cover_image ? (
                 <Image
                   src={novel.cover_image}
@@ -93,7 +95,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                   sizes="(max-width: 768px) 192px, 192px"
                 />
               ) : (
-                <div className="w-full h-full bg-light-border dark:bg-dark-border 
+                <div className="w-full h-full bg-light-border dark:bg-dark-border
                               rounded-lg flex items-center justify-center">
                   <svg
                     className="w-16 h-16 text-light-text-secondary dark:text-dark-text-secondary"
@@ -127,17 +129,19 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
             </div>
           </div>
 
-          {/* 小说信息 */}
-          <div className="flex-1 min-w-0">
-            {/* 标题和作者 */}
-            <div className="mb-4">
-              <h1 className="text-2xl lg:text-3xl font-bold text-light-text dark:text-dark-text mb-2">
-                {novel.title}
-              </h1>
-              <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary">
-                作者：{novel.author}
-              </p>
-            </div>
+          {/* 小说信息和评分 */}
+          <div className="flex-1 min-w-0 flex flex-col lg:flex-row gap-6">
+            {/* 左侧：小说信息 */}
+            <div className="flex-1 min-w-0">
+              {/* 标题和作者 */}
+              <div className="mb-4">
+                <h1 className="text-2xl lg:text-3xl font-bold text-light-text dark:text-dark-text mb-2">
+                  {novel.title}
+                </h1>
+                <p className="text-lg text-light-text-secondary dark:text-dark-text-secondary">
+                  作者：{novel.author}
+                </p>
+              </div>
 
             {/* 分类和状态 */}
             <div className="flex flex-wrap items-center gap-4 mb-4">
@@ -213,6 +217,14 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
 
             {/* 操作按钮 */}
             <ActionButtons novel={novel} />
+          </div>
+
+            {/* 右侧：评分分布 */}
+            <div className="w-full lg:w-80 flex-shrink-0">
+              <div className="lg:border-l lg:border-light-border lg:dark:border-dark-border lg:pl-6">
+                <RatingDistribution novel={novel} />
+              </div>
+            </div>
           </div>
         </div>
 
