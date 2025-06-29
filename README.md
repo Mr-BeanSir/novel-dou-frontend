@@ -1,6 +1,6 @@
 # 小说斗 - 小说阅读网站前端
 
-基于 Next.js 14 (App Router) 开发的现代化小说阅读平台前端，支持响应式设计和暗色/亮色主题切换。
+基于 Next.js 15 (App Router) 开发的现代化小说阅读平台前端，支持响应式设计和暗色/亮色主题切换。
 
 ## 功能特性
 
@@ -57,7 +57,7 @@ cp .env.example .env.local
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
-NEXT_PUBLIC_APP_NAME=小说斗
+NEXT_PUBLIC_APP_NAME=读书豆
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
