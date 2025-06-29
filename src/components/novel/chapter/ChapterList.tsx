@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { NovelChapter } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from '../../layout/LoadingSpinner';
 
 interface ChapterListProps {
   novelId: number;

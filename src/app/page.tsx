@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import NovelCard from '@/components/NovelCard';
+import NovelCard from '@/components/novel/card/NovelCard';
 import { getRecommendedNovels, getPopularNovels, getRecentNovels } from '@/services/novel';
 import { cache } from '@/lib/cache';
 import type { Novel } from '@/types/novel';

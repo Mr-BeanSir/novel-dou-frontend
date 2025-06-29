@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import NovelDetail from '@/components/NovelDetail';
+import NovelDetail from '@/components/novel/detail/NovelDetail';
 import { NovelService } from '@/services/novel';
 
 interface NovelPageProps {

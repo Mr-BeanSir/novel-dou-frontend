@@ -5,11 +5,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Novel, NovelChapter, NovelComment } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import ChapterList from './ChapterList';
-import CommentSection from './CommentSection';
+import ChapterList from '../chapter/ChapterList';
+import CommentSection from '../comment/CommentSection';
 import ActionButtons from './ActionButtons';
-import LoadingSpinner from './LoadingSpinner';
-import RatingDistribution from './RatingDistribution';
+import LoadingSpinner from '../../layout/LoadingSpinner';
+import RatingDistribution from '../rating/RatingDistribution';
 
 interface NovelDetailProps {
   novel: Novel;

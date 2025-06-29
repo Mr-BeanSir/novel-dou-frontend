@@ -83,16 +83,27 @@ src/
 │   ├── page.tsx           # 首页
 │   └── globals.css        # 全局样式
 ├── components/            # React 组件
-│   ├── Header.tsx         # 顶部导航栏
-│   ├── NovelCard.tsx      # 小说卡片
-│   ├── NovelDetail.tsx    # 小说详情组件
-│   ├── ChapterList.tsx    # 章节列表组件
-│   ├── CommentSection.tsx # 评论区组件
-│   ├── RatingSection.tsx  # 评分组件
-│   ├── ActionButtons.tsx  # 操作按钮组件
-│   ├── AuthModal.tsx      # 登录/注册弹窗
-│   ├── LoadingSpinner.tsx # 加载动画
-│   └── ThemeToggle.tsx    # 主题切换按钮
+│   ├── layout/           # 布局相关组件
+│   │   ├── Header.tsx         # 顶部导航栏
+│   │   ├── LoadingSpinner.tsx # 加载动画
+│   │   └── ThemeToggle.tsx    # 主题切换按钮
+│   ├── auth/             # 认证相关组件
+│   │   ├── AuthModal.tsx      # 登录/注册弹窗
+│   │   └── AuthButtonGroup.tsx # 认证按钮组
+│   └── novel/            # 小说相关组件
+│       ├── card/             # 卡片展示组件
+│       │   └── NovelCard.tsx      # 小说卡片
+│       ├── detail/           # 详情页面组件
+│       │   ├── NovelDetail.tsx    # 小说详情组件
+│       │   └── ActionButtons.tsx  # 操作按钮组件
+│       ├── rating/           # 评分相关组件
+│       │   ├── RatingDisplay.tsx  # 评分显示组件
+│       │   ├── RatingDistribution.tsx # 评分分布组件
+│       │   └── RatingSection.tsx  # 评分区域组件
+│       ├── chapter/          # 章节相关组件
+│       │   └── ChapterList.tsx    # 章节列表组件
+│       └── comment/          # 评论相关组件
+│           └── CommentSection.tsx # 评论区组件
 ├── hooks/                 # 自定义 Hooks
 │   ├── useAuth.ts         # 用户认证
 │   └── useTheme.ts        # 主题切换

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import ThemeToggle from './ThemeToggle';
-import AuthModal from './AuthModal';
+import AuthModal from '../auth/AuthModal';
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
