@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 亮色主题 - 阅读模式 */
+  --light-bg: #fef8e7;
+  --light-bg-secondary: #f9f3d2;
+  --light-text: #4b3f2f;
+  --light-text-secondary: #3a2e1e;
+  --light-accent: #C49E65;
+  --light-accent-hover: #a9744f;
+  --light-border: #e5d5b7;
+
+  /* 暗色主题 */
+  --dark-bg: #1a1a1a;
+  --dark-bg-secondary: #121212;
+  --dark-text: #eae3cc;
+  --dark-text-secondary: #d7d2c0;
+  --dark-accent: #89775f;
+  --dark-accent-hover: #5e503f;
+  --dark-border: #2d2d2d;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-light-bg: var(--light-bg);
+  --color-light-bg-secondary: var(--light-bg-secondary);
+  --color-light-text: var(--light-text);
+  --color-light-text-secondary: var(--light-text-secondary);
+  --color-light-accent: var(--light-accent);
+  --color-light-accent-hover: var(--light-accent-hover);
+  --color-light-border: var(--light-border);
+
+  --color-dark-bg: var(--dark-bg);
+  --color-dark-bg-secondary: var(--dark-bg-secondary);
+  --color-dark-text: var(--dark-text);
+  --color-dark-text-secondary: var(--dark-text-secondary);
+  --color-dark-accent: var(--dark-accent);
+  --color-dark-accent-hover: var(--dark-accent-hover);
+  --color-dark-border: var(--dark-border);
+
+  --font-family-serif: 'SimSun', '宋体', 'Source Han Serif', serif;
+  --font-family-sans: 'PingFang SC', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', sans-serif;
+
+  --line-height-reading: 1.8;
+  --max-width-reading: 720px;
+
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+
+  /* Tailwind 字体配置 */
+  --font-serif: var(--font-family-serif);
+  --font-sans: var(--font-family-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 亮色主题样式 */
+.light {
+  background-color: var(--light-bg);
+  color: var(--light-text);
+}
+
+/* 暗色主题样式 */
+.dark {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 自定义文本截断类 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

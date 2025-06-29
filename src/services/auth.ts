@@ -1,0 +1,171 @@
+// 认证相关服务
+
+import { get, post, setAuthToken, clearAuthToken } from '@/lib/api';
+import { API_CONFIG } from '@/config/api';
+import type { 
+  User, 
+  LoginRequest, 
+  RegisterRequest, 
+  AuthResponse, 
+  ApiResponse 
+} from '@/types/user';
+
+/**
+ * 认证服务类
+ */
+export class AuthService {
+  /**
+   * 用户登录
+   */
+  static async login(credentials: LoginRequest): Promise<AuthResponse> {
+    const response = await post<ApiResponse<AuthResponse>>(
+      API_CONFIG.ENDPOINTS.AUTH.LOGIN,
+      credentials,
+      false // 登录时不需要认证
+    );
+    
+    // 保存 token
+    if (response.data.token) {
+      setAuthToken(response.data.token);
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * 用户注册
+   */
+  static async register(userData: RegisterRequest): Promise<AuthResponse> {
+    const response = await post<ApiResponse<AuthResponse>>(
+      API_CONFIG.ENDPOINTS.AUTH.REGISTER,
+      userData,
+      false // 注册时不需要认证
+    );
+    
+    // 保存 token
+    if (response.data.token) {
+      setAuthToken(response.data.token);
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * 获取当前用户信息
+   */
+  static async getCurrentUser(): Promise<User> {
+    const response = await get<ApiResponse<User>>(API_CONFIG.ENDPOINTS.AUTH.PROFILE);
+    return response.data;
+  }
+
+  /**
+   * 用户登出
+   */
+  static async logout(): Promise<void> {
+    try {
+      await post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // 无论请求是否成功，都清除本地 token
+      clearAuthToken();
+    }
+  }
+
+  /**
+   * 刷新 token
+   */
+  static async refreshToken(): Promise<AuthResponse> {
+    const response = await post<ApiResponse<AuthResponse>>(API_CONFIG.ENDPOINTS.AUTH.REFRESH);
+    
+    // 更新 token
+    if (response.data.token) {
+      setAuthToken(response.data.token);
+    }
+    
+    return response.data;
+  }
+
+  /**
+   * 检查用户是否已登录
+   */
+  static isAuthenticated(): boolean {
+    if (typeof window === 'undefined') return false;
+    const token = localStorage.getItem(API_CONFIG.AUTH.TOKEN_KEY);
+    return !!token;
+  }
+
+  /**
+   * 获取当前 token
+   */
+  static getToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem(API_CONFIG.AUTH.TOKEN_KEY);
+  }
+
+  /**
+   * 检查用户权限
+   */
+  static hasPermission(user: User | null, permission: string): boolean {
+    if (!user || !user.permissions) return false;
+    
+    return user.permissions.some(p => p.name === permission);
+  }
+
+  /**
+   * 检查用户是否有任一权限
+   */
+  static hasAnyPermission(user: User | null, permissions: string[]): boolean {
+    if (!user || !user.permissions) return false;
+    
+    return permissions.some(permission => 
+      user.permissions!.some(p => p.name === permission)
+    );
+  }
+
+  /**
+   * 检查用户是否有所有权限
+   */
+  static hasAllPermissions(user: User | null, permissions: string[]): boolean {
+    if (!user || !user.permissions) return false;
+    
+    return permissions.every(permission => 
+      user.permissions!.some(p => p.name === permission)
+    );
+  }
+
+  /**
+   * 验证 token 是否有效
+   */
+  static async validateToken(): Promise<boolean> {
+    try {
+      await this.getCurrentUser();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 清除认证信息
+   */
+  static clearAuth(): void {
+    clearAuthToken();
+  }
+}
+
+// 导出便捷方法
+export const {
+  login,
+  register,
+  getCurrentUser,
+  logout,
+  refreshToken,
+  isAuthenticated,
+  getToken,
+  hasPermission,
+  hasAnyPermission,
+  hasAllPermissions,
+  validateToken,
+  clearAuth,
+} = AuthService;
