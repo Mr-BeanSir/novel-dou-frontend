@@ -119,23 +119,40 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
 
             {/* 标签 */}
             {novel.tags && novel.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-3">
-                {novel.tags.slice(0, 2).map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="px-2 py-1 text-xs rounded font-medium text-white text-shadow-sm"
-                    style={{
-                      backgroundColor: tag.color || '#c49e65',
-                      fontSize: '10px'
-                    }}
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-                {novel.tags.length > 2 && (
-                  <span className="px-2 py-1 text-xs text-theme-text-secondary">
-                    +{novel.tags.length - 2}
-                  </span>
+              <div className="flex items-center gap-1 mb-3 overflow-hidden" style={{ height: '1.5rem' }}>
+                {novel.tags.length <= 4 ? (
+                  // 如果标签数量 <= 4，全部显示
+                  novel.tags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="px-2 py-1 text-xs rounded font-medium text-white text-shadow-sm whitespace-nowrap flex-shrink-0"
+                      style={{
+                        backgroundColor: tag.color || '#c49e65',
+                        fontSize: '10px'
+                      }}
+                    >
+                      {tag.name}
+                    </span>
+                  ))
+                ) : (
+                  // 如果标签数量 > 4，显示前3个 + +X
+                  <>
+                    {novel.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag.id}
+                        className="px-2 py-1 text-xs rounded font-medium text-white text-shadow-sm whitespace-nowrap flex-shrink-0"
+                        style={{
+                          backgroundColor: tag.color || '#c49e65',
+                          fontSize: '10px'
+                        }}
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+                    <span className="px-2 py-1 text-xs text-theme-text-secondary whitespace-nowrap flex-shrink-0">
+                      +{novel.tags.length - 3}
+                    </span>
+                  </>
                 )}
               </div>
             )}
