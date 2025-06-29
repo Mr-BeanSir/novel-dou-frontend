@@ -134,18 +134,34 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
           <LoadingSpinner />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
-          {chapters.map((chapter) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
+          {chapters.map((chapter, index) => (
             <Link
               key={chapter.id}
               href={`/novel/${novelId}/chapter/${chapter.id}`}
-              className="block h-20 p-3 border border-light-border dark:border-dark-border
-                         rounded-lg hover:bg-light-bg dark:hover:bg-dark-bg
-                         hover:border-light-accent dark:hover:border-dark-accent
-                         transition-all duration-200 group"
+              className={`block h-16 p-2 hover:bg-light-bg dark:hover:bg-dark-bg
+                         transition-colors group border-light-border dark:border-dark-border
+                         ${index % 4 !== 3 ? 'border-r' : ''}
+                         ${Math.floor(index / 4) !== Math.floor((chapters.length - 1) / 4) ? 'border-b' : ''}`}
             >
               <div className="h-full flex flex-col justify-between">
-                {/* 顶部：字数和时间 */}
+                {/* 顶部：标题和箭头 */}
+                <div className="flex items-center justify-between">
+                  <h3 className="text-light-text dark:text-dark-text
+                               group-hover:text-light-accent dark:group-hover:text-dark-accent
+                               transition-colors text-sm font-medium truncate pr-2">
+                    {formatChapterTitle(chapter)}
+                  </h3>
+                  <svg className="w-4 h-4 text-light-text-secondary dark:text-dark-text-secondary
+                                 group-hover:text-light-accent dark:group-hover:text-dark-accent
+                                 transition-colors flex-shrink-0"
+                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                          d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+
+                {/* 底部：字数和时间 */}
                 <div className="flex items-center justify-between text-xs text-light-text-secondary dark:text-dark-text-secondary">
                   <div className="flex items-center space-x-1">
                     <span className="font-medium">{chapter.word_count}字</span>
@@ -155,27 +171,11 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center space-x-1">
+                  <div>
                     {chapter.published_at && (
                       <span className="font-medium">{formatPublishTime(chapter.published_at)}</span>
                     )}
-                    <svg className="w-3 h-3 text-light-text-secondary dark:text-dark-text-secondary
-                                   group-hover:text-light-accent dark:group-hover:text-dark-accent
-                                   transition-colors flex-shrink-0"
-                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                            d="M9 5l7 7-7 7" />
-                    </svg>
                   </div>
-                </div>
-
-                {/* 底部：章节标题 */}
-                <div className="flex-1 flex items-center">
-                  <h3 className="text-light-text dark:text-dark-text
-                               group-hover:text-light-accent dark:group-hover:text-dark-accent
-                               transition-colors text-sm font-medium leading-tight line-clamp-2">
-                    {formatChapterTitle(chapter)}
-                  </h3>
                 </div>
               </div>
             </Link>
