@@ -7,10 +7,8 @@ import type { Novel, NovelChapter, NovelComment } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import ChapterList from './ChapterList';
 import CommentSection from './CommentSection';
-import RatingSection from './RatingSection';
 import ActionButtons from './ActionButtons';
 import LoadingSpinner from './LoadingSpinner';
-import RatingDisplay from './RatingDisplay';
 import RatingDistribution from './RatingDistribution';
 
 interface NovelDetailProps {
@@ -239,9 +237,6 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
           </p>
         </div>
       </div>
-
-      {/* 评分区域 */}
-      <RatingSection novel={novel} />
 
       {/* 章节列表 */}
       <div className="mb-8">
