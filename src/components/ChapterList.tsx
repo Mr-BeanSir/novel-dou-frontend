@@ -134,43 +134,48 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
           <LoadingSpinner />
         </div>
       ) : (
-        <div className="divide-y divide-light-border dark:divide-dark-border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
           {chapters.map((chapter) => (
             <Link
               key={chapter.id}
               href={`/novel/${novelId}/chapter/${chapter.id}`}
-              className="block p-4 hover:bg-light-bg dark:hover:bg-dark-bg
-                         transition-colors group"
+              className="block h-20 p-3 border border-light-border dark:border-dark-border
+                         rounded-lg hover:bg-light-bg dark:hover:bg-dark-bg
+                         hover:border-light-accent dark:hover:border-dark-accent
+                         transition-all duration-200 group"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-light-text dark:text-dark-text
-                               group-hover:text-light-accent dark:group-hover:text-dark-accent
-                               transition-colors truncate">
-                    {formatChapterTitle(chapter)}
-                  </h3>
-                  <div className="flex items-center space-x-4 mt-1 text-xs
-                                text-light-text-secondary dark:text-dark-text-secondary">
-                    <span>{chapter.word_count} 字</span>
-                    {chapter.published_at && (
-                      <span>{formatPublishTime(chapter.published_at)}</span>
-                    )}
+              <div className="h-full flex flex-col justify-between">
+                {/* 顶部：字数和时间 */}
+                <div className="flex items-center justify-between text-xs text-light-text-secondary dark:text-dark-text-secondary">
+                  <div className="flex items-center space-x-1">
+                    <span className="font-medium">{chapter.word_count}字</span>
                     {chapter.is_vip && (
                       <span className="px-1 py-0.5 bg-yellow-500 text-white rounded text-xs">
                         VIP
                       </span>
                     )}
                   </div>
+                  <div className="flex items-center space-x-1">
+                    {chapter.published_at && (
+                      <span className="font-medium">{formatPublishTime(chapter.published_at)}</span>
+                    )}
+                    <svg className="w-3 h-3 text-light-text-secondary dark:text-dark-text-secondary
+                                   group-hover:text-light-accent dark:group-hover:text-dark-accent
+                                   transition-colors flex-shrink-0"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                            d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
 
-                <div className="flex-shrink-0 ml-4">
-                  <svg className="w-5 h-5 text-light-text-secondary dark:text-dark-text-secondary
-                                 group-hover:text-light-accent dark:group-hover:text-dark-accent
-                                 transition-colors"
-                       fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                          d="M9 5l7 7-7 7" />
-                  </svg>
+                {/* 底部：章节标题 */}
+                <div className="flex-1 flex items-center">
+                  <h3 className="text-light-text dark:text-dark-text
+                               group-hover:text-light-accent dark:group-hover:text-dark-accent
+                               transition-colors text-sm font-medium leading-tight line-clamp-2">
+                    {formatChapterTitle(chapter)}
+                  </h3>
                 </div>
               </div>
             </Link>
