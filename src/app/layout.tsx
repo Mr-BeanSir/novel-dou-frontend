@@ -30,10 +30,10 @@ export default function RootLayout({
               <main>{children}</main>
               <footer className="bg-light-bg-secondary dark:bg-dark-bg-secondary
                                border-t border-light-border dark:border-dark-border
-                               py-8 mt-16">
+                               py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                   <p className="text-light-text-secondary dark:text-dark-text-secondary">
-                    © 2024 读书豆. All rights reserved.
+                    © 2025 读书豆. All rights reserved.
                   </p>
                 </div>
               </footer>
