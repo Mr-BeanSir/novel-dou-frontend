@@ -93,7 +93,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
     const loadChapters = async () => {
       try {
         setIsLoadingChapters(true);
-        const response = await NovelService.getNovelChapters(novel.id, 1, 20);
+        const response = await NovelService.getNovelChapters(novel.id, 1, 50);
         setChapters(response.data);
       } catch (error) {
         console.error('Error loading chapters:', error);
@@ -171,8 +171,8 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* 小说基本信息 */}
-      <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary 
-                      border border-light-border dark:border-dark-border 
+      <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary
+                      border border-light-border dark:border-dark-border
                       rounded-lg p-6 mb-8">
         <div className="flex flex-col lg:flex-row gap-6 lg:items-stretch">
           {/* 封面图片 */}
@@ -204,7 +204,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                   </svg>
                 </div>
               )}
-              
+
               {/* 标识 */}
               <div className="absolute top-2 right-2 flex flex-col gap-1">
                 {novel.is_vip && (
@@ -334,7 +334,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                 </div>
 
                 {/* 操作按钮 */}
-                <ActionButtons novel={novel} />
+                <ActionButtons novel={novel} firstChapter={chapters.length > 0 ? chapters[0] : null} />
               </div>
             </div>
 
@@ -362,7 +362,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
           <h2 className="text-lg font-semibold text-light-text dark:text-dark-text mb-3">
             内容简介
           </h2>
-          <p className="text-light-text-secondary dark:text-dark-text-secondary 
+          <p className="text-light-text-secondary dark:text-dark-text-secondary
                        leading-relaxed whitespace-pre-wrap">
             {novel.description}
           </p>

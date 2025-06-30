@@ -66,7 +66,6 @@ export interface NovelChapter {
   view_count: number;
   is_vip: boolean;
   is_active: boolean;
-  published_at?: string;
   created_at: string;
   updated_at: string;
 }

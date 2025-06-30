@@ -46,6 +46,7 @@ export const API_CONFIG = {
       RATINGS: (id: number) => `/novels/${id}/ratings`,
       RATING_STATISTICS: (id: number) => `/novels/${id}/ratings/statistics`,
       COMMENTS: (id: number) => `/novels/${id}/comments`,
+      CHAPTERS: (id: number) => `/novels/${id}/chapters`,
       CHAPTER_CONTENT: (novelId: number, chapterId: number) => `/novels/${novelId}/chapters/${chapterId}`,
       READING_HISTORY: '/novels/reading-history',
     },

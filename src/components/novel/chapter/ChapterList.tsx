@@ -59,7 +59,7 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
   };
 
   // 格式化发布时间
-  const formatPublishTime = (dateString?: string): string => {
+  const formatUpdateTime = (dateString?: string): string => {
     if (!dateString) return '';
 
     const date = new Date(dateString);
@@ -172,8 +172,8 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
                     )}
                   </div>
                   <div>
-                    {chapter.published_at && (
-                      <span className="font-medium">{formatPublishTime(chapter.published_at)}</span>
+                    {chapter.updated_at && (
+                      <span className="font-medium">{formatUpdateTime(chapter.updated_at)}</span>
                     )}
                   </div>
                 </div>
