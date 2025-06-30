@@ -2,12 +2,12 @@
 
 import { get, post, setAuthToken, clearAuthToken } from '@/lib/api';
 import { API_CONFIG } from '@/config/api';
-import type { 
-  User, 
-  LoginRequest, 
-  RegisterRequest, 
-  AuthResponse, 
-  ApiResponse 
+import type {
+  User,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  ApiResponse
 } from '@/types/user';
 
 /**
@@ -18,36 +18,36 @@ export class AuthService {
    * 用户登录
    */
   static async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await post<ApiResponse<AuthResponse>>(
+    const response = await post<AuthResponse>(
       API_CONFIG.ENDPOINTS.AUTH.LOGIN,
       credentials,
       false // 登录时不需要认证
     );
-    
+
     // 保存 token
-    if (response.data.token) {
-      setAuthToken(response.data.token);
+    if (response.token) {
+      setAuthToken(response.token);
     }
-    
-    return response.data;
+
+    return response;
   }
 
   /**
    * 用户注册
    */
   static async register(userData: RegisterRequest): Promise<AuthResponse> {
-    const response = await post<ApiResponse<AuthResponse>>(
+    const response = await post<AuthResponse>(
       API_CONFIG.ENDPOINTS.AUTH.REGISTER,
       userData,
       false // 注册时不需要认证
     );
-    
+
     // 保存 token
-    if (response.data.token) {
-      setAuthToken(response.data.token);
+    if (response.token) {
+      setAuthToken(response.token);
     }
-    
-    return response.data;
+
+    return response;
   }
 
   /**
@@ -77,12 +77,12 @@ export class AuthService {
    */
   static async refreshToken(): Promise<AuthResponse> {
     const response = await post<ApiResponse<AuthResponse>>(API_CONFIG.ENDPOINTS.AUTH.REFRESH);
-    
+
     // 更新 token
     if (response.data.token) {
       setAuthToken(response.data.token);
     }
-    
+
     return response.data;
   }
 
@@ -108,7 +108,7 @@ export class AuthService {
    */
   static hasPermission(user: User | null, permission: string): boolean {
     if (!user || !user.permissions) return false;
-    
+
     return user.permissions.some(p => p.name === permission);
   }
 
@@ -117,8 +117,8 @@ export class AuthService {
    */
   static hasAnyPermission(user: User | null, permissions: string[]): boolean {
     if (!user || !user.permissions) return false;
-    
-    return permissions.some(permission => 
+
+    return permissions.some(permission =>
       user.permissions!.some(p => p.name === permission)
     );
   }
@@ -128,8 +128,8 @@ export class AuthService {
    */
   static hasAllPermissions(user: User | null, permissions: string[]): boolean {
     if (!user || !user.permissions) return false;
-    
-    return permissions.every(permission => 
+
+    return permissions.every(permission =>
       user.permissions!.some(p => p.name === permission)
     );
   }

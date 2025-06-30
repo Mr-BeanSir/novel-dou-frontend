@@ -3,14 +3,14 @@
 export const API_CONFIG = {
   // 基础 URL
   BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api',
-  
+
   // 超时设置
   TIMEOUT: 30000,
-  
+
   // 重试配置
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,
-  
+
   // 认证相关
   AUTH: {
     TOKEN_KEY: 'auth_token',
@@ -18,18 +18,18 @@ export const API_CONFIG = {
     TOKEN_HEADER: 'Authorization',
     TOKEN_PREFIX: 'Bearer',
   },
-  
+
   // 端点配置
   ENDPOINTS: {
     // 用户相关
     AUTH: {
-      LOGIN: '/auth/login',
-      REGISTER: '/auth/register',
-      LOGOUT: '/auth/logout',
-      REFRESH: '/auth/refresh',
-      PROFILE: '/auth/profile',
+      LOGIN: '/users/login',
+      REGISTER: '/users/register',
+      LOGOUT: '/users/logout',
+      REFRESH: '/users/refresh',
+      PROFILE: '/users/profile',
     },
-    
+
     // 小说相关
     NOVELS: {
       LIST: '/novels',
@@ -47,8 +47,7 @@ export const API_CONFIG = {
       RATING_STATISTICS: (id: number) => `/novels/${id}/ratings/statistics`,
       COMMENTS: (id: number) => `/novels/${id}/comments`,
       CHAPTERS: (id: number) => `/novels/${id}/chapters`,
-      CHAPTER_DETAIL: (novelId: number, chapterId: number) => `/novels/${novelId}/chapters/${chapterId}`,
-      CHAPTER_CONTENT: (novelId: number, chapterId: number) => `/novels/${novelId}/chapters/${chapterId}/content`,
+      CHAPTER_CONTENT: (novelId: number, chapterId: number) => `/novels/${novelId}/chapters/${chapterId}`,
       READING_HISTORY: '/novels/reading-history',
     },
   },

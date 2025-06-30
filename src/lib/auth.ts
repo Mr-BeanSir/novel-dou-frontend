@@ -1,44 +1,44 @@
 // 认证相关工具函数
 
 import { get, post, setAuthToken, clearAuthToken } from './api';
-import type { 
-  User, 
-  LoginRequest, 
-  RegisterRequest, 
-  AuthResponse, 
-  ApiResponse 
+import type {
+  User,
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  ApiResponse
 } from '@/types/user';
 
 // 用户登录
 export async function login(credentials: LoginRequest): Promise<AuthResponse> {
-  const response = await post<ApiResponse<AuthResponse>>(
+  const response = await post<AuthResponse>(
     '/users/login',
     credentials,
     false // 登录时不需要认证
   );
-  
+
   // 保存 token
-  if (response.data.token) {
-    setAuthToken(response.data.token);
+  if (response.token) {
+    setAuthToken(response.token);
   }
-  
-  return response.data;
+
+  return response;
 }
 
 // 用户注册
 export async function register(userData: RegisterRequest): Promise<AuthResponse> {
-  const response = await post<ApiResponse<AuthResponse>>(
+  const response = await post<AuthResponse>(
     '/users/register',
     userData,
     false // 注册时不需要认证
   );
-  
+
   // 保存 token
-  if (response.data.token) {
-    setAuthToken(response.data.token);
+  if (response.token) {
+    setAuthToken(response.token);
   }
-  
-  return response.data;
+
+  return response;
 }
 
 // 获取当前用户信息
@@ -80,15 +80,15 @@ export function isAuthenticated(): boolean {
 // 检查用户权限
 export function hasPermission(user: User | null, permission: string): boolean {
   if (!user || !user.permissions) return false;
-  
+
   return user.permissions.some(p => p.name === permission);
 }
 
 // 检查用户是否有任一权限
 export function hasAnyPermission(user: User | null, permissions: string[]): boolean {
   if (!user || !user.permissions) return false;
-  
-  return permissions.some(permission => 
+
+  return permissions.some(permission =>
     user.permissions!.some(p => p.name === permission)
   );
 }
@@ -96,8 +96,8 @@ export function hasAnyPermission(user: User | null, permissions: string[]): bool
 // 检查用户是否有所有权限
 export function hasAllPermissions(user: User | null, permissions: string[]): boolean {
   if (!user || !user.permissions) return false;
-  
-  return permissions.every(permission => 
+
+  return permissions.every(permission =>
     user.permissions!.some(p => p.name === permission)
   );
 }

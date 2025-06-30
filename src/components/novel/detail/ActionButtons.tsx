@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import type { Novel } from '@/types/novel';
+import type { Novel, NovelChapter } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -14,6 +14,43 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
   const { user, isAuthenticated } = useAuth();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
+  const [firstChapter, setFirstChapter] = useState<NovelChapter | null>(null);
+  const [isLoadingChapter, setIsLoadingChapter] = useState(true);
+
+  // 获取第一章信息
+  useEffect(() => {
+    const loadFirstChapter = async () => {
+      if (novel.chapter_count === 0) {
+        setIsLoadingChapter(false);
+        return;
+      }
+
+      try {
+        const response = await NovelService.getNovelChapters(novel.id, 1, 1);
+        if (response.data.length > 0) {
+          setFirstChapter(response.data[0]);
+        }
+      } catch (error) {
+        console.error('Failed to load first chapter:', error);
+        // 如果获取章节列表失败，我们可以尝试使用一个默认的章节ID
+        // 或者使用latest_chapter信息
+        if (novel.latest_chapter) {
+          // 假设第一章的ID比最新章节小
+          const estimatedFirstChapterId = novel.latest_chapter.id - novel.chapter_count + 1;
+          setFirstChapter({
+            ...novel.latest_chapter,
+            id: Math.max(1, estimatedFirstChapterId),
+            chapter_number: 1,
+            title: '第一章'
+          });
+        }
+      } finally {
+        setIsLoadingChapter(false);
+      }
+    };
+
+    loadFirstChapter();
+  }, [novel.id, novel.chapter_count, novel.latest_chapter]);
 
   // 处理收藏
   const handleBookmark = async () => {
@@ -42,6 +79,9 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
 
   // 开始阅读按钮
   const getReadButtonText = () => {
+    if (isLoadingChapter) {
+      return '加载中...';
+    }
     if (novel.chapter_count === 0) {
       return '暂无章节';
     }
@@ -49,11 +89,10 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
   };
 
   const getReadButtonHref = () => {
-    if (novel.chapter_count === 0) {
+    if (novel.chapter_count === 0 || !firstChapter) {
       return '#';
     }
-    // 假设第一章的ID是1，实际应该从章节列表获取
-    return `/novel/${novel.id}/chapter/1`;
+    return `/novel/${novel.id}/chapter/${firstChapter.id}`;
   };
 
   return (
@@ -61,13 +100,13 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
       {/* 开始阅读按钮 */}
       <Link
         href={getReadButtonHref()}
-        className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 
-                   ${novel.chapter_count === 0
+        className={`px-6 py-3 rounded-lg font-medium transition-all duration-200
+                   ${novel.chapter_count === 0 || isLoadingChapter || !firstChapter
                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                     : 'bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white hover:scale-105'
+                     : 'bg-[#c49e65] hover:bg-[#a9744f] text-white hover:scale-105'
                    }`}
         onClick={(e) => {
-          if (novel.chapter_count === 0) {
+          if (novel.chapter_count === 0 || isLoadingChapter || !firstChapter) {
             e.preventDefault();
           }
         }}
