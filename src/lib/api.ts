@@ -7,7 +7,6 @@ export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
 
   try {
-    // 从 Zustand 持久化存储中获取
     const userStorage = localStorage.getItem('user-storage');
     if (userStorage) {
       const parsed = JSON.parse(userStorage);
@@ -19,16 +18,13 @@ export function getAuthToken(): string | null {
   }
 }
 
-// 设置 token - 不再直接操作 localStorage，由 Zustand 管理
+// 这些函数不再需要，由 Zustand store 管理
 export function setAuthToken(token: string): void {
-  // 这个函数保留为兼容性，但实际由 Zustand store 管理
-  console.warn('setAuthToken is deprecated, use Zustand store instead');
+  // 由 Zustand store 管理
 }
 
-// 清除 token - 不再直接操作 localStorage，由 Zustand 管理
 export function clearAuthToken(): void {
-  // 这个函数保留为兼容性，但实际由 Zustand store 管理
-  console.warn('clearAuthToken is deprecated, use Zustand store instead');
+  // 由 Zustand store 管理
 }
 
 // 创建请求头

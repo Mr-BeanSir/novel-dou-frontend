@@ -9,7 +9,6 @@ import {
   getCurrentUser,
   isAuthenticated
 } from '@/services/auth';
-// 移除了对 helpers/utils 存储函数的依赖，统一使用 Zustand persist
 import type { User, LoginRequest, RegisterRequest } from '@/types/user';
 
 interface UserState {
@@ -58,7 +57,7 @@ export const useUserStore = create<UserState>()(
             isLoading: false
           });
 
-          // token 由 Zustand persist 自动保存到 user-storage
+
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -79,7 +78,7 @@ export const useUserStore = create<UserState>()(
             isLoading: false
           });
 
-          // token 由 Zustand persist 自动保存到 user-storage
+
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -101,7 +100,7 @@ export const useUserStore = create<UserState>()(
             isLoading: false
           });
 
-          // token 由 Zustand persist 自动清除
+
         }
       },
 
@@ -125,7 +124,7 @@ export const useUserStore = create<UserState>()(
             isAuthenticated: false,
             isLoading: false
           });
-          // token 由 Zustand persist 自动清除
+
         }
       },
 
@@ -137,7 +136,7 @@ export const useUserStore = create<UserState>()(
       // 设置 token
       setToken: (token: string | null) => {
         set({ token, isAuthenticated: !!token });
-        // token 由 Zustand persist 自动保存/清除
+
       },
 
       // 设置加载状态
@@ -149,34 +148,20 @@ export const useUserStore = create<UserState>()(
       initialize: async () => {
         const { token, user, isAuthenticated } = get();
 
-        console.log('Initialize called with state:', {
-          hasToken: !!token,
-          hasUser: !!user,
-          isAuthenticated
-        });
-
-        if (token && isAuthenticated) {
+        if (token && isAuthenticated && !user) {
           // 如果有token且标记为已认证，但没有用户信息，则重新获取
-          if (!user) {
-            console.log('Token exists but no user info, fetching user data...');
-            try {
-              const userData = await getCurrentUser();
-              console.log('User data fetched successfully:', userData);
-              set({ user: userData });
-            } catch (error) {
-              console.error('Failed to initialize user:', error);
-              // token 无效，清除状态
-              set({
-                user: null,
-                token: null,
-                isAuthenticated: false
-              });
-            }
-          } else {
-            console.log('User info already exists, no need to fetch');
+          try {
+            const userData = await getCurrentUser();
+            set({ user: userData });
+          } catch (error) {
+            console.error('Failed to initialize user:', error);
+            // token 无效，清除状态
+            set({
+              user: null,
+              token: null,
+              isAuthenticated: false
+            });
           }
-        } else {
-          console.log('No token or not authenticated, skipping initialization');
         }
       },
 
@@ -206,16 +191,12 @@ export const useUserStore = create<UserState>()(
     {
       name: 'user-storage',
       storage: createJSONStorage(() => localStorage),
-      // 只持久化必要的状态
+
       partialize: (state) => ({
         user: state.user,
         token: state.token,
         isAuthenticated: state.isAuthenticated
       }),
-      // 添加调试回调
-      onRehydrateStorage: () => (state) => {
-        console.log('Zustand rehydrated with state:', state);
-      },
     }
   )
 );
@@ -225,7 +206,7 @@ export const useUser = () => useUserStore((state) => state.user);
 export const useIsAuthenticated = () => useUserStore((state) => state.isAuthenticated);
 export const useIsLoading = () => useUserStore((state) => state.isLoading);
 
-// 分别导出每个action，避免对象重新创建导致的无限循环
+// 单独导出每个action
 export const useLogin = () => useUserStore((state) => state.login);
 export const useRegister = () => useUserStore((state) => state.register);
 export const useLogout = () => useUserStore((state) => state.logout);
