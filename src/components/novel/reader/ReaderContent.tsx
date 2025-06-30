@@ -1,21 +1,21 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Novel, NovelChapter } from '@/types/novel';
+import { Novel, NovelChapter, ChapterContentResponse } from '@/types/novel';
 import { ReaderSettings } from './ChapterReader';
 
 interface ReaderContentProps {
-  content: string;
+  chapterContent: ChapterContentResponse | null;
   settings: ReaderSettings;
   novel: Novel;
   chapter: NovelChapter;
 }
 
-export default function ReaderContent({ 
-  content, 
-  settings, 
-  novel, 
-  chapter 
+export default function ReaderContent({
+  chapterContent,
+  settings,
+  novel,
+  chapter
 }: ReaderContentProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -78,33 +78,46 @@ export default function ReaderContent({
     }
   };
 
-  const paragraphs = formatContent(content);
+  // 如果没有章节内容数据，显示加载状态
+  if (!chapterContent) {
+    return (
+      <main className="py-8">
+        <div className="mx-auto px-4 text-center" style={{ maxWidth: `${settings.maxWidth}px` }}>
+          <div className="text-light-text-secondary dark:text-dark-text-secondary">
+            正在加载章节内容...
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  const paragraphs = formatContent(chapterContent.content);
   const themeStyles = getThemeStyles();
 
   return (
     <main className="py-8">
-      <div 
+      <div
         className="mx-auto px-4"
         style={{ maxWidth: `${settings.maxWidth}px` }}
       >
         {/* 章节标题 */}
         <div className="text-center mb-8">
-          <h1 
+          <h1
             className="font-bold mb-2"
-            style={{ 
+            style={{
               fontSize: `${Math.max(settings.fontSize + 6, 20)}px`,
               lineHeight: settings.lineHeight,
               color: themeStyles.color
             }}
           >
-            第{chapter.chapter_number}章 {chapter.title}
+            第{chapterContent.chapter_info.chapter_number}章 {chapterContent.chapter_info.title}
           </h1>
           <div className="text-sm opacity-75 space-x-4">
-            <span>{novel.title}</span>
+            <span>{chapterContent.novel.title}</span>
             <span>·</span>
-            <span>{novel.author}</span>
+            <span>{chapterContent.novel.author}</span>
             <span>·</span>
-            <span>{chapter.word_count_formatted}</span>
+            <span>{chapterContent.word_count.toLocaleString()}字</span>
           </div>
         </div>
 
@@ -119,10 +132,10 @@ export default function ReaderContent({
           }}
         >
           {paragraphs.map((paragraph, index) => (
-            <p 
-              key={index} 
+            <p
+              key={index}
               className="mb-6 text-justify"
-              style={{ 
+              style={{
                 textIndent: '2em',
                 wordBreak: 'break-word',
                 hyphens: 'auto',
@@ -137,11 +150,17 @@ export default function ReaderContent({
         <div className="mt-12 pt-8 border-t border-light-border dark:border-dark-border">
           <div className="text-center text-sm opacity-75 space-y-2">
             <div>
-              本章字数：{chapter.word_count_formatted} | 
-              阅读次数：{chapter.view_count.toLocaleString()}
+              本章字数：{chapterContent.word_count.toLocaleString()}字 |
+              阅读次数：{chapterContent.view_count.toLocaleString()}
             </div>
             <div>
-              更新时间：{new Date(chapter.updated_at).toLocaleDateString('zh-CN')}
+              更新时间：{new Date(chapterContent.updated_at).toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
             </div>
           </div>
         </div>

@@ -153,6 +153,29 @@ export interface ReadingHistory {
   updated_at: string;
 }
 
+// 章节内容响应类型
+export interface ChapterContentResponse {
+  content: string;
+  word_count: number;
+  view_count: number;
+  created_at: string;
+  updated_at: string;
+  chapter_info: {
+    id: number;
+    title: string;
+    chapter_number: number;
+    is_vip: boolean;
+    view_count: number;
+    created_at: string;
+    updated_at: string;
+  };
+  novel: {
+    id: number;
+    title: string;
+    author: string;
+  };
+}
+
 // API 响应类型
 export interface ApiResponse<T> {
   data: T;

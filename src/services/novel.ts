@@ -12,6 +12,7 @@ import type {
   NovelRating,
   NovelRatingStatistics,
   ReadingHistory,
+  ChapterContentResponse,
   ApiResponse,
   PaginatedResponse,
   NovelListParams,
@@ -127,9 +128,9 @@ export class NovelService {
   /**
    * 获取章节内容（需要认证）
    */
-  static async getChapterContent(novelId: number, chapterId: number): Promise<string> {
-    const response = await get<{ content: string }>(API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_CONTENT(novelId, chapterId));
-    return response.content;
+  static async getChapterContent(novelId: number, chapterId: number): Promise<ChapterContentResponse> {
+    const response = await get<ChapterContentResponse>(API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_CONTENT(novelId, chapterId));
+    return response;
   }
 
   /**

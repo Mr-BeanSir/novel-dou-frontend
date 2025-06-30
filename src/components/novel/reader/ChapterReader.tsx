@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Novel, NovelChapter } from '@/types/novel';
+import { Novel, NovelChapter, ChapterContentResponse } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import ReaderHeader from './ReaderHeader';
 import ReaderContent from './ReaderContent';
@@ -23,7 +23,7 @@ export interface ReaderSettings {
 }
 
 export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
-  const [content, setContent] = useState<string>('');
+  const [chapterContent, setChapterContent] = useState<ChapterContentResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showControls, setShowControls] = useState(false);
@@ -37,15 +37,18 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
     maxWidth: 800,
   });
 
+  console.log('ChapterReader component mounted', { novel: novel.title, chapter: chapter.title });
+
   // 加载章节内容
   useEffect(() => {
     const loadChapterContent = async () => {
       try {
         setIsLoading(true);
         setError(null);
+        console.log('Loading chapter content for:', novel.id, chapter.id);
 
-        const chapterContent = await NovelService.getChapterContent(novel.id, chapter.id);
-        setContent(chapterContent);
+        const chapterContentResponse = await NovelService.getChapterContent(novel.id, chapter.id);
+        setChapterContent(chapterContentResponse);
       } catch (err) {
         console.error('Failed to load chapter content:', err);
         if (err instanceof Error && err.message.includes('401')) {
@@ -70,7 +73,29 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
 
 感谢您使用读书豆小说阅读平台！`;
 
-          setContent(mockContent);
+          // 创建模拟的章节内容响应
+          const mockChapterContent: ChapterContentResponse = {
+            content: mockContent,
+            word_count: 2629,
+            view_count: chapter.view_count || 0,
+            created_at: chapter.created_at,
+            updated_at: chapter.updated_at,
+            chapter_info: {
+              id: chapter.id,
+              title: chapter.title,
+              chapter_number: chapter.chapter_number,
+              is_vip: chapter.is_vip,
+              view_count: chapter.view_count || 0,
+              created_at: chapter.created_at,
+              updated_at: chapter.updated_at,
+            },
+            novel: {
+              id: novel.id,
+              title: novel.title,
+              author: novel.author,
+            },
+          };
+          setChapterContent(mockChapterContent);
           setError(null);
         }
       } finally {
@@ -199,7 +224,7 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
 
       {/* 章节内容 */}
       <ReaderContent
-        content={content}
+        chapterContent={chapterContent}
         settings={settings}
         novel={novel}
         chapter={chapter}
