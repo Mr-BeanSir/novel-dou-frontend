@@ -110,14 +110,12 @@ export default function ReaderContent({
               color: themeStyles.color
             }}
           >
-            第{chapterContent.chapter_info.chapter_number}章 {chapterContent.chapter_info.title}
+            {chapterContent.chapter_info.title}
           </h1>
           <div className="text-sm opacity-75 space-x-4">
             <span>{chapterContent.novel.title}</span>
             <span>·</span>
             <span>{chapterContent.novel.author}</span>
-            <span>·</span>
-            <span>{chapterContent.word_count.toLocaleString()}字</span>
           </div>
         </div>
 

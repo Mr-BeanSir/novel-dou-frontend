@@ -41,6 +41,7 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
 
   // 加载章节内容
   useEffect(() => {
+    console.log('useEffect triggered for chapter content loading');
     const loadChapterContent = async () => {
       try {
         setIsLoading(true);
@@ -55,7 +56,8 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
           setError('请先登录后再阅读章节内容');
         } else {
           // 提供一个示例内容，让用户能够体验阅读器功能
-          const mockContent = `这是《${novel.title}》的${chapter.title}的示例内容。
+          const mockChapterContent: ChapterContentResponse = {
+            content: `这是《${novel.title}》的${chapter.title}的示例内容。
 
 由于当前无法连接到后端服务器或需要登录认证，这里显示的是模拟内容，用于展示阅读器的功能。
 
@@ -71,23 +73,19 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
 
 章节导航功能让您可以轻松地在不同章节之间切换，同时保持阅读设置的持久化。
 
-感谢您使用读书豆小说阅读平台！`;
-
-          // 创建模拟的章节内容响应
-          const mockChapterContent: ChapterContentResponse = {
-            content: mockContent,
-            word_count: 2629,
-            view_count: chapter.view_count || 0,
-            created_at: chapter.created_at,
-            updated_at: chapter.updated_at,
+感谢您使用读书豆小说阅读平台！`,
+            word_count: 0,
+            view_count: 0,
+            created_at: "2025-06-30T11:53:47.000000Z",
+            updated_at: "2025-06-30T13:41:49.000000Z",
             chapter_info: {
               id: chapter.id,
-              title: chapter.title,
+              title: chapter.title.replace(/^第\d+章\s*/, ''), // 移除"第x章"前缀
               chapter_number: chapter.chapter_number,
               is_vip: chapter.is_vip,
-              view_count: chapter.view_count || 0,
-              created_at: chapter.created_at,
-              updated_at: chapter.updated_at,
+              view_count: 156,
+              created_at: "2025-06-30T11:53:47.000000Z",
+              updated_at: "2025-06-30T13:41:49.000000Z",
             },
             novel: {
               id: novel.id,
@@ -106,37 +104,26 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
     loadChapterContent();
   }, [novel.id, chapter.id, novel.title, chapter.title]);
 
-  // 加载章节列表（用于导航）
+  // 由于没有章节列表接口，创建基本的章节列表用于导航
   useEffect(() => {
-    const loadChapters = async () => {
-      try {
-        const response = await NovelService.getNovelChapters(novel.id, 1, 1000);
-        setChapters(response.data);
-      } catch (err) {
-        console.error('Failed to load chapters:', err);
-        // 如果无法获取章节列表，创建一个基本的章节列表用于导航
-        const mockChapters: NovelChapter[] = [];
-        for (let i = 1; i <= novel.chapter_count; i++) {
-          mockChapters.push({
-            id: chapter.id - chapter.chapter_number + i,
-            novel_id: novel.id,
-            title: `第${i}章`,
-            chapter_number: i,
-            word_count: 2000,
-            word_count_formatted: '2000字',
-            view_count: 0,
-            is_vip: false,
-            is_active: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          });
-        }
-        setChapters(mockChapters);
-      }
-    };
-
-    loadChapters();
-  }, [novel.id, novel.chapter_count, chapter.id, chapter.chapter_number]);
+    const mockChapters: NovelChapter[] = [];
+    for (let i = 1; i <= novel.chapter_count; i++) {
+      mockChapters.push({
+        id: chapter.id - chapter.chapter_number + i,
+        novel_id: novel.id,
+        title: `第${i}章`,
+        chapter_number: i,
+        word_count: 2000,
+        word_count_formatted: '2000字',
+        view_count: 0,
+        is_vip: false,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+    setChapters(mockChapters);
+  }, [novel.chapter_count, chapter.id, chapter.chapter_number]);
 
   // 从localStorage加载设置
   useEffect(() => {
@@ -236,6 +223,7 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
         currentChapter={chapter}
         prevChapter={prevChapter}
         nextChapter={nextChapter}
+        chapterContent={chapterContent}
       />
     </div>
   );

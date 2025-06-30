@@ -40,9 +40,9 @@ export default function ReaderHeader({
                            truncate max-w-xs sm:max-w-sm md:max-w-md">
                 {novel.title}
               </h1>
-              <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary 
+              <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary
                           truncate max-w-xs sm:max-w-sm md:max-w-md">
-                第{chapter.chapter_number}章 · {chapter.title}
+                {chapter.title.replace(/^第\d+章\s*/, '')}
               </p>
             </div>
           </div>

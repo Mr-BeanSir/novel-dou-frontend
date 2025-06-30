@@ -26,15 +26,9 @@ export async function generateMetadata({ params }: ChapterPageProps): Promise<Me
 
     const novel = await NovelService.getNovel(novelId);
 
-    // 尝试获取章节信息，如果失败则使用默认信息
-    let chapterTitle = `第${chapterIdNum}章`;
-    try {
-      const chapter = await NovelService.getChapter(novelId, chapterIdNum);
-      chapterTitle = chapter.title;
-    } catch (error) {
-      // 如果获取章节失败，使用默认标题
-      console.log('Chapter metadata requires authentication, using default title');
-    }
+    // 由于没有单独的章节详情接口，使用默认标题
+    // 实际的章节标题将在客户端通过章节内容接口获取
+    const chapterTitle = `第${chapterIdNum}章`;
 
     return {
       title: `${chapterTitle} - ${novel.title} | 读书豆`,
@@ -82,35 +76,29 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
       notFound();
     }
 
-    // 尝试获取章节信息，如果失败则创建一个基本的章节对象
-    let chapter;
-    try {
-      chapter = await NovelService.getChapter(novelId, chapterIdNum);
-    } catch (error) {
-      console.log('Chapter API requires authentication, creating mock chapter');
-      // 创建一个基本的章节对象
-      chapter = {
-        id: chapterIdNum,
-        novel_id: novelId,
-        title: `第${chapterIdNum}章`,
-        chapter_number: chapterIdNum,
-        word_count: 2000,
-        word_count_formatted: '2000字',
-        view_count: 0,
-        is_vip: false,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-    }
+    // 由于没有单独的章节详情接口，创建一个基本的章节对象
+    // 实际的章节信息将在客户端通过章节内容接口获取
+    const chapter = {
+      id: chapterIdNum,
+      novel_id: novelId,
+      title: `第${chapterIdNum}章`,
+      chapter_number: chapterIdNum,
+      word_count: 2000,
+      word_count_formatted: '2000字',
+      view_count: 0,
+      is_vip: false,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
     console.log('Chapter loaded successfully:', chapter.title);
 
     return (
       <div className="min-h-screen bg-light-bg dark:bg-dark-bg">
-        <ChapterReader 
-          novel={novel} 
-          chapter={chapter} 
+        <ChapterReader
+          novel={novel}
+          chapter={chapter}
         />
       </div>
     );

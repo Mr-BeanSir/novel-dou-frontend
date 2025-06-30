@@ -94,36 +94,8 @@ export class NovelService {
     return response.categories;
   }
 
-  /**
-   * 获取小说章节列表
-   */
-  static async getNovelChapters(
-    novelId: number,
-    page: number = 1,
-    perPage: number = 50
-  ): Promise<PaginatedResponse<NovelChapter>> {
-    const queryString = buildQueryString({ page, per_page: perPage, sort_order: 'asc' });
-    const response = await get<{ chapters: NovelChapter[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.CHAPTERS(novelId)}${queryString}`, false);
-
-    // 转换为标准的分页响应格式
-    return {
-      data: response.chapters,
-      current_page: response.pagination.current_page,
-      last_page: response.pagination.last_page,
-      per_page: response.pagination.per_page,
-      total: response.pagination.total,
-      from: response.pagination.from,
-      to: response.pagination.to,
-    };
-  }
-
-  /**
-   * 获取章节详情
-   */
-  static async getChapter(novelId: number, chapterId: number): Promise<NovelChapter> {
-    const response = await get<NovelChapter>(API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_DETAIL(novelId, chapterId), false);
-    return response;
-  }
+  // 注意：只有一个章节内容接口 /novels/${novelId}/chapters/${chapterId}
+  // 没有单独的章节列表接口或章节详情接口
 
   /**
    * 获取章节内容（需要认证）
@@ -296,13 +268,10 @@ export const {
   getRecentNovels,
   getRankingNovels,
   getCategories,
-  getNovelChapters,
-  getChapter,
   getChapterContent,
   bookmarkNovel,
   unbookmarkNovel,
   getBookmarks,
-  rateNovel,
   addComment,
   getComments,
   likeComment,
