@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
+import { useUser, useIsAuthenticated, useLogout } from '@/stores/user';
 import ThemeToggle from './ThemeToggle';
 import AuthModal from '../auth/AuthModal';
 
 export default function Header() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
+  const logout = useLogout();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

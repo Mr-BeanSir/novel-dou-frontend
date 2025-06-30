@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useLogin, useRegister } from '@/stores/user';
 import type { LoginRequest, RegisterRequest } from '@/types/user';
 
 interface AuthModalProps {
@@ -15,7 +15,8 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'login' }: Au
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const { login, register } = useAuth();
+  const login = useLogin();
+  const register = useRegister();
 
   const [loginForm, setLoginForm] = useState<LoginRequest>({
     email: '',

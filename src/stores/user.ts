@@ -9,7 +9,7 @@ import {
   getCurrentUser,
   isAuthenticated
 } from '@/services/auth';
-import { getStorageItem, setStorageItem, removeStorageItem } from '@/helpers/utils';
+// 移除了对 helpers/utils 存储函数的依赖，统一使用 Zustand persist
 import type { User, LoginRequest, RegisterRequest } from '@/types/user';
 
 interface UserState {
@@ -18,7 +18,7 @@ interface UserState {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  
+
   // 操作
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
@@ -28,7 +28,7 @@ interface UserState {
   setToken: (token: string | null) => void;
   setLoading: (loading: boolean) => void;
   initialize: () => Promise<void>;
-  
+
   // 权限检查
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
@@ -50,16 +50,15 @@ export const useUserStore = create<UserState>()(
         try {
           const authResponse = await apiLogin(credentials);
           const { user, token } = authResponse;
-          
-          set({ 
-            user, 
-            token, 
+
+          set({
+            user,
+            token,
             isAuthenticated: true,
-            isLoading: false 
+            isLoading: false
           });
-          
-          // 保存 token 到 localStorage
-          setStorageItem('auth_token', token);
+
+          // token 由 Zustand persist 自动保存到 user-storage
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -72,16 +71,15 @@ export const useUserStore = create<UserState>()(
         try {
           const authResponse = await apiRegister(userData);
           const { user, token } = authResponse;
-          
-          set({ 
-            user, 
-            token, 
+
+          set({
+            user,
+            token,
             isAuthenticated: true,
-            isLoading: false 
+            isLoading: false
           });
-          
-          // 保存 token 到 localStorage
-          setStorageItem('auth_token', token);
+
+          // token 由 Zustand persist 自动保存到 user-storage
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -96,15 +94,14 @@ export const useUserStore = create<UserState>()(
         } catch (error) {
           console.error('Logout failed:', error);
         } finally {
-          set({ 
-            user: null, 
-            token: null, 
+          set({
+            user: null,
+            token: null,
             isAuthenticated: false,
-            isLoading: false 
+            isLoading: false
           });
-          
-          // 清除 localStorage
-          removeStorageItem('auth_token');
+
+          // token 由 Zustand persist 自动清除
         }
       },
 
@@ -122,13 +119,13 @@ export const useUserStore = create<UserState>()(
           set({ user, isAuthenticated: true, isLoading: false });
         } catch (error) {
           console.error('Failed to refresh user:', error);
-          set({ 
-            user: null, 
-            token: null, 
+          set({
+            user: null,
+            token: null,
             isAuthenticated: false,
-            isLoading: false 
+            isLoading: false
           });
-          removeStorageItem('auth_token');
+          // token 由 Zustand persist 自动清除
         }
       },
 
@@ -140,11 +137,7 @@ export const useUserStore = create<UserState>()(
       // 设置 token
       setToken: (token: string | null) => {
         set({ token, isAuthenticated: !!token });
-        if (token) {
-          setStorageItem('auth_token', token);
-        } else {
-          removeStorageItem('auth_token');
-        }
+        // token 由 Zustand persist 自动保存/清除
       },
 
       // 设置加载状态
@@ -154,22 +147,36 @@ export const useUserStore = create<UserState>()(
 
       // 初始化
       initialize: async () => {
-        const token = getStorageItem('auth_token');
-        if (token) {
-          set({ token, isAuthenticated: true });
-          // 尝试获取用户信息
-          try {
-            const user = await getCurrentUser();
-            set({ user });
-          } catch (error) {
-            console.error('Failed to initialize user:', error);
-            set({ 
-              user: null, 
-              token: null, 
-              isAuthenticated: false 
-            });
-            removeStorageItem('auth_token');
+        const { token, user, isAuthenticated } = get();
+
+        console.log('Initialize called with state:', {
+          hasToken: !!token,
+          hasUser: !!user,
+          isAuthenticated
+        });
+
+        if (token && isAuthenticated) {
+          // 如果有token且标记为已认证，但没有用户信息，则重新获取
+          if (!user) {
+            console.log('Token exists but no user info, fetching user data...');
+            try {
+              const userData = await getCurrentUser();
+              console.log('User data fetched successfully:', userData);
+              set({ user: userData });
+            } catch (error) {
+              console.error('Failed to initialize user:', error);
+              // token 无效，清除状态
+              set({
+                user: null,
+                token: null,
+                isAuthenticated: false
+              });
+            }
+          } else {
+            console.log('User info already exists, no need to fetch');
           }
+        } else {
+          console.log('No token or not authenticated, skipping initialization');
         }
       },
 
@@ -183,7 +190,7 @@ export const useUserStore = create<UserState>()(
       hasAnyPermission: (permissions: string[]) => {
         const { user } = get();
         if (!user || !user.permissions) return false;
-        return permissions.some(permission => 
+        return permissions.some(permission =>
           user.permissions!.some(p => p.name === permission)
         );
       },
@@ -191,7 +198,7 @@ export const useUserStore = create<UserState>()(
       hasAllPermissions: (permissions: string[]) => {
         const { user } = get();
         if (!user || !user.permissions) return false;
-        return permissions.every(permission => 
+        return permissions.every(permission =>
           user.permissions!.some(p => p.name === permission)
         );
       },
@@ -200,11 +207,15 @@ export const useUserStore = create<UserState>()(
       name: 'user-storage',
       storage: createJSONStorage(() => localStorage),
       // 只持久化必要的状态
-      partialize: (state) => ({ 
-        user: state.user, 
+      partialize: (state) => ({
+        user: state.user,
         token: state.token,
-        isAuthenticated: state.isAuthenticated 
+        isAuthenticated: state.isAuthenticated
       }),
+      // 添加调试回调
+      onRehydrateStorage: () => (state) => {
+        console.log('Zustand rehydrated with state:', state);
+      },
     }
   )
 );
@@ -213,13 +224,14 @@ export const useUserStore = create<UserState>()(
 export const useUser = () => useUserStore((state) => state.user);
 export const useIsAuthenticated = () => useUserStore((state) => state.isAuthenticated);
 export const useIsLoading = () => useUserStore((state) => state.isLoading);
-export const useUserActions = () => useUserStore((state) => ({
-  login: state.login,
-  register: state.register,
-  logout: state.logout,
-  refreshUser: state.refreshUser,
-  initialize: state.initialize,
-}));
+
+// 分别导出每个action，避免对象重新创建导致的无限循环
+export const useLogin = () => useUserStore((state) => state.login);
+export const useRegister = () => useUserStore((state) => state.register);
+export const useLogout = () => useUserStore((state) => state.logout);
+export const useRefreshUser = () => useUserStore((state) => state.refreshUser);
+export const useInitialize = () => useUserStore((state) => state.initialize);
+
 export const useUserPermissions = () => useUserStore((state) => ({
   hasPermission: state.hasPermission,
   hasAnyPermission: state.hasAnyPermission,

@@ -91,8 +91,18 @@ export class AuthService {
    */
   static isAuthenticated(): boolean {
     if (typeof window === 'undefined') return false;
-    const token = localStorage.getItem(API_CONFIG.AUTH.TOKEN_KEY);
-    return !!token;
+
+    try {
+      // 从 Zustand 持久化存储中获取
+      const userStorage = localStorage.getItem('user-storage');
+      if (userStorage) {
+        const parsed = JSON.parse(userStorage);
+        return !!(parsed.state?.token && parsed.state?.isAuthenticated);
+      }
+      return false;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -100,7 +110,18 @@ export class AuthService {
    */
   static getToken(): string | null {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem(API_CONFIG.AUTH.TOKEN_KEY);
+
+    try {
+      // 从 Zustand 持久化存储中获取
+      const userStorage = localStorage.getItem('user-storage');
+      if (userStorage) {
+        const parsed = JSON.parse(userStorage);
+        return parsed.state?.token || null;
+      }
+      return null;
+    } catch {
+      return null;
+    }
   }
 
   /**

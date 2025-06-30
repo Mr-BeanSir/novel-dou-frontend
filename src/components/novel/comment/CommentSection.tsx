@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { NovelComment, NovelRating } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import { useAuth } from '@/hooks/useAuth';
+import { useUser, useIsAuthenticated } from '@/stores/user';
 import StarRating from '../rating/StarRating';
 
 interface CommentSectionProps {
@@ -21,7 +21,8 @@ export default function CommentSection({
   userRating,
   onRatingUpdate
 }: CommentSectionProps) {
-  const { user, isAuthenticated } = useAuth();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
   const [comments, setComments] = useState<NovelComment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
   const [rating, setRating] = useState(userRating?.rating || 0);
@@ -107,7 +108,7 @@ export default function CommentSection({
     try {
       setIsSubmitting(true);
       await NovelService.addComment(novelId, replyContent.trim(), undefined, parentId);
-      
+
       // 重新加载评论列表
       const response = await NovelService.getComments(novelId, 1, 10);
       setComments(response.data);
@@ -131,15 +132,15 @@ export default function CommentSection({
 
     try {
       await NovelService.likeComment(commentId);
-      
+
       // 更新评论列表中的点赞数
       setComments(prevComments =>
         prevComments.map(comment =>
           comment.id === commentId
-            ? { 
-                ...comment, 
+            ? {
+                ...comment,
                 likes_count: comment.likes_count + (comment.is_liked ? -1 : 1),
-                is_liked: !comment.is_liked 
+                is_liked: !comment.is_liked
               }
             : comment
         )
@@ -151,15 +152,15 @@ export default function CommentSection({
   };
 
   return (
-    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary 
-                    border border-light-border dark:border-dark-border 
+    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary
+                    border border-light-border dark:border-dark-border
                     rounded-lg overflow-hidden">
       {/* 发表评论 */}
       {isAuthenticated ? (
         <div className="p-6 border-b border-light-border dark:border-dark-border">
           <div className="flex space-x-3">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent 
+              <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent
                             rounded-full flex items-center justify-center">
                 <span className="text-white font-medium">
                   {user?.name?.charAt(0) || 'U'}
@@ -220,8 +221,8 @@ export default function CommentSection({
               // 这里应该触发登录弹窗
               alert('请先登录');
             }}
-            className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover 
-                     dark:bg-dark-accent dark:hover:bg-dark-accent-hover 
+            className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover
+                     dark:bg-dark-accent dark:hover:bg-dark-accent-hover
                      text-white rounded-md transition-colors"
           >
             立即登录
@@ -282,14 +283,14 @@ export default function CommentSection({
             <div key={comment.id} className="p-6">
               <div className="flex space-x-3">
                 <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent 
+                  <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent
                                 rounded-full flex items-center justify-center">
                     <span className="text-white font-medium">
                       {comment.user?.name?.charAt(0) || 'U'}
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-2">
                     <span className="font-medium text-light-text dark:text-dark-text">
@@ -299,11 +300,11 @@ export default function CommentSection({
                       {formatTime(comment.created_at)}
                     </span>
                   </div>
-                  
+
                   <p className="text-light-text dark:text-dark-text mb-3 whitespace-pre-wrap">
                     {comment.content}
                   </p>
-                  
+
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={() => handleLikeComment(comment.id)}
@@ -313,23 +314,23 @@ export default function CommentSection({
                           : 'text-light-text-secondary dark:text-dark-text-secondary hover:text-red-500'
                       }`}
                     >
-                      <svg className="w-4 h-4" fill={comment.is_liked ? "currentColor" : "none"} 
+                      <svg className="w-4 h-4" fill={comment.is_liked ? "currentColor" : "none"}
                            stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                       <span>{comment.likes_count}</span>
                     </button>
-                    
+
                     <button
                       onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      className="text-sm text-light-text-secondary dark:text-dark-text-secondary 
+                      className="text-sm text-light-text-secondary dark:text-dark-text-secondary
                                hover:text-light-accent dark:hover:text-dark-accent transition-colors"
                     >
                       回复
                     </button>
                   </div>
-                  
+
                   {/* 回复框 */}
                   {replyTo === comment.id && (
                     <div className="mt-3 pl-4 border-l-2 border-light-border dark:border-dark-border">
@@ -337,11 +338,11 @@ export default function CommentSection({
                         value={replyContent}
                         onChange={(e) => setReplyContent(e.target.value)}
                         placeholder={`回复 ${comment.user?.name || '匿名用户'}...`}
-                        className="w-full p-2 border border-light-border dark:border-dark-border 
-                                 rounded-md bg-light-bg dark:bg-dark-bg 
-                                 text-light-text dark:text-dark-text 
-                                 placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
-                                 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent 
+                        className="w-full p-2 border border-light-border dark:border-dark-border
+                                 rounded-md bg-light-bg dark:bg-dark-bg
+                                 text-light-text dark:text-dark-text
+                                 placeholder-light-text-secondary dark:placeholder-dark-text-secondary
+                                 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent
                                  resize-none text-sm"
                         rows={2}
                         maxLength={500}
@@ -356,7 +357,7 @@ export default function CommentSection({
                               setReplyTo(null);
                               setReplyContent('');
                             }}
-                            className="px-3 py-1 text-sm text-light-text-secondary dark:text-dark-text-secondary 
+                            className="px-3 py-1 text-sm text-light-text-secondary dark:text-dark-text-secondary
                                      hover:text-light-text dark:hover:text-dark-text transition-colors"
                           >
                             取消
@@ -364,9 +365,9 @@ export default function CommentSection({
                           <button
                             onClick={() => handleSubmitReply(comment.id)}
                             disabled={isSubmitting || !replyContent.trim()}
-                            className="px-3 py-1 text-sm bg-light-accent hover:bg-light-accent-hover 
-                                     dark:bg-dark-accent dark:hover:bg-dark-accent-hover 
-                                     text-white rounded transition-colors 
+                            className="px-3 py-1 text-sm bg-light-accent hover:bg-light-accent-hover
+                                     dark:bg-dark-accent dark:hover:bg-dark-accent-hover
+                                     text-white rounded transition-colors
                                      disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isSubmitting ? '回复中...' : '回复'}
@@ -375,14 +376,14 @@ export default function CommentSection({
                       </div>
                     </div>
                   )}
-                  
+
                   {/* 回复列表 */}
                   {comment.replies && comment.replies.length > 0 && (
                     <div className="mt-4 pl-4 border-l-2 border-light-border dark:border-dark-border space-y-3">
                       {comment.replies.map((reply) => (
                         <div key={reply.id} className="flex space-x-2">
                           <div className="flex-shrink-0">
-                            <div className="w-8 h-8 bg-light-accent dark:bg-dark-accent 
+                            <div className="w-8 h-8 bg-light-accent dark:bg-dark-accent
                                           rounded-full flex items-center justify-center">
                               <span className="text-white text-sm">
                                 {reply.user?.name?.charAt(0) || 'U'}

@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import type { Novel } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import { useAuth } from '@/hooks/useAuth';
+import { useIsAuthenticated } from '@/stores/user';
 
 interface RatingSectionProps {
   novel: Novel;
 }
 
 export default function RatingSection({ novel }: RatingSectionProps) {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useIsAuthenticated();
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [review, setReview] = useState('');
@@ -48,7 +48,7 @@ export default function RatingSection({ novel }: RatingSectionProps) {
     return Array.from({ length: 5 }, (_, i) => {
       const starValue = i + 1;
       const isFilled = starValue <= rating;
-      
+
       return (
         <button
           key={i}
@@ -78,8 +78,8 @@ export default function RatingSection({ novel }: RatingSectionProps) {
   const displayRating = hoverRating || userRating;
 
   return (
-    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary 
-                    border border-light-border dark:border-dark-border 
+    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary
+                    border border-light-border dark:border-dark-border
                     rounded-lg p-6 mb-8">
       <h2 className="text-lg font-semibold text-light-text dark:text-dark-text mb-4">
         读者评分
@@ -120,7 +120,7 @@ export default function RatingSection({ novel }: RatingSectionProps) {
               <h3 className="text-md font-medium text-light-text dark:text-dark-text mb-3">
                 给这本书评分
               </h3>
-              
+
               <div className="flex items-center space-x-2 mb-3">
                 <div className="flex space-x-1">
                   {renderStars(displayRating, true)}
@@ -136,7 +136,7 @@ export default function RatingSection({ novel }: RatingSectionProps) {
                 <div className="space-y-3">
                   <button
                     onClick={() => setShowReviewForm(!showReviewForm)}
-                    className="text-sm text-light-accent dark:text-dark-accent 
+                    className="text-sm text-light-accent dark:text-dark-accent
                              hover:underline"
                   >
                     {showReviewForm ? '收起评价' : '写个评价'}
@@ -147,11 +147,11 @@ export default function RatingSection({ novel }: RatingSectionProps) {
                       value={review}
                       onChange={(e) => setReview(e.target.value)}
                       placeholder="分享你的阅读感受..."
-                      className="w-full p-3 border border-light-border dark:border-dark-border 
-                               rounded-md bg-light-bg dark:bg-dark-bg 
-                               text-light-text dark:text-dark-text 
-                               placeholder-light-text-secondary dark:placeholder-dark-text-secondary 
-                               focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent 
+                      className="w-full p-3 border border-light-border dark:border-dark-border
+                               rounded-md bg-light-bg dark:bg-dark-bg
+                               text-light-text dark:text-dark-text
+                               placeholder-light-text-secondary dark:placeholder-dark-text-secondary
+                               focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent
                                resize-none"
                       rows={3}
                       maxLength={500}
@@ -161,9 +161,9 @@ export default function RatingSection({ novel }: RatingSectionProps) {
                   <button
                     onClick={handleRatingSubmit}
                     disabled={isSubmitting}
-                    className="w-full px-4 py-2 bg-light-accent hover:bg-light-accent-hover 
-                             dark:bg-dark-accent dark:hover:bg-dark-accent-hover 
-                             text-white rounded-md transition-colors 
+                    className="w-full px-4 py-2 bg-light-accent hover:bg-light-accent-hover
+                             dark:bg-dark-accent dark:hover:bg-dark-accent-hover
+                             text-white rounded-md transition-colors
                              disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? '提交中...' : '提交评分'}
@@ -181,8 +181,8 @@ export default function RatingSection({ novel }: RatingSectionProps) {
                   // 这里应该触发登录弹窗
                   alert('请先登录');
                 }}
-                className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover 
-                         dark:bg-dark-accent dark:hover:bg-dark-accent-hover 
+                className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover
+                         dark:bg-dark-accent dark:hover:bg-dark-accent-hover
                          text-white rounded-md transition-colors"
               >
                 立即登录

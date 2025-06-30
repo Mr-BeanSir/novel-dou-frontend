@@ -2,22 +2,33 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
 
-// 获取存储的 token
+// 获取存储的 token - 从 Zustand store 获取
 export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('auth_token');
+
+  try {
+    // 从 Zustand 持久化存储中获取
+    const userStorage = localStorage.getItem('user-storage');
+    if (userStorage) {
+      const parsed = JSON.parse(userStorage);
+      return parsed.state?.token || null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
-// 设置 token
+// 设置 token - 不再直接操作 localStorage，由 Zustand 管理
 export function setAuthToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('auth_token', token);
+  // 这个函数保留为兼容性，但实际由 Zustand store 管理
+  console.warn('setAuthToken is deprecated, use Zustand store instead');
 }
 
-// 清除 token
+// 清除 token - 不再直接操作 localStorage，由 Zustand 管理
 export function clearAuthToken(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem('auth_token');
+  // 这个函数保留为兼容性，但实际由 Zustand store 管理
+  console.warn('clearAuthToken is deprecated, use Zustand store instead');
 }
 
 // 创建请求头
@@ -44,7 +55,7 @@ async function request<T>(
   includeAuth: boolean = true
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const config: RequestInit = {
     ...options,
     headers: {
@@ -142,13 +153,13 @@ export function patch<T>(
 // 构建查询字符串
 export function buildQueryString(params: Record<string, any>): string {
   const searchParams = new URLSearchParams();
-  
+
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       searchParams.append(key, String(value));
     }
   });
-  
+
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : '';
 }

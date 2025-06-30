@@ -4,14 +4,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Novel, NovelChapter } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import { useAuth } from '@/hooks/useAuth';
+import { useUser, useIsAuthenticated } from '@/stores/user';
 
 interface ActionButtonsProps {
   novel: Novel;
 }
 
 export default function ActionButtons({ novel }: ActionButtonsProps) {
-  const { user, isAuthenticated } = useAuth();
+  const user = useUser();
+  const isAuthenticated = useIsAuthenticated();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [firstChapter, setFirstChapter] = useState<NovelChapter | null>(null);
@@ -113,7 +114,7 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
       >
         <div className="flex items-center space-x-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
           <span>{getReadButtonText()}</span>
@@ -133,7 +134,7 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
       >
         <div className="flex items-center space-x-2">
           <svg className="w-5 h-5" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
           <span>{isBookmarking ? '处理中...' : (isBookmarked ? '已收藏' : '收藏')}</span>
@@ -156,15 +157,15 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
             });
           }
         }}
-        className="px-6 py-3 rounded-lg font-medium transition-all duration-200 
-                   bg-transparent border-2 border-light-border dark:border-dark-border 
-                   text-light-text dark:text-dark-text 
-                   hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary 
+        className="px-6 py-3 rounded-lg font-medium transition-all duration-200
+                   bg-transparent border-2 border-light-border dark:border-dark-border
+                   text-light-text dark:text-dark-text
+                   hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary
                    hover:scale-105"
       >
         <div className="flex items-center space-x-2">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
           </svg>
           <span>分享</span>
@@ -177,15 +178,15 @@ export default function ActionButtons({ novel }: ActionButtonsProps) {
           onClick={() => {
             alert('下载功能开发中...');
           }}
-          className="px-6 py-3 rounded-lg font-medium transition-all duration-200 
-                     bg-transparent border-2 border-light-border dark:border-dark-border 
-                     text-light-text dark:text-dark-text 
-                     hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary 
+          className="px-6 py-3 rounded-lg font-medium transition-all duration-200
+                     bg-transparent border-2 border-light-border dark:border-dark-border
+                     text-light-text dark:text-dark-text
+                     hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary
                      hover:scale-105"
         >
           <div className="flex items-center space-x-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <span>下载</span>

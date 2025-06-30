@@ -73,8 +73,18 @@ export async function logoutAll(): Promise<void> {
 // 检查用户是否已登录
 export function isAuthenticated(): boolean {
   if (typeof window === 'undefined') return false;
-  const token = localStorage.getItem('auth_token');
-  return !!token;
+
+  try {
+    // 从 Zustand 持久化存储中获取
+    const userStorage = localStorage.getItem('user-storage');
+    if (userStorage) {
+      const parsed = JSON.parse(userStorage);
+      return !!(parsed.state?.token && parsed.state?.isAuthenticated);
+    }
+    return false;
+  } catch {
+    return false;
+  }
 }
 
 // 检查用户权限

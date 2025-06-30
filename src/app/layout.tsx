@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { CategoriesProvider } from "@/providers/CategoriesProvider";
+import { UserProvider } from "@/providers/UserProvider";
 
 export const metadata: Metadata = {
   title: "读书豆 - 优质小说阅读平台",
@@ -22,12 +23,13 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen font-serif">
         <ThemeProvider defaultTheme="system">
-          <CategoriesProvider>
-            <div className="min-h-screen bg-light-bg dark:bg-dark-bg
-                            text-light-text dark:text-dark-text
-                            transition-colors duration-300">
-              <Header />
-              <main>{children}</main>
+          <UserProvider>
+            <CategoriesProvider>
+              <div className="min-h-screen bg-light-bg dark:bg-dark-bg
+                              text-light-text dark:text-dark-text
+                              transition-colors duration-300">
+                <Header />
+                <main>{children}</main>
               <footer className="bg-light-bg-secondary dark:bg-dark-bg-secondary
                                border-t border-light-border dark:border-dark-border
                                py-8">
@@ -37,8 +39,9 @@ export default function RootLayout({
                   </p>
                 </div>
               </footer>
-            </div>
-          </CategoriesProvider>
+              </div>
+            </CategoriesProvider>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
