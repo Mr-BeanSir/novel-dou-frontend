@@ -113,7 +113,7 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-wood-primary"
+                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
                   placeholder="请输入小说标题"
                 />
               </div>
@@ -152,7 +152,7 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
                   type="url"
                   value={formData.cover_image}
                   onChange={(e) => setFormData(prev => ({ ...prev, cover_image: e.target.value }))}
-                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-wood-primary"
+                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
                   placeholder="请输入封面图片URL"
                 />
               </div>
@@ -201,7 +201,7 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
                 <select
                   value={formData.word_count_level}
                   onChange={(e) => setFormData(prev => ({ ...prev, word_count_level: e.target.value as CreateNovelRequest['word_count_level'] }))}
-                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-wood-primary"
+                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
                 >
                   <option value="short">短篇</option>
                   <option value="medium">中篇</option>
@@ -246,8 +246,8 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
                     className={`
                       px-3 py-1 rounded-full text-sm transition-colors
                       ${selectedTags.includes(tag.id)
-                        ? 'bg-wood-primary text-white'
-                        : 'bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text hover:bg-wood-primary/20'
+                        ? 'bg-light-accent dark:bg-dark-accent text-white'
+                        : 'bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text hover:bg-light-accent/20 dark:hover:bg-dark-accent/20'
                       }
                     `}
                   >
@@ -276,7 +276,7 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-2 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '创建中...' : '创建小说'}
               </button>

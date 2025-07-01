@@ -100,11 +100,11 @@ export function MyNovels() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-wood-primary"
+              className="px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
             />
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors"
+              className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors"
             >
               搜索
             </button>
@@ -148,7 +148,7 @@ export function MyNovels() {
         {/* 创建小说按钮 */}
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-6 py-2 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors font-medium"
+          className="px-6 py-2 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
         >
           + 创建小说
         </button>
@@ -173,7 +173,7 @@ export function MyNovels() {
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-6 py-3 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors font-medium"
+            className="px-6 py-3 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
           >
             创建我的第一部小说
           </button>
