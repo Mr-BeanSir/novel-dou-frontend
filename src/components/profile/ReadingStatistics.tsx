@@ -133,7 +133,7 @@ export function ReadingStatistics() {
       </div>
 
       {/* 喜好分类统计 */}
-      {reading_statistics.top_categories.length > 0 && (
+      {reading_statistics.top_categories && reading_statistics.top_categories.length > 0 && (
         <div className="bg-light-card dark:bg-dark-card rounded-lg p-6">
           <h3 className="text-lg font-bold text-light-text dark:text-dark-text mb-4">
             喜好分类统计
@@ -169,7 +169,7 @@ export function ReadingStatistics() {
       )}
 
       {/* 最近评价 */}
-      {ratingHistory.length > 0 && (
+      {ratingHistory && ratingHistory.length > 0 && (
         <div className="bg-light-card dark:bg-dark-card rounded-lg p-6">
           <h3 className="text-lg font-bold text-light-text dark:text-dark-text mb-4">
             最近评价

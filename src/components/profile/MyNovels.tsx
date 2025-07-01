@@ -79,7 +79,7 @@ export function MyNovels() {
     loadNovels(page);
   };
 
-  if (loading && novels.length === 0) {
+  if (loading && (!novels || novels.length === 0)) {
     return (
       <div className="flex justify-center py-12">
         <LoadingSpinner />
@@ -162,7 +162,7 @@ export function MyNovels() {
       )}
 
       {/* 小说列表 */}
-      {novels.length === 0 ? (
+      {!novels || novels.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📚</div>
           <h3 className="text-xl font-medium text-light-text dark:text-dark-text mb-2">
@@ -181,7 +181,7 @@ export function MyNovels() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {novels.map((novel) => (
+            {novels && novels.map((novel) => (
               <MyNovelCard key={novel.id} novel={novel} onUpdate={loadNovels} />
             ))}
           </div>

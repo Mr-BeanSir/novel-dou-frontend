@@ -77,7 +77,7 @@ export function MyBookmarks() {
       )}
 
       {/* 收藏列表 */}
-      {bookmarks.length === 0 ? (
+      {!bookmarks || bookmarks.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">⭐</div>
           <h3 className="text-xl font-medium text-light-text dark:text-dark-text mb-2">
@@ -96,7 +96,7 @@ export function MyBookmarks() {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bookmarks.map((bookmark) => (
+            {bookmarks && bookmarks.map((bookmark) => (
               <div
                 key={bookmark.id}
                 className="bg-light-card dark:bg-dark-card rounded-lg shadow-sm hover:shadow-md transition-shadow"

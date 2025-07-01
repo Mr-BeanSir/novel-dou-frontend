@@ -82,7 +82,7 @@ export function ReadingHistory() {
     }
   };
 
-  if (loading && history.length === 0) {
+  if (loading && (!history || history.length === 0)) {
     return (
       <div className="flex justify-center py-12">
         <LoadingSpinner />
@@ -103,7 +103,7 @@ export function ReadingHistory() {
           )}
         </h2>
         
-        {history.length > 0 && (
+        {history && history.length > 0 && (
           <button
             onClick={handleClearHistory}
             disabled={clearing}
@@ -122,7 +122,7 @@ export function ReadingHistory() {
       )}
 
       {/* 历史列表 */}
-      {history.length === 0 ? (
+      {!history || history.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📖</div>
           <h3 className="text-xl font-medium text-light-text dark:text-dark-text mb-2">
@@ -141,7 +141,7 @@ export function ReadingHistory() {
       ) : (
         <>
           <div className="space-y-4">
-            {history.map((record) => (
+            {history && history.map((record) => (
               <div
                 key={record.id}
                 className="bg-light-card dark:bg-dark-card rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
