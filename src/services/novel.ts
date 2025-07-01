@@ -12,6 +12,8 @@ import type {
   NovelRating,
   NovelRatingStatistics,
   ReadingHistory,
+  ReadingStatistics,
+  RatingHistory,
   ChapterContentResponse,
   ApiResponse,
   PaginatedResponse,
@@ -281,6 +283,67 @@ export class NovelService {
   static async clearReadingHistory(): Promise<void> {
     await del(API_CONFIG.ENDPOINTS.NOVELS.READING_HISTORY);
   }
+
+  /**
+   * 获取阅读统计
+   */
+  static async getReadingStatistics(): Promise<ReadingStatistics> {
+    const response = await get<{ reading_statistics: ReadingStatistics['reading_statistics']; rating_statistics: ReadingStatistics['rating_statistics'] }>(
+      API_CONFIG.ENDPOINTS.NOVELS.READING_STATISTICS
+    );
+    return {
+      reading_statistics: response.reading_statistics,
+      rating_statistics: response.rating_statistics,
+    };
+  }
+
+  /**
+   * 获取评价历史
+   */
+  static async getRatingHistory(
+    page: number = 1,
+    perPage: number = 15,
+    params: {
+      rating?: number;
+      date_from?: string;
+      date_to?: string;
+      with_review?: boolean;
+    } = {}
+  ): Promise<PaginatedResponse<RatingHistory>> {
+    const queryString = buildQueryString({ page, per_page: perPage, ...params });
+    const response = await get<{ ratings: RatingHistory[]; pagination: any }>(
+      `${API_CONFIG.ENDPOINTS.NOVELS.RATING_HISTORY}${queryString}`
+    );
+
+    return {
+      data: response.ratings,
+      current_page: response.pagination.current_page,
+      last_page: response.pagination.last_page,
+      per_page: response.pagination.per_page,
+      total: response.pagination.total,
+      from: response.pagination.from,
+      to: response.pagination.to,
+    };
+  }
+
+  /**
+   * 更新阅读时长
+   */
+  static async updateReadingDuration(
+    novelId: number,
+    chapterId: number,
+    duration: number
+  ): Promise<{ message: string; total_duration: number; total_duration_formatted: string }> {
+    const response = await post<{ message: string; total_duration: number; total_duration_formatted: string }>(
+      API_CONFIG.ENDPOINTS.NOVELS.READING_DURATION,
+      {
+        novel_id: novelId,
+        chapter_id: chapterId,
+        duration: duration,
+      }
+    );
+    return response;
+  }
 }
 
 // 导出便捷方法
@@ -302,4 +365,7 @@ export const {
   likeComment,
   getReadingHistory,
   clearReadingHistory,
+  getReadingStatistics,
+  getRatingHistory,
+  updateReadingDuration,
 } = NovelService;

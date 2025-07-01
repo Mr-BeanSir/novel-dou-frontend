@@ -209,3 +209,109 @@ export interface RankingParams {
   period: 'all' | 'week' | 'month';
   per_page?: number;
 }
+
+// 小说创建请求类型
+export interface CreateNovelRequest {
+  title: string;
+  author?: string;
+  description?: string;
+  cover_image?: string;
+  category_id: number;
+  status: 'draft' | 'serializing' | 'completed' | 'paused';
+  word_count_level: 'short' | 'medium' | 'long' | 'super_long';
+  is_vip?: boolean;
+  is_recommended?: boolean;
+  is_active?: boolean;
+  tag_ids?: number[];
+  meta_data?: Record<string, any>;
+}
+
+// 小说更新请求类型
+export interface UpdateNovelRequest extends Partial<CreateNovelRequest> {}
+
+// 用户小说列表查询参数
+export interface UserNovelListParams {
+  search?: string;
+  category_id?: number;
+  status?: Novel['status'];
+  sort_by?: 'created_at' | 'updated_at' | 'title' | 'view_count' | 'rating' | 'last_chapter_at';
+  sort_order?: 'asc' | 'desc';
+  per_page?: number;
+  page?: number;
+}
+
+// 章节上传请求类型
+export interface ChapterUploadRequest {
+  title: string;
+  file: File;
+  is_vip?: boolean;
+  is_active?: boolean;
+  chapter_number?: number;
+}
+
+// 批量章节上传响应类型
+export interface BatchUploadResult {
+  success: boolean;
+  chapter?: {
+    id: number;
+    title: string;
+    chapter_number: number;
+    file_path: string;
+  };
+  title: string;
+  error?: string;
+}
+
+export interface BatchUploadResponse {
+  success: boolean;
+  message: string;
+  data: {
+    results: BatchUploadResult[];
+    summary: {
+      total: number;
+      success: number;
+      failed: number;
+    };
+  };
+}
+
+// 阅读统计类型
+export interface ReadingStatistics {
+  reading_statistics: {
+    total_reading_time: number;
+    total_reading_time_formatted: string;
+    total_novels_read: number;
+    total_chapters_read: number;
+    recent_reading_time: number;
+    recent_reading_time_formatted: string;
+    top_categories: Array<{
+      name: string;
+      read_count: number;
+    }>;
+  };
+  rating_statistics: {
+    total_ratings: number;
+    average_rating: number;
+    reviews_count: number;
+  };
+}
+
+// 评价历史类型
+export interface RatingHistory {
+  id: number;
+  novel: {
+    id: number;
+    title: string;
+    author: string;
+    category: {
+      id: number;
+      name: string;
+    };
+  };
+  rating: number;
+  rating_text: string;
+  review?: string;
+  has_review: boolean;
+  created_at: string;
+  updated_at: string;
+}

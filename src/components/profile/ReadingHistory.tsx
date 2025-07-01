@@ -1,0 +1,241 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ReadingHistory as ReadingHistoryType, PaginatedResponse } from '@/types/novel';
+import { getReadingHistory, clearReadingHistory } from '@/services/novel';
+import LoadingSpinner from '@/components/layout/LoadingSpinner';
+
+export function ReadingHistory() {
+  const [history, setHistory] = useState<ReadingHistoryType[]>([]);
+  const [pagination, setPagination] = useState<Omit<PaginatedResponse<ReadingHistoryType>, 'data'> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [clearing, setClearing] = useState(false);
+
+  const loadHistory = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await getReadingHistory(page, 15);
+      setHistory(response.data);
+      setPagination({
+        current_page: response.current_page,
+        last_page: response.last_page,
+        per_page: response.per_page,
+        total: response.total,
+        from: response.from,
+        to: response.to,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '获取阅读历史失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const handleClearHistory = async () => {
+    if (!confirm('确定要清除所有阅读历史吗？此操作不可恢复。')) {
+      return;
+    }
+
+    try {
+      setClearing(true);
+      await clearReadingHistory();
+      setHistory([]);
+      setPagination(null);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '清除历史失败');
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    loadHistory(page);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const formatDuration = (seconds: number) => {
+    if (seconds < 60) {
+      return `${seconds}秒`;
+    } else if (seconds < 3600) {
+      return `${Math.floor(seconds / 60)}分钟`;
+    } else {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      return `${hours}小时${minutes > 0 ? `${minutes}分钟` : ''}`;
+    }
+  };
+
+  if (loading && history.length === 0) {
+    return (
+      <div className="flex justify-center py-12">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* 操作栏 */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-light-text dark:text-dark-text">
+          阅读历史
+          {pagination && (
+            <span className="text-sm font-normal text-light-text-secondary dark:text-dark-text-secondary ml-2">
+              共 {pagination.total} 条记录
+            </span>
+          )}
+        </h2>
+        
+        {history.length > 0 && (
+          <button
+            onClick={handleClearHistory}
+            disabled={clearing}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {clearing ? '清除中...' : '清除历史'}
+          </button>
+        )}
+      </div>
+
+      {/* 错误提示 */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p className="text-red-600 dark:text-red-400">{error}</p>
+        </div>
+      )}
+
+      {/* 历史列表 */}
+      {history.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📖</div>
+          <h3 className="text-xl font-medium text-light-text dark:text-dark-text mb-2">
+            还没有阅读历史
+          </h3>
+          <p className="text-light-text-secondary dark:text-dark-text-secondary mb-6">
+            开始阅读一些小说，这里就会显示您的阅读记录
+          </p>
+          <Link
+            href="/"
+            className="inline-block px-6 py-3 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors font-medium"
+          >
+            去首页看看
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-4">
+            {history.map((record) => (
+              <div
+                key={record.id}
+                className="bg-light-card dark:bg-dark-card rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start space-x-4">
+                  {/* 小说封面 */}
+                  <div className="w-16 h-20 bg-cover-bg rounded flex-shrink-0 overflow-hidden">
+                    {record.novel?.cover_image ? (
+                      <img
+                        src={record.novel.cover_image}
+                        alt={record.novel.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <div className="text-2xl">📖</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 阅读信息 */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-light-text dark:text-dark-text truncate">
+                          {record.novel?.title}
+                        </h3>
+                        <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                          作者：{record.novel?.author}
+                        </p>
+                        <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                          章节：{record.chapter?.title}
+                        </p>
+                      </div>
+                      
+                      <div className="text-right flex-shrink-0 ml-4">
+                        <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                          {formatDate(record.created_at)}
+                        </p>
+                        <p className="text-sm text-wood-primary">
+                          阅读时长：{formatDuration(record.reading_duration)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* 操作按钮 */}
+                    <div className="flex space-x-2 mt-3">
+                      <Link
+                        href={`/novel/${record.novel_id}`}
+                        className="px-3 py-1 bg-wood-primary text-white rounded text-sm hover:bg-wood-primary/90 transition-colors"
+                      >
+                        查看小说
+                      </Link>
+                      <Link
+                        href={`/novel/${record.novel_id}/chapter/${record.chapter_id}`}
+                        className="px-3 py-1 bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text rounded text-sm hover:bg-wood-primary/20 transition-colors"
+                      >
+                        继续阅读
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 分页 */}
+          {pagination && pagination.last_page > 1 && (
+            <div className="flex justify-center mt-8">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handlePageChange(pagination.current_page - 1)}
+                  disabled={pagination.current_page === 1}
+                  className="px-3 py-2 border border-light-border dark:border-dark-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light-hover dark:hover:bg-dark-hover"
+                >
+                  上一页
+                </button>
+                
+                <span className="px-4 py-2 text-light-text dark:text-dark-text">
+                  第 {pagination.current_page} 页，共 {pagination.last_page} 页
+                </span>
+                
+                <button
+                  onClick={() => handlePageChange(pagination.current_page + 1)}
+                  disabled={pagination.current_page === pagination.last_page}
+                  className="px-3 py-2 border border-light-border dark:border-dark-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light-hover dark:hover:bg-dark-hover"
+                >
+                  下一页
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
