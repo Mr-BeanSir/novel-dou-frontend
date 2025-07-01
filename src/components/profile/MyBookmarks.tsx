@@ -88,7 +88,7 @@ export function MyBookmarks() {
           </p>
           <Link
             href="/"
-            className="inline-block px-6 py-3 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors font-medium"
+            className="inline-block px-6 py-3 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
           >
             去首页看看
           </Link>
@@ -99,7 +99,7 @@ export function MyBookmarks() {
             {bookmarks && bookmarks.map((bookmark) => (
               <div
                 key={bookmark.id}
-                className="bg-light-card dark:bg-dark-card rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* 封面区域 */}
                 <div className="aspect-[3/4] bg-cover-bg rounded-t-lg relative overflow-hidden">

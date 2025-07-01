@@ -70,8 +70,8 @@ export function ReadingStatistics() {
     <div className="space-y-8">
       {/* 阅读统计概览 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-light-card dark:bg-dark-card rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-wood-primary mb-2">
+        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6 text-center">
+          <div className="text-3xl font-bold text-light-accent dark:text-dark-accent mb-2">
             {reading_statistics.total_reading_time_formatted}
           </div>
           <div className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -79,8 +79,8 @@ export function ReadingStatistics() {
           </div>
         </div>
 
-        <div className="bg-light-card dark:bg-dark-card rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-wood-primary mb-2">
+        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6 text-center">
+          <div className="text-3xl font-bold text-light-accent dark:text-dark-accent mb-2">
             {reading_statistics.total_novels_read}
           </div>
           <div className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -88,8 +88,8 @@ export function ReadingStatistics() {
           </div>
         </div>
 
-        <div className="bg-light-card dark:bg-dark-card rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-wood-primary mb-2">
+        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6 text-center">
+          <div className="text-3xl font-bold text-light-accent dark:text-dark-accent mb-2">
             {reading_statistics.total_chapters_read}
           </div>
           <div className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -97,8 +97,8 @@ export function ReadingStatistics() {
           </div>
         </div>
 
-        <div className="bg-light-card dark:bg-dark-card rounded-lg p-6 text-center">
-          <div className="text-3xl font-bold text-wood-primary mb-2">
+        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6 text-center">
+          <div className="text-3xl font-bold text-light-accent dark:text-dark-accent mb-2">
             {rating_statistics.total_ratings}
           </div>
           <div className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -108,13 +108,13 @@ export function ReadingStatistics() {
       </div>
 
       {/* 最近阅读时长 */}
-      <div className="bg-light-card dark:bg-dark-card rounded-lg p-6">
+      <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6">
         <h3 className="text-lg font-bold text-light-text dark:text-dark-text mb-4">
           最近阅读活动
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <div className="text-2xl font-bold text-wood-primary mb-1">
+            <div className="text-2xl font-bold text-light-accent dark:text-dark-accent mb-1">
               {reading_statistics.recent_reading_time_formatted}
             </div>
             <div className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -122,7 +122,7 @@ export function ReadingStatistics() {
             </div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-wood-primary mb-1">
+            <div className="text-2xl font-bold text-light-accent dark:text-dark-accent mb-1">
               {rating_statistics.average_rating.toFixed(1)}
             </div>
             <div className="text-light-text-secondary dark:text-dark-text-secondary">
@@ -134,7 +134,7 @@ export function ReadingStatistics() {
 
       {/* 喜好分类统计 */}
       {reading_statistics.top_categories && reading_statistics.top_categories.length > 0 && (
-        <div className="bg-light-card dark:bg-dark-card rounded-lg p-6">
+        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6">
           <h3 className="text-lg font-bold text-light-text dark:text-dark-text mb-4">
             喜好分类统计
           </h3>
@@ -152,7 +152,7 @@ export function ReadingStatistics() {
                     <div className="flex items-center space-x-2">
                       <div className="flex-1 bg-light-border dark:bg-dark-border rounded-full h-2">
                         <div
-                          className="bg-wood-primary h-2 rounded-full transition-all duration-300"
+                          className="bg-light-accent dark:bg-dark-accent h-2 rounded-full transition-all duration-300"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
@@ -170,7 +170,7 @@ export function ReadingStatistics() {
 
       {/* 最近评价 */}
       {ratingHistory && ratingHistory.length > 0 && (
-        <div className="bg-light-card dark:bg-dark-card rounded-lg p-6">
+        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6">
           <h3 className="text-lg font-bold text-light-text dark:text-dark-text mb-4">
             最近评价
           </h3>

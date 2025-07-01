@@ -34,7 +34,7 @@ export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
 
   return (
     <>
-      <div className="bg-light-card dark:bg-dark-card rounded-lg shadow-sm hover:shadow-md transition-shadow">
+      <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg shadow-sm hover:shadow-md transition-shadow">
         {/* 封面区域 */}
         <div className="aspect-[3/4] bg-cover-bg rounded-t-lg relative overflow-hidden">
           {novel.cover_image ? (

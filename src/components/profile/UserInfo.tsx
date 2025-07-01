@@ -16,11 +16,11 @@ export function UserInfo({ user }: UserInfoProps) {
   };
 
   return (
-    <div className="bg-light-card dark:bg-dark-card rounded-lg p-6 shadow-sm">
+    <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-6 shadow-sm">
       <div className="flex items-center space-x-6">
         {/* 头像 */}
-        <div className="w-20 h-20 bg-wood-primary/20 rounded-full flex items-center justify-center bg-light-accent dark:bg-dark-accent">
-          <span className="text-2xl font-bold text-wood-primary text-light-bg dark:text-dark-bg">
+        <div className="w-20 h-20 bg-light-accent/20 dark:bg-dark-accent/20 rounded-full flex items-center justify-center">
+          <span className="text-2xl font-bold text-light-accent dark:text-dark-accent">
             {user.name.charAt(0).toUpperCase()}
           </span>
         </div>

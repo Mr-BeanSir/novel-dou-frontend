@@ -133,7 +133,7 @@ export function ReadingHistory() {
           </p>
           <Link
             href="/"
-            className="inline-block px-6 py-3 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors font-medium"
+            className="inline-block px-6 py-3 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
           >
             去首页看看
           </Link>
@@ -144,7 +144,7 @@ export function ReadingHistory() {
             {history && history.map((record) => (
               <div
                 key={record.id}
-                className="bg-light-card dark:bg-dark-card rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start space-x-4">
                   {/* 小说封面 */}
