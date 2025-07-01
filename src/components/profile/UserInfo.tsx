@@ -36,7 +36,7 @@ export function UserInfo({ user }: UserInfoProps) {
               {user.email}
             </p>
             <p>
-              <span className="inline-block w-16">加入时间：</span>
+              <span className="inline-block">加入时间：</span>
               {formatDate(user.created_at)}
             </p>
             {user.email_verified_at && (
