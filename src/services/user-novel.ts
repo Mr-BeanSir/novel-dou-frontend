@@ -76,7 +76,7 @@ export class UserNovelService {
    * 获取标签列表（用于创建小说时选择）
    */
   static async getTags(): Promise<NovelTag[]> {
-    const response = await get<{ tags: NovelTag[] }>(
+    const response = await get<{ tags: NovelTag[]; pagination?: any }>(
       API_CONFIG.ENDPOINTS.NOVELS.TAGS,
       false
     );

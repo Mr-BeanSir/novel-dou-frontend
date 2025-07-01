@@ -41,7 +41,7 @@ export const API_CONFIG = {
       RECENT: '/novels/recent',
       RANKING: '/novels/ranking',
       CATEGORIES: '/novels/categories/all',
-      TAGS: '/novels/tags',
+      TAGS: '/novels/tags/all',
       BOOKMARK: (id: number) => `/novels/${id}/bookmark`,
       BOOKMARKS: '/novels/bookmarks',
       RATING: (id: number) => `/novels/${id}/rating`,
