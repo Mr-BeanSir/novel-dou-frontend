@@ -63,6 +63,15 @@ export const API_CONFIG = {
     // 用户相关
     USER: {
       NOVELS: '/users/novels',
+      NOVEL_DETAIL: (id: number) => `/users/novels/${id}`,
+      NOVEL_UPDATE: (id: number) => `/users/novels/${id}`,
+      NOVEL_STATUS: (id: number) => `/users/novels/${id}/status`,
+      NOVEL_CHAPTERS: (id: number) => `/users/novels/${id}/chapters`,
+      CHAPTER_DETAIL: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
+      CHAPTER_CONTENT: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}/content`,
+      CHAPTER_TEXT_CREATE: (novelId: number) => `/users/novels/${novelId}/chapters/text`,
+      CHAPTER_UPDATE: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
+      CHAPTER_DELETE: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
     },
   },
 } as const;

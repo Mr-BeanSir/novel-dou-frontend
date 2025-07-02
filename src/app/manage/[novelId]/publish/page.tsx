@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useUser, useIsAuthenticated } from '@/stores/user';
 import { Novel } from '@/types/novel';
-import { getNovel } from '@/services/novel';
+import { getUserNovelDetail } from '@/services/user-novel';
 import { publishChapter } from '@/services/user-novel';
 import { ManageLayout } from '@/components/manage/ManageLayout';
 import { MarkdownEditor } from '@/components/manage/MarkdownEditor';
@@ -49,7 +49,7 @@ export default function PublishChapterPage() {
       setLoading(true);
       setError(null);
 
-      const novelData = await getNovel(parseInt(novelId));
+      const novelData = await getUserNovelDetail(parseInt(novelId));
 
       // 检查是否是用户自己的小说
       if (novelData.author !== user?.name) {

@@ -24,12 +24,14 @@ export function ManageLayout({ children, novelTitle, novelId }: ManageLayoutProp
               <ArrowLeft className="w-5 h-5" />
               <span>返回个人中心</span>
             </Link>
-            
+              <span className="text-light-text-secondary dark:text-dark-text-secondary">/</span>
+              <span className="text-light-text-secondary dark:text-dark-text-secondary">小说管理</span>
+
             {novelTitle && (
               <>
                 <span className="text-light-text-secondary dark:text-dark-text-secondary">/</span>
                 <h1 className="text-xl font-bold text-light-text dark:text-dark-text">
-                  管理《{novelTitle}》
+                  {novelTitle}
                 </h1>
               </>
             )}

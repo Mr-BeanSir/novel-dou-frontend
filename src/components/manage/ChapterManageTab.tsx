@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { NovelChapter, PaginatedResponse } from '@/types/novel';
-import { getNovelChapters } from '@/services/novel';
+import { getUserNovelChapters } from '@/services/user-novel';
 import { Plus, Eye, Calendar, FileText, ChevronRight, ChevronLeft } from 'lucide-react';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
 
@@ -28,8 +28,13 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await getNovelChapters(novelId, page, 20);
+
+      const response = await getUserNovelChapters(novelId, {
+        page,
+        per_page: 20,
+        sort_by: 'chapter_number',
+        sort_order: 'asc'
+      });
       setChapters(response.data);
       setPagination({
         current_page: response.current_page,
@@ -83,7 +88,7 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
             </span>
           )}
         </div>
-        
+
         <Link
           href={`/manage/${novelId}/publish`}
           className="flex items-center gap-2 px-4 py-2 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
@@ -199,7 +204,7 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex items-center gap-2">
                           <Link
-                            href={`/novel/${novelId}/chapter/${chapter.id}`}
+                            href={`/manage/${novelId}/chapter/${chapter.id}`}
                             className="text-light-accent hover:text-light-accent-hover dark:text-dark-accent dark:hover:text-dark-accent-hover font-medium"
                           >
                             查看
@@ -223,7 +228,7 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
               <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
                 显示第 {pagination.from} - {pagination.to} 条，共 {pagination.total} 条
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handlePageChange(pagination.current_page - 1)}
@@ -233,7 +238,7 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
                   <ChevronLeft className="w-4 h-4" />
                   上一页
                 </button>
-                
+
                 <span className="px-4 py-2 text-sm text-light-text dark:text-dark-text">
                   {pagination.current_page} / {pagination.last_page}
                 </span>
