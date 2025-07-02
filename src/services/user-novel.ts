@@ -109,23 +109,27 @@ export class UserNovelService {
     chapter: {
       id: number;
       title: string;
-      content: string;
       chapter_number: number;
       word_count: number;
       is_vip: boolean;
       is_active: boolean;
+      created_at: string;
+      updated_at: string;
     };
+    content: string;
   }> {
     const response = await get<{
       chapter: {
         id: number;
         title: string;
-        content: string;
         chapter_number: number;
         word_count: number;
         is_vip: boolean;
         is_active: boolean;
+        created_at: string;
+        updated_at: string;
       };
+      content: string;
     }>(API_CONFIG.ENDPOINTS.USER.CHAPTER_CONTENT(novelId, chapterId));
     return response;
   }

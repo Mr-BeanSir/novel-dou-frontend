@@ -12,11 +12,17 @@ import { ArrowLeft, Edit, Eye, Calendar, FileText } from 'lucide-react';
 interface ChapterContent {
   id: number;
   title: string;
-  content: string;
   chapter_number: number;
   word_count: number;
   is_vip: boolean;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ChapterContentResponse {
+  chapter: ChapterContent;
+  content: string;
 }
 
 export default function ManageChapterViewPage() {
@@ -24,9 +30,10 @@ export default function ManageChapterViewPage() {
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
   const user = useUser();
-  
+
   const [novel, setNovel] = useState<Novel | null>(null);
   const [chapter, setChapter] = useState<ChapterContent | null>(null);
+  const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +45,7 @@ export default function ManageChapterViewPage() {
       router.push('/login');
       return;
     }
-    
+
     if (novelId && chapterId) {
       loadData();
     }
@@ -48,20 +55,21 @@ export default function ManageChapterViewPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const [novelData, chapterData] = await Promise.all([
         getUserNovelDetail(parseInt(novelId)),
         getChapterContent(parseInt(novelId), parseInt(chapterId))
       ]);
-      
+
       // 检查是否是用户自己的小说
       if (novelData.author !== user?.name) {
         setError('您没有权限查看此章节');
         return;
       }
-      
+
       setNovel(novelData);
       setChapter(chapterData.chapter);
+      setContent(chapterData.content || '');
     } catch (err) {
       setError(err instanceof Error ? err.message : '获取章节内容失败');
     } finally {
@@ -81,6 +89,10 @@ export default function ManageChapterViewPage() {
 
   const renderContent = (content: string) => {
     // 简单的markdown渲染
+    if (!content || typeof content !== 'string') {
+      return '';
+    }
+
     return content
       .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4 text-light-text dark:text-dark-text">$1</h1>')
       .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold mb-3 text-light-text dark:text-dark-text">$1</h2>')
@@ -173,7 +185,7 @@ export default function ManageChapterViewPage() {
               第 {chapter.chapter_number} 章
             </h1>
           </div>
-          
+
           <div className="flex gap-3">
             <button
               onClick={() => router.push(`/novel/${novelId}/chapter/${chapterId}`)}
@@ -205,11 +217,11 @@ export default function ManageChapterViewPage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  创建时间
+                  {formatDate(chapter.created_at)}
                 </div>
               </div>
             </div>
-            
+
             <div className="flex gap-2">
               {chapter.is_vip && (
                 <span className="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-medium">
@@ -225,16 +237,16 @@ export default function ManageChapterViewPage() {
               </span>
             </div>
           </div>
-        </div>
 
-        {/* 章节内容 */}
-        <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary border border-light-border dark:border-dark-border rounded-lg p-8">
-          <div 
-            className="prose prose-lg max-w-none text-light-text dark:text-dark-text leading-relaxed"
-            dangerouslySetInnerHTML={{ 
-              __html: `<p class="mb-4">${renderContent(chapter.content)}</p>` 
-            }}
-          />
+          {/* 章节内容 */}
+          <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary">
+            <div
+                className="prose prose-lg max-w-none text-light-text dark:text-dark-text leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html: `<p class="mb-4">${renderContent(content)}</p>`
+                }}
+            />
+          </div>
         </div>
       </div>
     </ManageLayout>
