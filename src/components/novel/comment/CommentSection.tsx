@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { NovelComment, NovelRating } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import { useUser, useIsAuthenticated } from '@/stores/user';
+import { useToast } from '@/providers/ToastProvider';
 import StarRating from '../rating/StarRating';
 
 interface CommentSectionProps {
@@ -23,6 +24,7 @@ export default function CommentSection({
 }: CommentSectionProps) {
   const user = useUser();
   const isAuthenticated = useIsAuthenticated();
+  const { showSuccess, showError, showWarning } = useToast();
   const [comments, setComments] = useState<NovelComment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
   const [rating, setRating] = useState(userRating?.rating || 0);
@@ -55,12 +57,12 @@ export default function CommentSection({
   // 提交评论和评分
   const handleSubmitComment = async () => {
     if (!isAuthenticated) {
-      alert('请先登录');
+      showWarning('请先登录');
       return;
     }
 
     if (!newComment.trim() && rating === 0) {
-      alert('请输入评论内容或选择评分');
+      showWarning('请输入评论内容或选择评分');
       return;
     }
 
@@ -84,10 +86,10 @@ export default function CommentSection({
       // 通知父组件更新评分数据
       onRatingUpdate?.();
 
-      alert('发表成功！');
+      showSuccess('发表成功！');
     } catch (error) {
       console.error('Error submitting comment/rating:', error);
-      alert('发表失败，请重试');
+      showError('发表失败，请重试');
     } finally {
       setIsSubmitting(false);
     }
@@ -96,12 +98,12 @@ export default function CommentSection({
   // 提交回复
   const handleSubmitReply = async (parentId: number) => {
     if (!isAuthenticated) {
-      alert('请先登录');
+      showWarning('请先登录');
       return;
     }
 
     if (!replyContent.trim()) {
-      alert('请输入回复内容');
+      showWarning('请输入回复内容');
       return;
     }
 
@@ -114,10 +116,10 @@ export default function CommentSection({
       setComments(response.data);
       setReplyTo(null);
       setReplyContent('');
-      alert('回复发表成功！');
+      showSuccess('回复发表成功！');
     } catch (error) {
       console.error('Error submitting reply:', error);
-      alert('回复发表失败，请重试');
+      showError('回复发表失败，请重试');
     } finally {
       setIsSubmitting(false);
     }

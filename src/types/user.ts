@@ -95,3 +95,18 @@ export interface PermissionListParams {
   per_page?: number;
   search?: string;
 }
+
+// Toast 通知相关类型
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export interface Toast {
+  id: string;
+  type: ToastType;
+  title?: string;
+  message: string;
+  duration?: number;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
+}

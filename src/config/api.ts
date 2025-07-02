@@ -62,8 +62,6 @@ export const API_CONFIG = {
     USER: {
       NOVELS: '/users/novels',
       CREATE: '/users/novels',
-      DETAIL: (id: number) => `/users/novels/${id}`,
-      UPDATE: (id: number) => `/users/novels/${id}`,
       NOVEL_DETAIL: (id: number) => `/users/novels/${id}`,
       NOVEL_UPDATE: (id: number) => `/users/novels/${id}`,
       NOVEL_STATUS: (id: number) => `/users/novels/${id}/status`,

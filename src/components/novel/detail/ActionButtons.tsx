@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { Novel, NovelChapter } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import { useUser, useIsAuthenticated } from '@/stores/user';
+import { useToast } from '@/providers/ToastProvider';
 
 interface ActionButtonsProps {
   novel: Novel;
@@ -14,6 +15,7 @@ interface ActionButtonsProps {
 export default function ActionButtons({ novel, firstChapter }: ActionButtonsProps) {
   const user = useUser();
   const isAuthenticated = useIsAuthenticated();
+  const { showSuccess, showError, showWarning } = useToast();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
 
@@ -22,8 +24,7 @@ export default function ActionButtons({ novel, firstChapter }: ActionButtonsProp
   // 处理收藏
   const handleBookmark = async () => {
     if (!isAuthenticated) {
-      // 这里可以触发登录弹窗
-      alert('请先登录');
+      showWarning('请先登录');
       return;
     }
 
@@ -32,13 +33,15 @@ export default function ActionButtons({ novel, firstChapter }: ActionButtonsProp
       if (isBookmarked) {
         await NovelService.unbookmarkNovel(novel.id);
         setIsBookmarked(false);
+        showSuccess('已取消收藏');
       } else {
         await NovelService.bookmarkNovel(novel.id);
         setIsBookmarked(true);
+        showSuccess('收藏成功');
       }
     } catch (error) {
       console.error('Error bookmarking novel:', error);
-      alert('操作失败，请重试');
+      showError('操作失败，请重试');
     } finally {
       setIsBookmarking(false);
     }
@@ -116,7 +119,7 @@ export default function ActionButtons({ novel, firstChapter }: ActionButtonsProp
           } else {
             // 复制链接到剪贴板
             navigator.clipboard.writeText(window.location.href).then(() => {
-              alert('链接已复制到剪贴板');
+              showSuccess('链接已复制到剪贴板');
             });
           }
         }}
@@ -139,7 +142,7 @@ export default function ActionButtons({ novel, firstChapter }: ActionButtonsProp
       {novel.is_finished && (
         <button
           onClick={() => {
-            alert('下载功能开发中...');
+            showWarning('下载功能开发中...');
           }}
           className="px-6 py-3 rounded-lg font-medium transition-all duration-200
                      bg-transparent border-2 border-light-border dark:border-dark-border

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Novel } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import { useIsAuthenticated } from '@/stores/user';
+import { useToast } from '@/providers/ToastProvider';
 
 interface RatingSectionProps {
   novel: Novel;
@@ -11,6 +12,7 @@ interface RatingSectionProps {
 
 export default function RatingSection({ novel }: RatingSectionProps) {
   const isAuthenticated = useIsAuthenticated();
+  const { showSuccess, showError, showWarning } = useToast();
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [review, setReview] = useState('');
@@ -20,24 +22,24 @@ export default function RatingSection({ novel }: RatingSectionProps) {
   // 处理评分提交
   const handleRatingSubmit = async () => {
     if (!isAuthenticated) {
-      alert('请先登录');
+      showWarning('请先登录');
       return;
     }
 
     if (userRating === 0) {
-      alert('请选择评分');
+      showWarning('请选择评分');
       return;
     }
 
     try {
       setIsSubmitting(true);
       await NovelService.submitRating(novel.id, userRating, review || undefined);
-      alert('评分成功！');
+      showSuccess('评分成功！');
       setShowReviewForm(false);
       setReview('');
     } catch (error) {
       console.error('Error submitting rating:', error);
-      alert('评分失败，请重试');
+      showError('评分失败，请重试');
     } finally {
       setIsSubmitting(false);
     }
@@ -179,7 +181,7 @@ export default function RatingSection({ novel }: RatingSectionProps) {
               <button
                 onClick={() => {
                   // 这里应该触发登录弹窗
-                  alert('请先登录');
+                  showWarning('请先登录');
                 }}
                 className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover
                          dark:bg-dark-accent dark:hover:bg-dark-accent-hover

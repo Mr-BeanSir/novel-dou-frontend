@@ -72,6 +72,16 @@ async function request<T>(
       });
 
       const errorData = await response.json().catch(() => ({}));
+
+      // 处理422验证错误
+      if (response.status === 422 && errorData.errors) {
+        // 提取第一个验证错误信息
+        const firstError = Object.values(errorData.errors)[0];
+        const errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+        throw new Error(errorMessage || errorData.message || '验证失败');
+      }
+
+      // 处理其他错误
       const errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
       throw new Error(errorMessage);
     }

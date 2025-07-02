@@ -36,7 +36,7 @@ export class UserNovelService {
    */
   static async updateNovel(novelId: number, novelData: UpdateNovelRequest): Promise<Novel> {
     const response = await put<{ message: string; novel: Novel }>(
-      API_CONFIG.ENDPOINTS.USER.UPDATE(novelId),
+      API_CONFIG.ENDPOINTS.USER.NOVEL_UPDATE(novelId),
       novelData
     );
     return response.novel;

@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { CategoriesProvider } from "@/providers/CategoriesProvider";
 import { UserProvider } from "@/providers/UserProvider";
+import { ToastProvider } from "@/providers/ToastProvider";
 
 export const metadata: Metadata = {
   title: "读书豆 - 优质小说阅读平台",
@@ -25,21 +26,23 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="system">
           <UserProvider>
             <CategoriesProvider>
-              <div className="min-h-screen bg-light-bg dark:bg-dark-bg
-                              text-light-text dark:text-dark-text
-                              transition-colors duration-300">
-                <Header />
-                <main>{children}</main>
-              <footer className="bg-light-bg-secondary dark:bg-dark-bg-secondary
-                               border-t border-light-border dark:border-dark-border
-                               py-8">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                  <p className="text-light-text-secondary dark:text-dark-text-secondary">
-                    © 2025 读书豆. All rights reserved.
-                  </p>
+              <ToastProvider>
+                <div className="min-h-screen bg-light-bg dark:bg-dark-bg
+                                text-light-text dark:text-dark-text
+                                transition-colors duration-300">
+                  <Header />
+                  <main>{children}</main>
+                <footer className="bg-light-bg-secondary dark:bg-dark-bg-secondary
+                                 border-t border-light-border dark:border-dark-border
+                                 py-8">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <p className="text-light-text-secondary dark:text-dark-text-secondary">
+                      © 2025 读书豆. All rights reserved.
+                    </p>
+                  </div>
+                </footer>
                 </div>
-              </footer>
-              </div>
+              </ToastProvider>
             </CategoriesProvider>
           </UserProvider>
         </ThemeProvider>

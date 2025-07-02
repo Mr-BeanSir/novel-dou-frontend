@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useUser, useIsAuthenticated, useIsLoading } from '@/stores/user';
+import { useToast } from '@/providers/ToastProvider';
 import { Novel } from '@/types/novel';
 import { getUserNovelDetail } from '@/services/user-novel';
 import { publishChapter } from '@/services/user-novel';
@@ -17,12 +18,12 @@ export default function PublishChapterPage() {
   const isAuthenticated = useIsAuthenticated();
   const isAuthLoading = useIsLoading();
   const user = useUser();
+  const { showSuccess, showError } = useToast();
 
   const [novel, setNovel] = useState<Novel | null>(null);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -91,15 +92,14 @@ export default function PublishChapterPage() {
     try {
       setPublishing(true);
       setError(null);
-      setSuccess(null);
 
       if (!formData.title.trim()) {
-        setError('请输入章节标题');
+        showError('请输入章节标题');
         return;
       }
 
       if (!formData.content.trim()) {
-        setError('请输入章节内容');
+        showError('请输入章节内容');
         return;
       }
 
@@ -113,9 +113,9 @@ export default function PublishChapterPage() {
 
       await publishChapter(parseInt(novelId), draftData);
 
-      setSuccess('草稿保存成功');
+      showSuccess('草稿保存成功');
     } catch (err) {
-      setError(err instanceof Error ? err.message : '保存草稿失败');
+      showError(err instanceof Error ? err.message : '保存草稿失败');
     } finally {
       setPublishing(false);
     }
@@ -125,15 +125,14 @@ export default function PublishChapterPage() {
     try {
       setPublishing(true);
       setError(null);
-      setSuccess(null);
 
       if (!formData.title.trim()) {
-        setError('请输入章节标题');
+        showError('请输入章节标题');
         return;
       }
 
       if (!formData.content.trim()) {
-        setError('请输入章节内容');
+        showError('请输入章节内容');
         return;
       }
 
@@ -147,14 +146,14 @@ export default function PublishChapterPage() {
 
       await publishChapter(parseInt(novelId), publishData);
 
-      setSuccess('章节发布成功');
+      showSuccess('章节发布成功');
 
       // 发布成功后跳转回管理页面
       setTimeout(() => {
         router.push(`/manage/${novelId}?tab=chapters`);
       }, 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '发布章节失败');
+      showError(err instanceof Error ? err.message : '发布章节失败');
     } finally {
       setPublishing(false);
     }
@@ -235,12 +234,6 @@ export default function PublishChapterPage() {
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
             <p className="text-red-600 dark:text-red-400">{error}</p>
-          </div>
-        )}
-
-        {success && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-            <p className="text-green-600 dark:text-green-400">{success}</p>
           </div>
         )}
 
