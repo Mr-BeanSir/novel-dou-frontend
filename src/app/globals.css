@@ -18,6 +18,13 @@
   --dark-accent: #89775f;
   --dark-accent-hover: #5e503f;
   --dark-border: #2d2d2d;
+
+  /* 悬停效果 */
+  --light-hover: rgba(196, 158, 101, 0.1);
+  --dark-hover: rgba(137, 119, 95, 0.1);
+
+  /* 封面背景色 */
+  --cover-bg: #E5D5B7;
 }
 
 @theme {
@@ -28,6 +35,7 @@
   --color-light-accent: var(--light-accent);
   --color-light-accent-hover: var(--light-accent-hover);
   --color-light-border: var(--light-border);
+  --color-light-hover: var(--light-hover);
 
   --color-dark-bg: var(--dark-bg);
   --color-dark-bg-secondary: var(--dark-bg-secondary);
@@ -36,6 +44,9 @@
   --color-dark-accent: var(--dark-accent);
   --color-dark-accent-hover: var(--dark-accent-hover);
   --color-dark-border: var(--dark-border);
+  --color-dark-hover: var(--dark-hover);
+
+  --color-cover-bg: var(--cover-bg);
 
   --font-family-serif: 'SimSun', '宋体', 'Source Han Serif', serif;
   --font-family-sans: 'PingFang SC', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', sans-serif;
@@ -81,4 +92,49 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* 管理页面样式 */
+.manage-tab-active {
+  border-color: var(--light-accent);
+  color: var(--light-accent);
+}
+
+.dark .manage-tab-active {
+  border-color: var(--dark-accent);
+  color: var(--dark-accent);
+}
+
+/* 编辑器样式 */
+.markdown-editor {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* 表格样式 */
+.manage-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.manage-table th,
+.manage-table td {
+  border-bottom: 1px solid var(--light-border);
+}
+
+.dark .manage-table th,
+.dark .manage-table td {
+  border-bottom-color: var(--dark-border);
+}
+
+/* 悬停效果 */
+.hover-light {
+  transition: background-color 0.2s ease;
+}
+
+.hover-light:hover {
+  background-color: var(--light-hover);
+}
+
+.dark .hover-light:hover {
+  background-color: var(--dark-hover);
 }

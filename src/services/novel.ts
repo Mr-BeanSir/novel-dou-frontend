@@ -6,6 +6,7 @@ import { API_CONFIG } from '@/config/api';
 import type {
   Novel,
   NovelCategory,
+  NovelTag,
   NovelChapter,
   NovelBookmark,
   NovelComment,
@@ -94,6 +95,14 @@ export class NovelService {
   static async getCategories(): Promise<NovelCategory[]> {
     const response = await get<{ categories: NovelCategory[] }>(API_CONFIG.ENDPOINTS.NOVELS.CATEGORIES, false);
     return response.categories;
+  }
+
+  /**
+   * 获取标签列表
+   */
+  static async getTags(): Promise<NovelTag[]> {
+    const response = await get<{ tags: NovelTag[]; pagination?: any }>(API_CONFIG.ENDPOINTS.NOVELS.TAGS, false);
+    return response.tags;
   }
 
   /**
@@ -355,6 +364,7 @@ export const {
   getRecentNovels,
   getRankingNovels,
   getCategories,
+  getTags,
   getNovelChapters,
   getChapterContent,
   bookmarkNovel,

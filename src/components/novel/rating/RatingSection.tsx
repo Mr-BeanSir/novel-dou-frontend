@@ -31,7 +31,7 @@ export default function RatingSection({ novel }: RatingSectionProps) {
 
     try {
       setIsSubmitting(true);
-      await NovelService.rateNovel(novel.id, userRating, review || undefined);
+      await NovelService.submitRating(novel.id, userRating, review || undefined);
       alert('评分成功！');
       setShowReviewForm(false);
       setReview('');

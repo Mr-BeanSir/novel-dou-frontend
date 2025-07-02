@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Novel, NovelCategory, NovelTag, CreateNovelRequest } from '@/types/novel';
-import { createNovel, getCategories, getTags } from '@/services/user-novel';
+import { createNovel } from '@/services/user-novel';
+import { getCategories, getTags } from '@/services/novel';
 
 interface CreateNovelModalProps {
   onClose: () => void;

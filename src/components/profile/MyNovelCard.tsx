@@ -107,12 +107,12 @@ export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
             >
               详情
             </Link>
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="flex-1 px-2 py-1.5 bg-[#c49e65] border border-[#c49e65] text-white rounded hover:bg-[#a9744f] hover:border-[#a9744f] transition-colors text-xs"
+            <Link
+              href={`/manage/${novel.id}`}
+              className="flex-1 px-2 py-1.5 text-center bg-[#c49e65] border border-[#c49e65] text-white rounded hover:bg-[#a9744f] hover:border-[#a9744f] transition-colors text-xs"
             >
-              上传
-            </button>
+              管理
+            </Link>
           </div>
         </div>
       </div>

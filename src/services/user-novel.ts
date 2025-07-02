@@ -7,9 +7,11 @@ import type {
   Novel,
   NovelCategory,
   NovelTag,
+  NovelChapter,
   CreateNovelRequest,
   UpdateNovelRequest,
   UserNovelListParams,
+  ChapterUploadRequest,
   PaginatedResponse,
   ApiResponse,
 } from '@/types/novel';
@@ -61,26 +63,40 @@ export class UserNovelService {
     };
   }
 
+
+
   /**
-   * 获取分类列表（用于创建小说时选择）
+   * 发布新章节
    */
-  static async getCategories(): Promise<NovelCategory[]> {
-    const response = await get<{ categories: NovelCategory[] }>(
-      API_CONFIG.ENDPOINTS.NOVELS.CATEGORIES,
-      false
+  static async publishChapter(novelId: number, chapterData: {
+    title: string;
+    content: string;
+    chapter_number?: number;
+    is_vip?: boolean;
+    is_active?: boolean;
+  }): Promise<NovelChapter> {
+    const response = await post<{ message: string; chapter: NovelChapter }>(
+      API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_UPLOAD(novelId),
+      chapterData
     );
-    return response.categories;
+    return response.chapter;
   }
 
   /**
-   * 获取标签列表（用于创建小说时选择）
+   * 更新章节
    */
-  static async getTags(): Promise<NovelTag[]> {
-    const response = await get<{ tags: NovelTag[]; pagination?: any }>(
-      API_CONFIG.ENDPOINTS.NOVELS.TAGS,
-      false
+  static async updateChapter(novelId: number, chapterId: number, chapterData: {
+    title?: string;
+    content?: string;
+    chapter_number?: number;
+    is_vip?: boolean;
+    is_active?: boolean;
+  }): Promise<NovelChapter> {
+    const response = await put<{ message: string; chapter: NovelChapter }>(
+      `/novels/${novelId}/chapters/${chapterId}`,
+      chapterData
     );
-    return response.tags;
+    return response.chapter;
   }
 }
 
@@ -89,6 +105,6 @@ export const {
   createNovel,
   updateNovel,
   getUserNovels,
-  getCategories,
-  getTags,
+  publishChapter,
+  updateChapter,
 } = UserNovelService;
