@@ -25,7 +25,7 @@ export class UserNovelService {
    */
   static async createNovel(novelData: CreateNovelRequest): Promise<Novel> {
     const response = await post<{ message: string; novel: Novel }>(
-      API_CONFIG.ENDPOINTS.NOVELS.CREATE,
+      API_CONFIG.ENDPOINTS.USER.CREATE,
       novelData
     );
     return response.novel;
@@ -36,7 +36,7 @@ export class UserNovelService {
    */
   static async updateNovel(novelId: number, novelData: UpdateNovelRequest): Promise<Novel> {
     const response = await put<{ message: string; novel: Novel }>(
-      API_CONFIG.ENDPOINTS.NOVELS.UPDATE(novelId),
+      API_CONFIG.ENDPOINTS.USER.UPDATE(novelId),
       novelData
     );
     return response.novel;

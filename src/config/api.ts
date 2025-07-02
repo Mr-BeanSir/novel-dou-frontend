@@ -33,9 +33,7 @@ export const API_CONFIG = {
     // 小说相关
     NOVELS: {
       LIST: '/novels',
-      CREATE: '/novels',
       DETAIL: (id: number) => `/novels/${id}`,
-      UPDATE: (id: number) => `/novels/${id}`,
       RECOMMENDED: '/novels/recommended',
       POPULAR: '/novels/popular',
       RECENT: '/novels/recent',
@@ -63,6 +61,9 @@ export const API_CONFIG = {
     // 用户相关
     USER: {
       NOVELS: '/users/novels',
+      CREATE: '/users/novels',
+      DETAIL: (id: number) => `/users/novels/${id}`,
+      UPDATE: (id: number) => `/users/novels/${id}`,
       NOVEL_DETAIL: (id: number) => `/users/novels/${id}`,
       NOVEL_UPDATE: (id: number) => `/users/novels/${id}`,
       NOVEL_STATUS: (id: number) => `/users/novels/${id}/status`,
