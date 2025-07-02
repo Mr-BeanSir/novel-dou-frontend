@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useUser, useIsAuthenticated } from '@/stores/user';
+import { useUser, useIsAuthenticated, useIsLoading } from '@/stores/user';
 import { Novel } from '@/types/novel';
 import { getUserNovelDetail, getChapterContent } from '@/services/user-novel';
 import { ManageLayout } from '@/components/manage/ManageLayout';
@@ -29,6 +29,7 @@ export default function ManageChapterViewPage() {
   const params = useParams();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
+  const isAuthLoading = useIsLoading();
   const user = useUser();
 
   const [novel, setNovel] = useState<Novel | null>(null);
@@ -36,20 +37,28 @@ export default function ManageChapterViewPage() {
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   const novelId = params.novelId as string;
   const chapterId = params.chapterId as string;
 
+  // 等待客户端 hydration 完成
   useEffect(() => {
-    if (!isAuthenticated) {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    // 只有在 hydration 完成且不在加载状态时才检查认证
+    if (isHydrated && !isAuthLoading && !isAuthenticated) {
       router.push('/login');
       return;
     }
 
-    if (novelId && chapterId) {
+    // 只有在认证通过且有参数时才加载数据
+    if (isHydrated && !isAuthLoading && isAuthenticated && novelId && chapterId) {
       loadData();
     }
-  }, [novelId, chapterId, isAuthenticated, router]);
+  }, [novelId, chapterId, isAuthenticated, isAuthLoading, router, isHydrated]);
 
   const loadData = async () => {
     try {
@@ -108,6 +117,16 @@ export default function ManageChapterViewPage() {
       .replace(/\n/g, '<br>');
   };
 
+  // 显示加载状态：正在加载认证状态或者还未 hydration
+  if (isAuthLoading || !isHydrated) {
+    return (
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // 如果未认证，不渲染任何内容（会被重定向）
   if (!isAuthenticated) {
     return null;
   }

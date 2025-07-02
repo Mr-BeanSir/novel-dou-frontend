@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useUser, useIsAuthenticated } from '@/stores/user';
+import { useUser, useIsAuthenticated, useIsLoading } from '@/stores/user';
 import { Novel } from '@/types/novel';
 import { getUserNovelDetail } from '@/services/user-novel';
 import { ManageLayout } from '@/components/manage/ManageLayout';
@@ -18,25 +18,34 @@ export default function ManageNovelPage() {
   const params = useParams();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
+  const isAuthLoading = useIsLoading();
   const user = useUser();
 
   const [novel, setNovel] = useState<Novel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('data');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   const novelId = params.novelId as string;
 
+  // 等待客户端 hydration 完成
   useEffect(() => {
-    if (!isAuthenticated) {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    // 只有在 hydration 完成且不在加载状态时才检查认证
+    if (isHydrated && !isAuthLoading && !isAuthenticated) {
       router.push('/login');
       return;
     }
 
-    if (novelId) {
+    // 只有在认证通过且有 novelId 时才加载小说数据
+    if (isHydrated && !isAuthLoading && isAuthenticated && novelId) {
       loadNovel();
     }
-  }, [novelId, isAuthenticated, router]);
+  }, [novelId, isAuthenticated, isAuthLoading, router, isHydrated]);
 
   const loadNovel = async () => {
     try {
@@ -63,6 +72,16 @@ export default function ManageNovelPage() {
     setNovel(updatedNovel);
   };
 
+  // 显示加载状态：正在加载认证状态或者还未 hydration
+  if (isAuthLoading || !isHydrated) {
+    return (
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // 如果未认证，不渲染任何内容（会被重定向）
   if (!isAuthenticated) {
     return null;
   }
