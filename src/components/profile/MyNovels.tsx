@@ -180,7 +180,7 @@ export function MyNovels() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4">
             {novels && novels.map((novel) => (
               <MyNovelCard key={novel.id} novel={novel} onUpdate={loadNovels} />
             ))}
@@ -197,11 +197,11 @@ export function MyNovels() {
                 >
                   上一页
                 </button>
-                
+
                 <span className="px-4 py-2 text-light-text dark:text-dark-text">
                   第 {pagination.current_page} 页，共 {pagination.last_page} 页
                 </span>
-                
+
                 <button
                   onClick={() => handlePageChange(pagination.current_page + 1)}
                   disabled={pagination.current_page === pagination.last_page}

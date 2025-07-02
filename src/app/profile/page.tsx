@@ -19,14 +19,22 @@ export default function ProfilePage() {
   const isAuthenticated = useIsAuthenticated();
   const isLoading = useIsLoading();
   const [activeTab, setActiveTab] = useState<TabType>('novels');
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // 等待客户端 hydration 完成
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    // 只有在 hydration 完成且不在加载状态时才检查认证
+    if (isHydrated && !isLoading && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, isHydrated]);
 
-  if (isLoading) {
+  // 显示加载状态：正在加载或者还未 hydration
+  if (isLoading || !isHydrated) {
     return (
       <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center">
         <LoadingSpinner />
@@ -34,6 +42,7 @@ export default function ProfilePage() {
     );
   }
 
+  // 如果已经 hydration 完成且不在加载状态，但未认证，则返回 null（此时会触发重定向）
   if (!isAuthenticated || !user) {
     return null;
   }

@@ -41,7 +41,7 @@ export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
             <img
               src={novel.cover_image}
               alt={novel.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -53,7 +53,7 @@ export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
               </div>
             </div>
           )}
-          
+
           {/* 状态标签 */}
           <div className="absolute top-2 right-2">
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(novel.status)}`}>
@@ -72,50 +72,46 @@ export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
         </div>
 
         {/* 内容区域 */}
-        <div className="p-4">
+        <div className="p-2">
           {/* 标题 */}
-          <h3 className="font-bold text-lg text-light-text dark:text-dark-text mb-2 line-clamp-2">
+          <h3 className="font-bold text-sm text-light-text dark:text-dark-text mb-1 line-clamp-2">
             {novel.title}
           </h3>
 
-          {/* 作者 */}
-          <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm mb-2">
-            作者：{novel.author}
-          </p>
-
-          {/* 分类 */}
-          {novel.category && (
-            <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm mb-3">
-              分类：{novel.category.name}
-            </p>
-          )}
+          {/* 作者和分类 */}
+          <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary mb-1">
+            <p className="truncate">作者：{novel.author}</p>
+            {novel.category && (
+              <p className="truncate">分类：{novel.category.name}</p>
+            )}
+          </div>
 
           {/* 统计信息 */}
-          <div className="grid grid-cols-2 gap-2 text-sm text-light-text-secondary dark:text-dark-text-secondary mb-4">
-            <div>字数：{novel.word_count_formatted}</div>
-            <div>章节：{novel.chapter_count}</div>
-            <div>阅读：{novel.view_count}</div>
-            <div>收藏：{novel.bookmark_count}</div>
+          <div className="grid grid-cols-2 gap-1 text-xs text-light-text-secondary dark:text-dark-text-secondary mb-2">
+            <div className="truncate">字数：{novel.word_count_formatted}</div>
+            <div className="truncate">章节：{novel.chapter_count}</div>
+            <div className="truncate">阅读：{novel.view_count}</div>
+            <div className="truncate">收藏：{novel.bookmark_count}</div>
           </div>
 
           {/* 更新时间 */}
-          <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary mb-4">
-            更新时间：{formatDate(novel.updated_at)}
+          <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary mb-2 truncate">
+            更新：{formatDate(novel.updated_at)}
           </p>
 
           {/* 操作按钮 */}
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <Link
               href={`/novel/${novel.id}`}
-              className="flex-1 px-3 py-2 text-center bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text rounded-lg hover:bg-wood-primary/20 transition-colors text-sm"
+              className="flex-1 px-2 py-1.5 text-center border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text rounded hover:bg-[#c49e65]/20 hover:border-[#c49e65] transition-colors text-xs"
             >
-              查看详情
+              详情
             </Link>
             <button
               onClick={() => setShowUploadModal(true)}
-              className="flex-1 px-3 py-2 bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors text-sm"
+              className="flex-1 px-2 py-1.5 bg-[#c49e65] border border-[#c49e65] text-white rounded hover:bg-[#a9744f] hover:border-[#a9744f] transition-colors text-xs"
             >
-              上传章节
+              上传
             </button>
           </div>
         </div>
