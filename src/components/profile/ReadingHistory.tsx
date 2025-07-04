@@ -169,7 +169,7 @@ export function ReadingHistory() {
                         <h3 className="font-medium text-light-text dark:text-dark-text truncate">
                           {record.novel.title}
                         </h3>
-                        <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                        <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mb-2">
                           作者：{record.novel.author}
                         </p>
                         <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
