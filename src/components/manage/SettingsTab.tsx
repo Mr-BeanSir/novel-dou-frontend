@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Novel, NovelCategory, NovelTag, UpdateNovelRequest } from '@/types/novel';
 import { updateNovel } from '@/services/user-novel';
 import { getCategories, getTags } from '@/services/novel';
-import { AlertTriangle, Save, X } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 interface SettingsTabProps {
   novel: Novel;
@@ -28,8 +28,6 @@ export function SettingsTab({ novel, onUpdate }: SettingsTabProps) {
     is_active: novel.is_active,
     tag_ids: novel.tags?.map(tag => tag.id) || []
   });
-
-  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   useEffect(() => {
     loadCategoriesAndTags();
@@ -90,25 +88,7 @@ export function SettingsTab({ novel, onUpdate }: SettingsTabProps) {
     }
   };
 
-  const handleDeactivate = async () => {
-    try {
-      setLoading(true);
-      setError(null);
 
-      const updateData: UpdateNovelRequest = {
-        is_active: false
-      };
-
-      const updatedNovel = await updateNovel(novel.id, updateData);
-      onUpdate(updatedNovel);
-      setShowDeactivateModal(false);
-      setSuccess('小说已下架');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '下架失败');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -194,32 +174,38 @@ export function SettingsTab({ novel, onUpdate }: SettingsTabProps) {
             </select>
           </div>
 
-          {/* VIP设置 */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="is_vip"
-              checked={formData.is_vip}
-              onChange={(e) => handleInputChange('is_vip', e.target.checked)}
-              className="w-4 h-4 text-light-accent focus:ring-light-accent border-light-border rounded"
-            />
-            <label htmlFor="is_vip" className="text-sm font-medium text-light-text dark:text-dark-text">
-              VIP小说
+          {/* 小说设置 */}
+          <div>
+            <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
+              小说设置
             </label>
-          </div>
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="is_vip"
+                  checked={formData.is_vip}
+                  onChange={(e) => handleInputChange('is_vip', e.target.checked)}
+                  className="w-4 h-4 text-light-accent focus:ring-light-accent border-light-border rounded"
+                />
+                <label htmlFor="is_vip" className="text-sm font-medium text-light-text dark:text-dark-text">
+                  VIP小说
+                </label>
+              </div>
 
-          {/* 上架状态 */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={formData.is_active}
-              onChange={(e) => handleInputChange('is_active', e.target.checked)}
-              className="w-4 h-4 text-light-accent focus:ring-light-accent border-light-border rounded"
-            />
-            <label htmlFor="is_active" className="text-sm font-medium text-light-text dark:text-dark-text">
-              上架状态
-            </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  checked={formData.is_active}
+                  onChange={(e) => handleInputChange('is_active', e.target.checked)}
+                  className="w-4 h-4 text-light-accent focus:ring-light-accent border-light-border rounded"
+                />
+                <label htmlFor="is_active" className="text-sm font-medium text-light-text dark:text-dark-text">
+                  上架状态
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -250,30 +236,6 @@ export function SettingsTab({ novel, onUpdate }: SettingsTabProps) {
         </div>
       </div>
 
-      {/* 危险操作 */}
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5" />
-          危险操作
-        </h3>
-
-        <div className="space-y-4">
-          <div>
-            <h4 className="font-medium text-red-600 dark:text-red-400 mb-2">下架小说</h4>
-            <p className="text-sm text-red-500 dark:text-red-300 mb-4">
-              下架后，读者将无法搜索和阅读此小说。您可以随时重新上架。
-            </p>
-            <button
-              onClick={() => setShowDeactivateModal(true)}
-              disabled={!novel.is_active}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-            >
-              {novel.is_active ? '下架小说' : '已下架'}
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* 保存按钮 */}
       <div className="flex justify-end gap-4">
         <button
@@ -285,38 +247,6 @@ export function SettingsTab({ novel, onUpdate }: SettingsTabProps) {
           {loading ? '保存中...' : '保存设置'}
         </button>
       </div>
-
-      {/* 下架确认模态框 */}
-      {showDeactivateModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-light-bg dark:bg-dark-bg border border-light-border dark:border-dark-border rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="w-6 h-6 text-red-600" />
-              <h3 className="text-lg font-bold text-light-text dark:text-dark-text">确认下架</h3>
-            </div>
-
-            <p className="text-light-text-secondary dark:text-dark-text-secondary mb-6">
-              确定要下架《{novel.title}》吗？下架后读者将无法搜索和阅读此小说。
-            </p>
-
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowDeactivateModal(false)}
-                className="px-4 py-2 border border-light-border dark:border-dark-border text-light-text dark:text-dark-text rounded-lg hover:bg-light-hover dark:hover:bg-dark-hover transition-colors"
-              >
-                取消
-              </button>
-              <button
-                onClick={handleDeactivate}
-                disabled={loading}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg transition-colors"
-              >
-                {loading ? '下架中...' : '确认下架'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
