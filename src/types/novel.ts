@@ -142,12 +142,13 @@ export interface NovelRating {
 
 export interface ReadingHistory {
   id: number;
-  user_id: number;
   novel_id: number;
   chapter_id: number;
-  novel?: Novel;
-  chapter?: NovelChapter;
+  novel: Novel;
+  chapter: NovelChapter;
   reading_duration: number;
+  reading_duration_formatted: string;
+  read_at: string;
   created_at: string;
   updated_at: string;
 }

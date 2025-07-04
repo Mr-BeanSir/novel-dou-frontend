@@ -282,8 +282,28 @@ export class NovelService {
    */
   static async getReadingHistory(page: number = 1, perPage: number = 15): Promise<PaginatedResponse<ReadingHistory>> {
     const queryString = buildQueryString({ page, per_page: perPage });
-    const response = await get<PaginatedResponse<ReadingHistory>>(`${API_CONFIG.ENDPOINTS.NOVELS.READING_HISTORY}${queryString}`);
-    return response;
+    const response = await get<{
+      history: ReadingHistory[];
+      pagination: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number;
+        to: number;
+      };
+    }>(`${API_CONFIG.ENDPOINTS.NOVELS.READING_HISTORY}${queryString}`);
+
+    // 转换为标准的分页响应格式
+    return {
+      data: response.history,
+      current_page: response.pagination.current_page,
+      last_page: response.pagination.last_page,
+      per_page: response.pagination.per_page,
+      total: response.pagination.total,
+      from: response.pagination.from,
+      to: response.pagination.to,
+    };
   }
 
   /**

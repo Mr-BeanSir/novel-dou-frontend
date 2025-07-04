@@ -149,7 +149,7 @@ export function ReadingHistory() {
                 <div className="flex items-start space-x-4">
                   {/* 小说封面 */}
                   <div className="w-16 h-20 bg-cover-bg rounded flex-shrink-0 overflow-hidden">
-                    {record.novel?.cover_image ? (
+                    {record.novel.cover_image ? (
                       <img
                         src={record.novel.cover_image}
                         alt={record.novel.title}
@@ -167,40 +167,40 @@ export function ReadingHistory() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-light-text dark:text-dark-text truncate">
-                          {record.novel?.title}
+                          {record.novel.title}
                         </h3>
                         <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                          作者：{record.novel?.author}
+                          作者：{record.novel.author}
                         </p>
                         <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                          章节：{record.chapter?.title}
+                          章节：{record.chapter.title}
                         </p>
                       </div>
                       
                       <div className="text-right flex-shrink-0 ml-4">
                         <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                          {formatDate(record.created_at)}
+                          {formatDate(record.read_at)}
                         </p>
-                        <p className="text-sm text-wood-primary">
-                          阅读时长：{formatDuration(record.reading_duration)}
+                        <p className="text-sm text-wood-primary mb-2">
+                          阅读时长：{record.reading_duration_formatted}
                         </p>
-                      </div>
-                    </div>
 
-                    {/* 操作按钮 */}
-                    <div className="flex space-x-2 mt-3">
-                      <Link
-                        href={`/novel/${record.novel_id}`}
-                        className="px-3 py-1 bg-wood-primary text-white rounded text-sm hover:bg-wood-primary/90 transition-colors"
-                      >
-                        查看小说
-                      </Link>
-                      <Link
-                        href={`/novel/${record.novel_id}/chapter/${record.chapter_id}`}
-                        className="px-3 py-1 bg-light-hover dark:bg-dark-hover text-light-text dark:text-dark-text rounded text-sm hover:bg-wood-primary/20 transition-colors"
-                      >
-                        继续阅读
-                      </Link>
+                        {/* 操作按钮 */}
+                        <div className="flex space-x-2">
+                          <Link
+                            href={`/novel/${record.novel_id}`}
+                            className="px-3 py-1 border border-light-border dark:border-dark-border bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text rounded hover:bg-[#c49e65]/20 hover:border-[#c49e65] transition-colors text-sm"
+                          >
+                            查看小说
+                          </Link>
+                          <Link
+                            href={`/novel/${record.novel_id}/chapter/${record.chapter_id}`}
+                            className="px-3 py-1 bg-[#c49e65] border border-[#c49e65] text-white rounded hover:bg-[#a9744f] hover:border-[#a9744f] transition-colors text-sm"
+                          >
+                            继续阅读
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
