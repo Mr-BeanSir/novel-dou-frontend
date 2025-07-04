@@ -75,9 +75,9 @@ export interface NovelBookmark {
   user_id: number;
   novel_id: number;
   novel?: Novel;
-  last_read_chapter_id?: number;
   last_read_chapter?: NovelChapter;
   reading_progress: number;
+  last_read_at: string | null;
   created_at: string;
   updated_at: string;
 }

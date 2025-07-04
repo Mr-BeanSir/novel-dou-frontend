@@ -159,8 +159,28 @@ export class NovelService {
    */
   static async getBookmarks(page: number = 1, perPage: number = 15): Promise<PaginatedResponse<NovelBookmark>> {
     const queryString = buildQueryString({ page, per_page: perPage });
-    const response = await get<PaginatedResponse<NovelBookmark>>(`${API_CONFIG.ENDPOINTS.NOVELS.BOOKMARKS}${queryString}`);
-    return response;
+    const response = await get<{
+      bookmarks: NovelBookmark[];
+      pagination: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number;
+        to: number;
+      };
+    }>(`${API_CONFIG.ENDPOINTS.NOVELS.BOOKMARKS}${queryString}`);
+
+    // 转换为标准的分页响应格式
+    return {
+      data: response.bookmarks,
+      current_page: response.pagination.current_page,
+      last_page: response.pagination.last_page,
+      per_page: response.pagination.per_page,
+      total: response.pagination.total,
+      from: response.pagination.from,
+      to: response.pagination.to,
+    };
   }
 
   /**

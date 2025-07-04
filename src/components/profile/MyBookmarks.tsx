@@ -180,7 +180,10 @@ export function MyBookmarks() {
                   <div className="flex gap-2">
                     <Link
                       href={`/novel/${bookmark.novel_id}`}
-                      className="flex-1 px-3 py-2 text-center bg-wood-primary text-white rounded-lg hover:bg-wood-primary/90 transition-colors text-sm"
+                      className="flex-1 px-3 py-2 text-center text-white rounded-lg transition-colors text-sm"
+                      style={{ backgroundColor: '#C49E65' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#B8925C'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C49E65'}
                     >
                       继续阅读
                     </Link>
