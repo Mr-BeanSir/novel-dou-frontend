@@ -59,6 +59,14 @@ export class AuthService {
   }
 
   /**
+   * 获取最新用户信息 (用于页面访问时的状态检查)
+   */
+  static async getCurrentUserLatest(): Promise<User> {
+    const response = await get<ApiResponse<User>>(API_CONFIG.ENDPOINTS.AUTH.ME);
+    return response.data;
+  }
+
+  /**
    * 用户登出
    */
   static async logout(): Promise<void> {
@@ -156,6 +164,16 @@ export class AuthService {
   }
 
   /**
+   * 检查用户是否为管理员
+   */
+  static isAdmin(user: User | null): boolean {
+    if (!user || !user.user_group) return false;
+
+    // 根据用户组名称判断是否为管理员
+    return user.user_group.name === '管理员' || user.user_group.name === 'admin';
+  }
+
+  /**
    * 验证 token 是否有效
    */
   static async validateToken(): Promise<boolean> {
@@ -180,6 +198,7 @@ export const {
   login,
   register,
   getCurrentUser,
+  getCurrentUserLatest,
   logout,
   refreshToken,
   isAuthenticated,
@@ -187,6 +206,7 @@ export const {
   hasPermission,
   hasAnyPermission,
   hasAllPermissions,
+  isAdmin,
   validateToken,
   clearAuth,
 } = AuthService;

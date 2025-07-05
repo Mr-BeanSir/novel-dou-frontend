@@ -28,6 +28,7 @@ export const API_CONFIG = {
       LOGOUT: '/users/logout',
       REFRESH: '/users/refresh',
       PROFILE: '/users/profile',
+      ME: '/users/me',
     },
 
     // 小说相关

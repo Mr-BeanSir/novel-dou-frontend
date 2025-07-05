@@ -7,7 +7,9 @@ import {
   register as apiRegister,
   logout as apiLogout,
   getCurrentUser,
-  isAuthenticated
+  getCurrentUserLatest,
+  isAuthenticated,
+  isAdmin as checkIsAdmin
 } from '@/services/auth';
 import type { User, LoginRequest, RegisterRequest } from '@/types/user';
 
@@ -32,6 +34,8 @@ interface UserState {
   hasPermission: (permission: string) => boolean;
   hasAnyPermission: (permissions: string[]) => boolean;
   hasAllPermissions: (permissions: string[]) => boolean;
+  isAdmin: () => boolean;
+  refreshUserLatest: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>()(
@@ -187,6 +191,29 @@ export const useUserStore = create<UserState>()(
           user.permissions!.some(p => p.name === permission)
         );
       },
+
+      // 检查是否为管理员
+      isAdmin: () => {
+        const { user } = get();
+        return checkIsAdmin(user);
+      },
+
+      // 使用 me 接口刷新用户信息
+      refreshUserLatest: async () => {
+        try {
+          const userData = await getCurrentUserLatest();
+          set({ user: userData });
+        } catch (error) {
+          console.error('Failed to refresh user with latest data:', error);
+          // 如果获取失败，清除认证状态
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false
+          });
+          throw error;
+        }
+      },
     }),
     {
       name: 'user-storage',
@@ -197,6 +224,28 @@ export const useUserStore = create<UserState>()(
         token: state.token,
         isAuthenticated: state.isAuthenticated
       }),
+
+      // 添加序列化选项以避免循环引用
+      serialize: {
+        stringify: JSON.stringify,
+        parse: JSON.parse,
+      },
+
+      // 添加版本控制
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        // 如果版本为 0 或未定义，说明是旧版本或首次加载
+        if (version === 0 || version === undefined) {
+          // 返回当前版本的默认状态
+          return {
+            user: persistedState?.user || null,
+            token: persistedState?.token || null,
+            isAuthenticated: !!(persistedState?.token || persistedState?.isAuthenticated)
+          };
+        }
+        // 如果版本匹配，直接返回持久化状态
+        return persistedState;
+      },
     }
   )
 );
@@ -211,10 +260,11 @@ export const useLogin = () => useUserStore((state) => state.login);
 export const useRegister = () => useUserStore((state) => state.register);
 export const useLogout = () => useUserStore((state) => state.logout);
 export const useRefreshUser = () => useUserStore((state) => state.refreshUser);
+export const useRefreshUserLatest = () => useUserStore((state) => state.refreshUserLatest);
 export const useInitialize = () => useUserStore((state) => state.initialize);
 
-export const useUserPermissions = () => useUserStore((state) => ({
-  hasPermission: state.hasPermission,
-  hasAnyPermission: state.hasAnyPermission,
-  hasAllPermissions: state.hasAllPermissions,
-}));
+// 权限检查 hooks
+export const useHasPermission = () => useUserStore((state) => state.hasPermission);
+export const useHasAnyPermission = () => useUserStore((state) => state.hasAnyPermission);
+export const useHasAllPermissions = () => useUserStore((state) => state.hasAllPermissions);
+export const useIsAdmin = () => useUserStore((state) => state.isAdmin);

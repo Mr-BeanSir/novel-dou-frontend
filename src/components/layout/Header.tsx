@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useUser, useIsAuthenticated, useLogout } from '@/stores/user';
+import { useUser, useIsAuthenticated, useClearAuth } from '@/stores/userSimple';
+import { isAdmin } from '@/services/auth';
 import ThemeToggle from './ThemeToggle';
 import AuthModal from '../auth/AuthModal';
+import { Shield } from 'lucide-react';
 
 export default function Header() {
   const user = useUser();
   const isAuthenticated = useIsAuthenticated();
-  const logout = useLogout();
+  const clearAuth = useClearAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -30,8 +32,17 @@ export default function Header() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setIsUserMenuOpen(false);
+    try {
+      // 清空本地状态
+      clearAuth();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user-storage');
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setIsUserMenuOpen(false);
+    }
   };
 
   return (
@@ -173,6 +184,23 @@ export default function Header() {
                       >
                         我的收藏
                       </Link>
+
+                      {/* 管理员入口 */}
+                      {isAdmin(user) && (
+                        <>
+                          <div className="border-t border-light-border dark:border-dark-border my-1"></div>
+                          <Link
+                            href="/admin"
+                            className="flex items-center px-4 py-2 text-sm text-light-text dark:text-dark-text
+                                     hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary"
+                            onClick={() => setIsUserMenuOpen(false)}
+                          >
+                            <Shield className="w-4 h-4 mr-2 text-light-accent dark:text-dark-accent" />
+                            管理员控制台
+                          </Link>
+                        </>
+                      )}
+
                       <Link
                         href="/history"
                         className="block px-4 py-2 text-sm text-light-text dark:text-dark-text
