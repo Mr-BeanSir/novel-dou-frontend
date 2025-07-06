@@ -64,7 +64,7 @@ export default function AuthorCard({ author, className = '' }: AuthorCardProps) 
   return (
     <div className={`group ${className}`}>
       <Link href={`/novels?search=${encodeURIComponent(author.name)}`}>
-        <div className="border border-light-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-theme-accent/10
+        <div className="border border-light-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-light-accent/10
                         transition-all duration-300 hover:scale-[1.03]
                         group cursor-pointer bg-light-bg-secondary">
           

@@ -47,22 +47,22 @@ function CategoryCard({ category }: { category: NovelCategory }) {
   return (
     <div className="group">
       <Link href={`/novels?category_id=${category.id}`}>
-        <div className="border border-[#E5D5B7] rounded-xl overflow-hidden hover:shadow-xl hover:shadow-theme-accent/10
+        <div className="border border-light-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-light-accent/10
                         transition-all duration-300 hover:scale-[1.03]
                         group cursor-pointer">
           {/* 封面区域 */}
-          <div className="relative aspect-[4/3] overflow-hidden bg-[#E5D5B7]">
-            <div className="w-full h-full bg-gradient-to-br from-theme-border to-theme-bg-secondary
+          <div className="relative aspect-[4/3] overflow-hidden bg-cover-bg">
+            <div className="w-full h-full bg-gradient-to-br from-light-border to-light-bg-secondary
                           flex items-center justify-center relative overflow-hidden">
               {/* 背景装饰 */}
               <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-theme-accent rounded-full"></div>
-                <div className="absolute bottom-4 right-4 w-6 h-6 border-2 border-theme-accent rounded-full"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border border-theme-accent rounded-full"></div>
+                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-light-accent rounded-full"></div>
+                <div className="absolute bottom-4 right-4 w-6 h-6 border-2 border-light-accent rounded-full"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border border-light-accent rounded-full"></div>
               </div>
 
               {/* 分类图标 */}
-              <div className="relative z-10 text-4xl text-theme-accent">
+              <div className="relative z-10 text-4xl text-light-accent">
                 📚
               </div>
 
@@ -76,15 +76,15 @@ function CategoryCard({ category }: { category: NovelCategory }) {
           </div>
 
           {/* 内容区域 */}
-          <div className="p-5 bg-[#F9F3D2]">
+          <div className="p-5 bg-light-bg-secondary">
             {/* 分类名称 */}
-            <h3 className="font-bold text-xl text-theme-text mb-3
-                         group-hover:text-theme-accent transition-theme leading-tight">
+            <h3 className="font-bold text-xl text-light-text mb-3
+                         group-hover:text-light-accent transition-colors duration-200 leading-tight">
               {category.name}
             </h3>
 
             {/* 统计信息 */}
-            <div className="space-y-2 text-sm text-theme-text-secondary">
+            <div className="space-y-2 text-sm text-light-text-secondary">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,8 +175,8 @@ export default function CategoriesPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-accent mx-auto mb-4"></div>
-          <p className="text-theme-text-secondary">加载中...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-light-accent mx-auto mb-4"></div>
+          <p className="text-light-text-secondary">加载中...</p>
         </div>
       </div>
     );
@@ -186,36 +186,36 @@ export default function CategoriesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* 页面头部 */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4
-                       bg-gradient-to-r from-theme-text to-theme-accent bg-clip-text">
+        <h1 className="text-4xl md:text-5xl font-bold text-light-text mb-4
+                       bg-gradient-to-r from-light-text to-light-accent bg-clip-text">
           小说分类
         </h1>
-        <p className="text-lg md:text-xl text-theme-text-secondary max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl text-light-text-secondary max-w-3xl mx-auto leading-relaxed">
           探索不同类型的精彩小说，找到你喜欢的故事类型
         </p>
       </div>
 
       {/* 统计信息 */}
       {!loading && pagination && (
-        <div className="bg-[#F9F3D2] border border-[#E5D5B7] rounded-xl p-6 mb-8">
+        <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div>
-              <div className="text-3xl font-bold text-theme-accent mb-2">
+              <div className="text-3xl font-bold text-light-accent mb-2">
                 {pagination.total}
               </div>
-              <div className="text-theme-text-secondary">个分类</div>
+              <div className="text-light-text-secondary">个分类</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-theme-accent mb-2">
+              <div className="text-3xl font-bold text-light-accent mb-2">
                 {totalNovels.toLocaleString()}
               </div>
-              <div className="text-theme-text-secondary">部作品</div>
+              <div className="text-light-text-secondary">部作品</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-theme-accent mb-2">
+              <div className="text-3xl font-bold text-light-accent mb-2">
                 {activeCategories.length}
               </div>
-              <div className="text-theme-text-secondary">活跃分类</div>
+              <div className="text-light-text-secondary">活跃分类</div>
             </div>
           </div>
         </div>
@@ -224,8 +224,8 @@ export default function CategoriesPage() {
       {/* 加载状态 */}
       {loading && (
         <div className="text-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-accent mx-auto mb-4"></div>
-          <p className="text-theme-text-secondary">加载分类列表中...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-light-accent mx-auto mb-4"></div>
+          <p className="text-light-text-secondary">加载分类列表中...</p>
         </div>
       )}
 
@@ -233,11 +233,11 @@ export default function CategoriesPage() {
       {error && (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">❌</div>
-          <h3 className="text-xl font-bold text-theme-text mb-2">加载失败</h3>
-          <p className="text-theme-text-secondary mb-4">{error}</p>
+          <h3 className="text-xl font-bold text-light-text mb-2">加载失败</h3>
+          <p className="text-light-text-secondary mb-4">{error}</p>
           <button
             onClick={fetchCategories}
-            className="px-4 py-2 bg-theme-accent text-white rounded-lg hover:bg-theme-accent-hover transition-colors"
+            className="px-4 py-2 bg-light-accent text-white rounded-lg hover:bg-light-accent-hover transition-colors"
           >
             重试
           </button>
@@ -252,13 +252,13 @@ export default function CategoriesPage() {
               <section>
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-theme-text mb-2">
+                    <h2 className="text-2xl font-bold text-light-text mb-2">
                       所有分类
                     </h2>
-                    <p className="text-theme-text-secondary">浏览全部小说分类</p>
+                    <p className="text-light-text-secondary">浏览全部小说分类</p>
                   </div>
                   {pagination && (
-                    <div className="text-sm text-theme-text-secondary">
+                    <div className="text-sm text-light-text-secondary">
                       显示 {pagination.from}-{pagination.to} / 共 {pagination.total} 个分类
                     </div>
                   )}
@@ -284,8 +284,8 @@ export default function CategoriesPage() {
           ) : (
             <div className="text-center py-16">
               <div className="text-6xl mb-4">📚</div>
-              <h3 className="text-xl font-bold text-theme-text mb-2">暂无分类</h3>
-              <p className="text-theme-text-secondary">
+              <h3 className="text-xl font-bold text-light-text mb-2">暂无分类</h3>
+              <p className="text-light-text-secondary">
                 目前还没有可用的小说分类
               </p>
             </div>

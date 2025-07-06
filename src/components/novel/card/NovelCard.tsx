@@ -37,7 +37,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
   return (
     <div className={`group ${className}`}>
       <Link href={`/novel/${novel.id}`}>
-        <div className="border border-light-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-theme-accent/10
+        <div className="border border-light-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-light-accent/10
                         transition-all duration-300 hover:scale-[1.03]
                         group cursor-pointer">
           {/* 封面图片 */}
@@ -51,17 +51,17 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
                 sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-theme-border to-theme-bg-secondary
+              <div className="w-full h-full bg-gradient-to-br from-light-border to-light-bg-secondary
                             flex items-center justify-center relative overflow-hidden">
                 {/* 背景装饰 */}
-                <div className="absolute inset-0 bg-gradient-to-br from-theme-accent/5 to-transparent"></div>
-                <div className="absolute top-4 right-4 w-8 h-8 bg-theme-accent/10 rounded-full"></div>
-                <div className="absolute bottom-6 left-6 w-4 h-4 bg-theme-accent/20 rounded-full"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-light-accent/5 to-transparent"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 bg-light-accent/10 rounded-full"></div>
+                <div className="absolute bottom-6 left-6 w-4 h-4 bg-light-accent/20 rounded-full"></div>
 
                 <div className="relative z-10 text-center">
                   <svg
-                    className="w-16 h-16 text-theme-text-secondary/60 mx-auto mb-2
-                             group-hover:text-theme-accent/80 transition-theme"
+                    className="w-16 h-16 text-light-text-secondary/60 mx-auto mb-2
+                             group-hover:text-light-accent/80 transition-colors duration-200"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -73,7 +73,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
                       d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                     />
                   </svg>
-                  <p className="text-base text-theme-text-secondary/50 font-medium">小说封面</p>
+                  <p className="text-base text-light-text-secondary/50 font-medium">小说封面</p>
                 </div>
               </div>
             )}
@@ -98,13 +98,13 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
           {/* 内容区域 */}
           <div className="p-5 bg-light-bg-secondary">
             {/* 标题 */}
-            <h3 className="font-bold text-lg text-theme-text line-clamp-2 mb-3
-                         group-hover:text-theme-accent transition-theme leading-tight">
+            <h3 className="font-bold text-lg text-light-text line-clamp-2 mb-3
+                         group-hover:text-light-accent transition-colors duration-200 leading-tight">
               {novel.title}
             </h3>
 
             {/* 作者 */}
-            <p className="text-sm text-theme-text-secondary mb-3 flex items-center gap-1">
+            <p className="text-sm text-light-text-secondary mb-3 flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -113,7 +113,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
             </p>
 
             {/* 简介 */}
-            <p className="text-sm text-theme-text-secondary line-clamp-3 mb-4 leading-relaxed">
+            <p className="text-sm text-light-text-secondary line-clamp-3 mb-4 leading-relaxed">
               {novel.description}
             </p>
 
@@ -149,7 +149,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
                         {tag.name}
                       </span>
                     ))}
-                    <span className="px-2 py-1 text-xs text-theme-text-secondary whitespace-nowrap flex-shrink-0">
+                    <span className="px-2 py-1 text-xs text-light-text-secondary whitespace-nowrap flex-shrink-0">
                       +{novel.tags.length - 3}
                     </span>
                   </>
@@ -158,7 +158,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
             )}
 
             {/* 统计信息 - 网格对齐布局 */}
-            <div className="grid grid-cols-3 gap-2 text-xs text-theme-text-secondary">
+            <div className="grid grid-cols-3 gap-2 text-xs text-light-text-secondary">
               {/* 第一行 */}
               <div className="text-left">
                 <span>{novel.word_count_formatted || `${formatNumber(novel.word_count)}字`}</span>
