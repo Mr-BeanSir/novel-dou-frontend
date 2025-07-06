@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useUser } from '@/stores/userSimple';
 import { PageAuthGuard } from '@/components/auth/PageAuthGuard';
 import { ProfileLayout } from '@/components/profile/ProfileLayout';
@@ -14,7 +15,25 @@ type TabType = 'novels' | 'bookmarks' | 'history' | 'statistics';
 
 export default function ProfilePage() {
   const user = useUser();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('novels');
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // 等待客户端 hydration 完成
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  // 处理URL参数中的tab
+  useEffect(() => {
+    if (isHydrated) {
+      const tabParam = searchParams.get('tab') as TabType;
+      if (tabParam && ['novels', 'bookmarks', 'history', 'statistics'].includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, [searchParams, isHydrated]);
 
   const tabs = [
     { id: 'novels' as TabType, label: '我的小说', icon: '📚' },
@@ -22,6 +41,20 @@ export default function ProfilePage() {
     { id: 'history' as TabType, label: '阅读历史', icon: '📖' },
     { id: 'statistics' as TabType, label: '阅读统计', icon: '📊' },
   ];
+
+  const handleTabChange = (tabId: TabType) => {
+    setActiveTab(tabId);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    if (tabId === 'novels') {
+      // 如果是默认标签页，移除tab参数
+      newSearchParams.delete('tab');
+    } else {
+      newSearchParams.set('tab', tabId);
+    }
+    const newUrl = newSearchParams.toString() ? `/profile?${newSearchParams.toString()}` : '/profile';
+    router.replace(newUrl);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -53,7 +86,7 @@ export default function ProfilePage() {
                   {tabs.map((tab) => (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => handleTabChange(tab.id)}
                       className={`
                         py-4 px-1 border-b-2 font-medium text-lg transition-colors duration-200
                         ${

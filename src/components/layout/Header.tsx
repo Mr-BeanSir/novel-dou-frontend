@@ -168,6 +168,7 @@ export default function Header() {
                                   bg-light-bg dark:bg-dark-bg
                                   border border-light-border dark:border-dark-border
                                   rounded-md shadow-lg py-1 z-50">
+                      {/* 个人功能区 */}
                       <Link
                         href="/profile"
                         className="block px-4 py-2 text-sm text-light-text dark:text-dark-text
@@ -177,12 +178,20 @@ export default function Header() {
                         个人资料
                       </Link>
                       <Link
-                        href="/bookmarks"
+                        href="/profile?tab=bookmarks"
                         className="block px-4 py-2 text-sm text-light-text dark:text-dark-text
                                  hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         我的收藏
+                      </Link>
+                      <Link
+                        href="/profile?tab=history"
+                        className="block px-4 py-2 text-sm text-light-text dark:text-dark-text
+                                 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        阅读历史
                       </Link>
 
                       {/* 管理员入口 */}
@@ -201,14 +210,6 @@ export default function Header() {
                         </>
                       )}
 
-                      <Link
-                        href="/history"
-                        className="block px-4 py-2 text-sm text-light-text dark:text-dark-text
-                                 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        阅读历史
-                      </Link>
                       <hr className="my-1 border-light-border dark:border-dark-border" />
                       <button
                         onClick={handleLogout}
