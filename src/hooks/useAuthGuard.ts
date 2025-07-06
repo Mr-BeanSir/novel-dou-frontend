@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/userSimple';
 import { getCurrentUserLatest, isAdmin } from '@/services/auth';
 
 interface UseAuthGuardOptions {

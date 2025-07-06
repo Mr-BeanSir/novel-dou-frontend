@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { NovelComment, NovelRating } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import { useUser, useIsAuthenticated } from '@/stores/user';
+import { useUser, useIsAuthenticated } from '@/stores/userSimple';
 import { useToast } from '@/providers/ToastProvider';
 import StarRating from '../rating/StarRating';
 

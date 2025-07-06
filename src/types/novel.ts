@@ -41,7 +41,7 @@ export interface Novel {
   chapter_count: number;
   view_count: number;
   bookmark_count: number;
-  comment_count: number;
+  comment_count?: number;
   rating: string;
   rating_count: number;
   last_chapter_at?: string;

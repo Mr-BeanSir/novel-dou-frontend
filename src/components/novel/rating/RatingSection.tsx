@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { Novel } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import { useIsAuthenticated } from '@/stores/user';
+import { useIsAuthenticated } from '@/stores/userSimple';
 import { useToast } from '@/providers/ToastProvider';
 
 interface RatingSectionProps {

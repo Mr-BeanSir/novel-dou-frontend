@@ -386,7 +386,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
       {/* 评论和评分区域 */}
       <div>
         <h2 className="text-xl font-semibold text-light-text dark:text-dark-text mb-4">
-          读者评价 ({novel.comment_count + (ratingStatistics?.total_ratings || 0)})
+          读者评价 ({(novel.comment_count || 0) + (ratingStatistics?.total_ratings || 0)})
         </h2>
         {isLoadingComments || isLoadingRating ? (
           <div className="flex justify-center py-8">

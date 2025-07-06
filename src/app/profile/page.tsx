@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser } from '@/stores/user';
+import { useUser } from '@/stores/userSimple';
 import { PageAuthGuard } from '@/components/auth/PageAuthGuard';
 import { ProfileLayout } from '@/components/profile/ProfileLayout';
 import { UserInfo } from '@/components/profile/UserInfo';

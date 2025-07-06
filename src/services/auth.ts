@@ -62,8 +62,9 @@ export class AuthService {
    * 获取最新用户信息 (用于页面访问时的状态检查)
    */
   static async getCurrentUserLatest(): Promise<User> {
-    const response = await get<ApiResponse<User>>(API_CONFIG.ENDPOINTS.AUTH.ME);
-    return response.data;
+    const response = await get<any>(API_CONFIG.ENDPOINTS.AUTH.ME);
+    // /api/users/me 接口可能直接返回用户对象，也可能包装在 data 字段中
+    return response.user || response.data || response;
   }
 
   /**

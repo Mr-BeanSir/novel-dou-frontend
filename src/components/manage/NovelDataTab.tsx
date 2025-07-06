@@ -58,7 +58,7 @@ export function NovelDataTab({ novel }: NovelDataTabProps) {
     },
     {
       title: '评论数',
-      value: novel.comment_count.toLocaleString(),
+      value: novel.comment_count ? novel.comment_count.toLocaleString() : '0',
       icon: MessageCircle,
       color: 'text-green-600 dark:text-green-400',
       bgColor: 'bg-green-50 dark:bg-green-900/20'

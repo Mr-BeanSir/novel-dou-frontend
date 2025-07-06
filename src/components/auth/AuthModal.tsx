@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useLogin, useRegister } from '@/stores/user';
+import { login as apiLogin, register as apiRegister } from '@/services/auth';
+import { useSetUser, useSetToken, useSetAuthenticated } from '@/stores/userSimple';
 import type { LoginRequest, RegisterRequest } from '@/types/user';
 
 interface AuthModalProps {
@@ -15,8 +16,9 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'login' }: Au
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const login = useLogin();
-  const register = useRegister();
+  const setUser = useSetUser();
+  const setToken = useSetToken();
+  const setAuthenticated = useSetAuthenticated();
 
   const [loginForm, setLoginForm] = useState<LoginRequest>({
     email: '',
@@ -54,7 +56,14 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'login' }: Au
     setError(null);
 
     try {
-      await login(loginForm);
+      const authResponse = await apiLogin(loginForm);
+      const { user, token } = authResponse;
+
+      // 更新简化版store
+      setUser(user);
+      setToken(token);
+      setAuthenticated(true);
+
       handleClose();
     } catch (error) {
       setError(error instanceof Error ? error.message : '登录失败');
@@ -75,7 +84,14 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'login' }: Au
     }
 
     try {
-      await register(registerForm);
+      const authResponse = await apiRegister(registerForm);
+      const { user, token } = authResponse;
+
+      // 更新简化版store
+      setUser(user);
+      setToken(token);
+      setAuthenticated(true);
+
       handleClose();
     } catch (error) {
       setError(error instanceof Error ? error.message : '注册失败');

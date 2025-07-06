@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import type { Novel, NovelChapter } from '@/types/novel';
 import { NovelService } from '@/services/novel';
-import { useUser, useIsAuthenticated } from '@/stores/user';
+import { useUser, useIsAuthenticated } from '@/stores/userSimple';
 import { useToast } from '@/providers/ToastProvider';
 
 interface ActionButtonsProps {

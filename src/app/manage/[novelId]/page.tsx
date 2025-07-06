@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useUser, useIsAuthenticated, useIsLoading } from '@/stores/user';
+import { useUser, useIsAuthenticated, useIsLoading } from '@/stores/userSimple';
 import { Novel } from '@/types/novel';
 import { getUserNovelDetail } from '@/services/user-novel';
 import { ManageLayout } from '@/components/manage/ManageLayout';

@@ -78,7 +78,7 @@ export function usePageAuth(options: UsePageAuthOptions = {}): UsePageAuthReturn
 
         // 获取最新用户信息
         const latestUser = await getCurrentUserLatest();
-        
+
         if (isMounted) {
           // 更新 store
           setUser(latestUser);
