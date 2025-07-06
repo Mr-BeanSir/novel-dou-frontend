@@ -25,6 +25,19 @@ export interface NovelTag {
   updated_at: string;
 }
 
+export interface UserReadingHistory {
+  id: number;
+  chapter_id: number;
+  chapter: {
+    id: number;
+    title: string;
+    chapter_number: number;
+  };
+  reading_duration: number;
+  reading_duration_formatted: string;
+  read_at: string;
+}
+
 export interface Novel {
   id: number;
   title: string;
@@ -50,6 +63,7 @@ export interface Novel {
   is_recommended: boolean;
   is_active: boolean;
   latest_chapter?: NovelChapter;
+  user_reading_history?: UserReadingHistory | null;
   created_at: string;
   updated_at: string;
 }

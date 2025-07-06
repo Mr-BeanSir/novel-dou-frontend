@@ -32,8 +32,6 @@ function createHeaders(includeAuth: boolean = true): HeadersInit {
     }
   }
 
-  console.log(headers);
-
   return headers;
 }
 

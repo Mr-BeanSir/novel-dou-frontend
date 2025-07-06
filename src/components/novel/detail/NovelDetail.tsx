@@ -62,28 +62,25 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
     } else if (diffDays < 7) {
       return `${diffDays}天前更新`;
     } else {
-      return date.toLocaleDateString('zh-CN') + ' 更新';
+      return date.toLocaleDateString('zh-CN');
     }
   };
 
-  // 获取上次阅读章节
-  const getLastReadChapter = (): string => {
-    // 检查是否在客户端环境
-    if (typeof window === 'undefined') {
-      return '暂无阅读记录';
+  // 获取上次阅读章节信息
+  const getLastReadChapterInfo = () => {
+    if (novel.user_reading_history) {
+      const history = novel.user_reading_history;
+      return {
+        title: history.chapter.title,
+        chapterId: history.chapter_id,
+        hasHistory: true
+      };
     }
-
-    // 从本地存储获取阅读进度
-    try {
-      const readingProgress = localStorage.getItem(`novel_${novel.id}_progress`);
-      if (readingProgress) {
-        const progress = JSON.parse(readingProgress);
-        return progress.chapterTitle || '暂无阅读记录';
-      }
-    } catch (error) {
-      console.error('Error parsing reading progress:', error);
-    }
-    return '暂无阅读记录';
+    return {
+      title: '暂无阅读记录',
+      chapterId: null,
+      hasHistory: false
+    };
   };
 
   // 加载章节列表
@@ -302,7 +299,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                     </svg>
                     <span className="font-medium">更新时间:</span>
                     <span className="ml-2">
-                      {novel.updated_at ? formatUpdateTime(novel.updated_at) : '暂无更新'}
+                      {novel.last_chapter_at ? formatUpdateTime(novel.last_chapter_at) : '暂无更新'}
                     </span>
                   </div>
                   <div className="flex items-center">
@@ -310,9 +307,25 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                     <span className="font-medium">上次阅读章节:</span>
-                    <span className="ml-2">
-                      {getLastReadChapter()}
-                    </span>
+                    {(() => {
+                      const chapterInfo = getLastReadChapterInfo();
+                      if (chapterInfo.hasHistory && chapterInfo.chapterId) {
+                        return (
+                          <Link
+                            href={`/novel/${novel.id}/chapter/${chapterInfo.chapterId}`}
+                            className="ml-2 text-light-accent dark:text-dark-accent hover:text-light-accent-hover dark:hover:text-dark-accent-hover transition-colors cursor-pointer underline"
+                          >
+                            {chapterInfo.title}
+                          </Link>
+                        );
+                      } else {
+                        return (
+                          <span className="ml-2">
+                            {chapterInfo.title}
+                          </span>
+                        );
+                      }
+                    })()}
                   </div>
                 </div>
 

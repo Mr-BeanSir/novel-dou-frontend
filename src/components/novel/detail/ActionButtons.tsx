@@ -52,6 +52,10 @@ export default function ActionButtons({ novel, firstChapter }: ActionButtonsProp
     if (novel.chapter_count === 0) {
       return '暂无章节';
     }
+    // 如果有阅读历史，显示"继续阅读"
+    if (novel.user_reading_history) {
+      return '继续阅读';
+    }
     return '开始阅读';
   };
 
@@ -59,6 +63,11 @@ export default function ActionButtons({ novel, firstChapter }: ActionButtonsProp
     if (novel.chapter_count === 0 || !firstChapter) {
       return '#';
     }
+    // 如果有阅读历史，跳转到上次阅读的章节
+    if (novel.user_reading_history) {
+      return `/novel/${novel.id}/chapter/${novel.user_reading_history.chapter_id}`;
+    }
+    // 否则跳转到第一章
     return `/novel/${novel.id}/chapter/${firstChapter.id}`;
   };
 
