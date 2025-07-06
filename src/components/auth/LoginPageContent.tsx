@@ -9,6 +9,33 @@ import { useUserStore } from '@/stores/userSimple';
 import { useToast } from '@/providers/ToastProvider';
 import type { LoginRequest, RegisterRequest } from '@/types/user';
 
+// 登录页面背景图片配置
+const LOGIN_BACKGROUND_IMAGES = [
+  'login-left-cover.jpg',
+  'login-left-cover-1.jpg',
+  'login-left-cover-2.jpg',
+  'login-left-cover-3.jpg',
+  'login-left-cover-4.jpg',
+  'login-left-cover-5.jpg',
+  // 可以继续添加更多图片
+];
+
+// 随机选择背景图片
+const getRandomBackgroundImage = (): string => {
+  const randomIndex = Math.floor(Math.random() * LOGIN_BACKGROUND_IMAGES.length);
+  return `/asset/image/login/${LOGIN_BACKGROUND_IMAGES[randomIndex]}`;
+};
+
+// 预加载图片
+const preloadImage = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+    img.src = src;
+  });
+};
+
 export default function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,6 +48,11 @@ export default function LoginPageContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // 随机背景图片
+  const [backgroundImage, setBackgroundImage] = useState<string>('');
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
 
   // 登录表单状态
   const [loginForm, setLoginForm] = useState<LoginRequest>({
@@ -47,6 +79,39 @@ export default function LoginPageContent() {
       setMode('login');
     }
   }, [searchParams]);
+
+  // 设置随机背景图片
+  useEffect(() => {
+    const selectedImage = getRandomBackgroundImage();
+    setBackgroundImage(selectedImage);
+
+    // 预加载图片
+    preloadImage(selectedImage)
+      .then(() => {
+        console.log('Background image preloaded successfully:', selectedImage);
+      })
+      .catch((error) => {
+        console.warn('Failed to preload background image:', error);
+      });
+  }, []);
+
+  // 处理图片加载
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  // 处理图片加载错误
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+    console.warn('Failed to load background image:', backgroundImage);
+
+    // 如果当前图片加载失败，尝试使用默认图片
+    if (backgroundImage !== '/asset/image/login/login-left-cover.jpg') {
+      setBackgroundImage('/asset/image/login/login-left-cover.jpg');
+    }
+  };
 
   // 切换模式并更新URL
   const handleModeChange = (newMode: 'login' | 'register') => {
@@ -146,12 +211,33 @@ export default function LoginPageContent() {
       {/* 左侧图片区域 - 60% */}
       <div className="hidden lg:flex lg:w-3/5 relative overflow-hidden">
         {/* 背景图片 */}
-        <img
-          src="/asset/image/login/login-left-cover.jpg"
-          alt="读书豆登录背景"
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ objectFit: 'cover' }}
-        />
+        {backgroundImage && (
+          <img
+            src={backgroundImage}
+            alt="读书豆登录背景"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{ objectFit: 'cover' }}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        )}
+
+        {/* 加载占位符 */}
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-light-accent/20 to-light-accent/40 dark:from-dark-accent/20 dark:to-dark-accent/40 flex items-center justify-center">
+            <div className="text-center text-light-text dark:text-dark-text">
+              <div className="w-16 h-16 border-4 border-light-accent dark:border-dark-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-sm opacity-70">加载背景图片...</p>
+            </div>
+          </div>
+        )}
+
+        {/* 错误占位符 */}
+        {imageError && (
+          <div className="absolute inset-0 bg-gradient-to-br from-light-accent/20 to-light-accent/40 dark:from-dark-accent/20 dark:to-dark-accent/40"></div>
+        )}
         
         {/* 遮罩层 */}
         <div className="absolute inset-0 bg-black/30 dark:bg-black/50"></div>

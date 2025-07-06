@@ -2,18 +2,17 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useUser, useIsAuthenticated, useClearAuth } from '@/stores/userSimple';
-import { isAdmin } from '@/services/auth';
+import { AuthService, isAdmin } from '@/services/auth';
 import ThemeToggle from './ThemeToggle';
-import AuthModal from '../auth/AuthModal';
 import { Shield } from 'lucide-react';
 
 export default function Header() {
+  const router = useRouter();
   const user = useUser();
   const isAuthenticated = useIsAuthenticated();
   const clearAuth = useClearAuth();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -26,20 +25,63 @@ export default function Header() {
     { name: '排行榜', href: '/rankings' },
   ];
 
-  const handleAuthClick = (mode: 'login' | 'register') => {
-    setAuthModalMode(mode);
-    setIsAuthModalOpen(true);
-  };
-
   const handleLogout = async () => {
     try {
+      // 首先验证localStorage中的user-storage数据
+      let shouldCallAPI = true;
+
+      if (typeof window !== 'undefined') {
+        try {
+          const userStorage = localStorage.getItem('user-storage');
+          if (!userStorage) {
+            console.log('Logout: No user-storage found in localStorage');
+            shouldCallAPI = false;
+          } else {
+            const parsed = JSON.parse(userStorage);
+            if (!parsed.state?.token || !parsed.state?.isAuthenticated) {
+              console.log('Logout: Invalid user-storage data - missing token or authentication status', {
+                hasToken: !!parsed.state?.token,
+                isAuthenticated: !!parsed.state?.isAuthenticated
+              });
+              shouldCallAPI = false;
+            }
+          }
+        } catch (parseError) {
+          console.error('Logout: Failed to parse user-storage data', parseError);
+          shouldCallAPI = false;
+        }
+      }
+
+      // 如果数据有效，调用后端退出登录API
+      if (shouldCallAPI) {
+        try {
+          await AuthService.logout();
+          console.log('Logout: Successfully called backend logout API');
+        } catch (apiError) {
+          console.error('Logout: Backend API call failed', apiError);
+          // API调用失败不影响本地清理
+        }
+      } else {
+        console.log('Logout: Skipping API call due to invalid local storage data');
+      }
+
       // 清空本地状态
       clearAuth();
       if (typeof window !== 'undefined') {
         localStorage.removeItem('user-storage');
       }
+
+      // 重定向到登录页面
+      router.push('/login');
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Logout: Unexpected error during logout process', error);
+
+      // 发生任何错误都要清空本地状态并重定向
+      clearAuth();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user-storage');
+      }
+      router.push('/login');
     } finally {
       setIsUserMenuOpen(false);
     }
@@ -134,7 +176,7 @@ export default function Header() {
               <ThemeToggle />
 
               {/* 用户区域 */}
-              {isAuthenticated && user ? (
+              {isAuthenticated && user && (
                 <div className="relative">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -229,27 +271,6 @@ export default function Header() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => handleAuthClick('login')}
-                    className="px-4 py-2 text-sm font-medium text-light-text dark:text-dark-text
-                             hover:text-light-accent dark:hover:text-dark-accent
-                             transition-colors duration-200"
-                  >
-                    登录
-                  </button>
-                  <button
-                    onClick={() => handleAuthClick('register')}
-                    className="px-4 py-2 text-sm font-medium
-                             bg-light-accent dark:bg-dark-accent
-                             text-light-bg dark:text-dark-bg
-                             rounded-md hover:bg-light-accent-hover dark:hover:bg-dark-accent-hover
-                             transition-colors duration-200"
-                  >
-                    注册
-                  </button>
-                </div>
               )}
             </div>
           </div>
@@ -276,13 +297,6 @@ export default function Header() {
           </div>
         )}
       </header>
-
-      {/* 认证弹窗 */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        defaultMode={authModalMode}
-      />
     </>
   );
 }
