@@ -209,25 +209,23 @@ export default function PublishChapterPage() {
     );
   }
 
+  // 构建面包屑
+  const breadcrumbs = [
+    { label: '返回个人中心', href: '/profile' },
+    { label: '小说管理', href: `/manage/${novelId}?tab=chapters` },
+    { label: novel?.title || '', href: undefined },
+    { label: '发布新章节', href: undefined }
+  ];
+
   return (
-    <ManageLayout novelTitle={novel?.title} novelId={novelId}>
+    <ManageLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* 页面标题 */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push(`/manage/${novelId}?tab=chapters`)}
-              className="flex items-center gap-2 text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              返回章节管理
-            </button>
-            <div className="w-px h-6 bg-light-border dark:border-dark-border"></div>
-            <h1 className="text-2xl font-bold text-light-text dark:text-dark-text flex items-center gap-2">
-              <FileText className="w-6 h-6" />
-              发布新章节
-            </h1>
-          </div>
+          <h1 className="text-2xl font-bold text-light-text dark:text-dark-text flex items-center gap-2">
+            <FileText className="w-6 h-6" />
+            发布新章节
+          </h1>
         </div>
 
         {/* 消息提示 */}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useUser, useIsAuthenticated, useIsLoading } from '@/stores/userSimple';
 import { Novel } from '@/types/novel';
 import { getUserNovelDetail } from '@/services/user-novel';
@@ -17,6 +17,7 @@ type TabType = 'data' | 'chapters' | 'settings';
 export default function ManageNovelPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isAuthenticated = useIsAuthenticated();
   const isAuthLoading = useIsLoading();
   const user = useUser();
@@ -33,6 +34,16 @@ export default function ManageNovelPage() {
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // 处理URL参数中的tab
+  useEffect(() => {
+    if (isHydrated) {
+      const tabParam = searchParams.get('tab') as TabType;
+      if (tabParam && ['data', 'chapters', 'settings'].includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, [searchParams, isHydrated]);
 
   useEffect(() => {
     // 只有在 hydration 完成且不在加载状态时才检查认证
@@ -70,6 +81,14 @@ export default function ManageNovelPage() {
 
   const handleNovelUpdate = (updatedNovel: Novel) => {
     setNovel(updatedNovel);
+  };
+
+  const handleTabChange = (tabId: TabType) => {
+    setActiveTab(tabId);
+    // 更新URL参数
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+    newSearchParams.set('tab', tabId);
+    router.replace(`/manage/${novelId}?${newSearchParams.toString()}`);
   };
 
   // 显示加载状态：正在加载认证状态或者还未 hydration
@@ -248,7 +267,7 @@ export default function ManageNovelPage() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`
                     group py-4 px-1 border-b-2 font-medium text-lg transition-colors duration-200 flex items-center gap-3
                     ${
