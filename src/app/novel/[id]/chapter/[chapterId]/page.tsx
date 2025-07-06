@@ -1,5 +1,5 @@
 import { redirect, notFound } from 'next/navigation';
-import ChapterReader from '@/components/novel/chapter/ChapterReader';
+import ChapterReader from '@/components/novel/reader/ChapterReader';
 import { serverGet, getServerUser } from '@/lib/auth-server';
 import type { Novel, NovelChapter } from '@/types/novel';
 

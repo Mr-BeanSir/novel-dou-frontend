@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Novel, NovelChapter, NovelComment, NovelRating, NovelRatingStatistics } from '@/types/novel';
+import type { Novel, NovelChapter, NovelRating, NovelRatingStatistics } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import ChapterList from '../chapter/ChapterList';
 import CommentSection from '../comment/CommentSection';
@@ -17,12 +17,10 @@ interface NovelDetailProps {
 
 export default function NovelDetail({ novel }: NovelDetailProps) {
   const [chapters, setChapters] = useState<NovelChapter[]>([]);
-  const [comments, setComments] = useState<NovelComment[]>([]);
   const [ratings, setRatings] = useState<NovelRating[]>([]);
   const [userRating, setUserRating] = useState<NovelRating | null>(null);
   const [ratingStatistics, setRatingStatistics] = useState<NovelRatingStatistics | null>(null);
   const [isLoadingChapters, setIsLoadingChapters] = useState(true);
-  const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [isLoadingRating, setIsLoadingRating] = useState(true);
 
   // 格式化数字显示
@@ -105,22 +103,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
     loadChapters();
   }, [novel.id]);
 
-  // 加载评论
-  useEffect(() => {
-    const loadComments = async () => {
-      try {
-        setIsLoadingComments(true);
-        const response = await NovelService.getComments(novel.id, 1, 10);
-        setComments(response.data);
-      } catch (error) {
-        console.error('Error loading comments:', error);
-      } finally {
-        setIsLoadingComments(false);
-      }
-    };
 
-    loadComments();
-  }, [novel.id]);
 
   // 加载评分数据
   useEffect(() => {
@@ -383,19 +366,18 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
         )}
       </div>
 
-      {/* 评论和评分区域 */}
+      {/* 评分区域 */}
       <div>
         <h2 className="text-xl font-semibold text-light-text dark:text-dark-text mb-4">
-          读者评价 ({(novel.comment_count || 0) + (ratingStatistics?.total_ratings || 0)})
+          读者评价 ({ratingStatistics?.total_ratings || 0})
         </h2>
-        {isLoadingComments || isLoadingRating ? (
+        {isLoadingRating ? (
           <div className="flex justify-center py-8">
             <LoadingSpinner />
           </div>
         ) : (
           <CommentSection
             novelId={novel.id}
-            comments={comments}
             ratings={ratings}
             userRating={userRating}
             onRatingUpdate={handleRatingUpdate}

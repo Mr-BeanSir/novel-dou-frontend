@@ -47,7 +47,6 @@ export const API_CONFIG = {
       USER_RATING: (id: number) => `/novels/${id}/rating/user`,
       RATINGS: (id: number) => `/novels/${id}/ratings`,
       RATING_STATISTICS: (id: number) => `/novels/${id}/ratings/statistics`,
-      COMMENTS: (id: number) => `/novels/${id}/comments`,
       CHAPTERS: (id: number) => `/novels/${id}/chapters`,
       CHAPTER_CONTENT: (novelId: number, chapterId: number) => `/novels/${novelId}/chapters/${chapterId}`,
       CHAPTER_UPLOAD: (novelId: number) => `/novels/${novelId}/chapters/upload`,

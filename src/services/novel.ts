@@ -9,7 +9,6 @@ import type {
   NovelTag,
   NovelChapter,
   NovelBookmark,
-  NovelComment,
   NovelRating,
   NovelRatingStatistics,
   ReadingHistory,
@@ -247,55 +246,7 @@ export class NovelService {
     return response.statistics;
   }
 
-  /**
-   * 添加评论
-   */
-  static async addComment(
-    novelId: number,
-    content: string,
-    chapterId?: number,
-    parentId?: number
-  ): Promise<void> {
-    await post(API_CONFIG.ENDPOINTS.NOVELS.COMMENTS(novelId), {
-      content,
-      chapter_id: chapterId,
-      parent_id: parentId,
-    });
-  }
 
-  /**
-   * 获取评论列表
-   */
-  static async getComments(
-    novelId: number,
-    page: number = 1,
-    perPage: number = 15,
-    chapterId?: number
-  ): Promise<PaginatedResponse<NovelComment>> {
-    const params: any = { page, per_page: perPage };
-    if (chapterId) params.chapter_id = chapterId;
-
-    const queryString = buildQueryString(params);
-    const response = await get<{ comments: NovelComment[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.COMMENTS(novelId)}${queryString}`);
-
-    // 转换为标准的分页响应格式
-    return {
-      data: response.comments,
-      current_page: response.pagination.current_page,
-      last_page: response.pagination.last_page,
-      per_page: response.pagination.per_page,
-      total: response.pagination.total,
-      from: response.pagination.from,
-      to: response.pagination.to,
-    };
-  }
-
-  /**
-   * 点赞评论
-   */
-  static async likeComment(commentId: number): Promise<void> {
-    await post(`/novels/comments/${commentId}/like`);
-  }
 
   /**
    * 获取阅读历史
@@ -410,9 +361,6 @@ export const {
   bookmarkNovel,
   unbookmarkNovel,
   getBookmarks,
-  addComment,
-  getComments,
-  likeComment,
   getReadingHistory,
   clearReadingHistory,
   getReadingStatistics,

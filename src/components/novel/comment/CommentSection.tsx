@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { NovelComment, NovelRating } from '@/types/novel';
+import type { NovelRating } from '@/types/novel';
 import { NovelService } from '@/services/novel';
 import { useUser, useIsAuthenticated } from '@/stores/userSimple';
 import { useToast } from '@/providers/ToastProvider';
@@ -9,7 +9,6 @@ import StarRating from '../rating/StarRating';
 
 interface CommentSectionProps {
   novelId: number;
-  comments: NovelComment[];
   ratings: NovelRating[];
   userRating?: NovelRating | null;
   onRatingUpdate?: () => void;
@@ -17,7 +16,6 @@ interface CommentSectionProps {
 
 export default function CommentSection({
   novelId,
-  comments: initialComments,
   ratings,
   userRating,
   onRatingUpdate
@@ -25,12 +23,9 @@ export default function CommentSection({
   const user = useUser();
   const isAuthenticated = useIsAuthenticated();
   const { showSuccess, showError, showWarning } = useToast();
-  const [comments, setComments] = useState<NovelComment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
   const [rating, setRating] = useState(userRating?.rating || 0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [replyTo, setReplyTo] = useState<number | null>(null);
-  const [replyContent, setReplyContent] = useState('');
 
   // 格式化时间
   const formatTime = (dateString: string): string => {
@@ -54,104 +49,40 @@ export default function CommentSection({
     }
   };
 
-  // 提交评论和评分
-  const handleSubmitComment = async () => {
+  // 提交评分
+  const handleSubmitRating = async () => {
     if (!isAuthenticated) {
       showWarning('请先登录');
       return;
     }
 
-    if (!newComment.trim() && rating === 0) {
-      showWarning('请输入评论内容或选择评分');
+    if (rating === 0) {
+      showWarning('请选择评分');
       return;
     }
 
     try {
       setIsSubmitting(true);
 
-      // 如果有评分，先提交评分
-      if (rating > 0) {
-        await NovelService.submitRating(novelId, rating, newComment.trim() || undefined);
-      } else if (newComment.trim()) {
-        // 如果只有评论没有评分，提交评论
-        await NovelService.addComment(novelId, newComment.trim());
-      }
+      // 提交评分
+      await NovelService.submitRating(novelId, rating, newComment.trim() || undefined);
 
-      // 重新加载评论列表
-      const response = await NovelService.getComments(novelId, 1, 10);
-      setComments(response.data);
       setNewComment('');
       setRating(0);
 
       // 通知父组件更新评分数据
       onRatingUpdate?.();
 
-      showSuccess('发表成功！');
+      showSuccess('评分发表成功！');
     } catch (error) {
-      console.error('Error submitting comment/rating:', error);
-      showError('发表失败，请重试');
+      console.error('Error submitting rating:', error);
+      showError('评分发表失败，请重试');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // 提交回复
-  const handleSubmitReply = async (parentId: number) => {
-    if (!isAuthenticated) {
-      showWarning('请先登录');
-      return;
-    }
 
-    if (!replyContent.trim()) {
-      showWarning('请输入回复内容');
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      await NovelService.addComment(novelId, replyContent.trim(), undefined, parentId);
-
-      // 重新加载评论列表
-      const response = await NovelService.getComments(novelId, 1, 10);
-      setComments(response.data);
-      setReplyTo(null);
-      setReplyContent('');
-      showSuccess('回复发表成功！');
-    } catch (error) {
-      console.error('Error submitting reply:', error);
-      showError('回复发表失败，请重试');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // 点赞评论
-  const handleLikeComment = async (commentId: number) => {
-    if (!isAuthenticated) {
-      alert('请先登录');
-      return;
-    }
-
-    try {
-      await NovelService.likeComment(commentId);
-
-      // 更新评论列表中的点赞数
-      setComments(prevComments =>
-        prevComments.map(comment =>
-          comment.id === commentId
-            ? {
-                ...comment,
-                likes_count: comment.likes_count + (comment.is_liked ? -1 : 1),
-                is_liked: !comment.is_liked
-              }
-            : comment
-        )
-      );
-    } catch (error) {
-      console.error('Error liking comment:', error);
-      alert('操作失败，请重试');
-    }
-  };
 
   return (
     <div className="bg-light-bg-secondary dark:bg-dark-bg-secondary
@@ -173,7 +104,7 @@ export default function CommentSection({
               {/* 评分选择 */}
               <div className="mb-3">
                 <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
-                  为这本小说评分（可选）
+                  为这本小说评分
                 </label>
                 <StarRating
                   rating={rating}
@@ -185,7 +116,7 @@ export default function CommentSection({
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder="写下你的想法..."
+                placeholder="写下你的评价（可选）..."
                 className="w-full p-3 border border-light-border dark:border-dark-border
                          rounded-md bg-light-bg dark:bg-dark-bg
                          text-light-text dark:text-dark-text
@@ -200,14 +131,14 @@ export default function CommentSection({
                   {newComment.length}/1000
                 </span>
                 <button
-                  onClick={handleSubmitComment}
-                  disabled={isSubmitting || (!newComment.trim() && rating === 0)}
+                  onClick={handleSubmitRating}
+                  disabled={isSubmitting || rating === 0}
                   className="px-4 py-2 bg-light-accent hover:bg-light-accent-hover
                            dark:bg-dark-accent dark:hover:bg-dark-accent-hover
                            text-white rounded-md transition-colors
                            disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? '发表中...' : '发表评价'}
+                  {isSubmitting ? '发表中...' : '发表评分'}
                 </button>
               </div>
             </div>
@@ -216,7 +147,7 @@ export default function CommentSection({
       ) : (
         <div className="p-6 border-b border-light-border dark:border-dark-border text-center">
           <p className="text-light-text-secondary dark:text-dark-text-secondary mb-3">
-            登录后可以发表评论
+            登录后可以发表评分
           </p>
           <button
             onClick={() => {
@@ -232,63 +163,28 @@ export default function CommentSection({
         </div>
       )}
 
-      {/* 评论和评分列表 */}
+      {/* 评分列表 */}
       <div className="divide-y divide-light-border dark:divide-dark-border">
-        {/* 先显示评分列表 */}
-        {ratings.map((rating) => (
-          <div key={`rating-${rating.id}`} className="p-6">
-            <div className="flex space-x-3">
-              <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent
-                              rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium">
-                    {rating.user.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className="font-medium text-light-text dark:text-dark-text">
-                    {rating.user.name}
-                  </span>
-                  <StarRating rating={rating.rating} readonly size="sm" showText />
-                  <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-                    {formatTime(rating.created_at)}
-                  </span>
-                </div>
-
-                {rating.review && (
-                  <p className="text-light-text dark:text-dark-text mb-3 whitespace-pre-wrap">
-                    {rating.review}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* 然后显示普通评论 */}
-        {comments.length === 0 && ratings.length === 0 ? (
+        {ratings.length === 0 ? (
           <div className="p-8 text-center">
             <svg className="w-16 h-16 mx-auto text-light-text-secondary dark:text-dark-text-secondary mb-4"
                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
             </svg>
             <p className="text-light-text-secondary dark:text-dark-text-secondary">
-              暂无评价，快来发表第一条评价吧！
+              暂无评分，快来发表第一条评分吧！
             </p>
           </div>
         ) : (
-          comments.map((comment) => (
-            <div key={comment.id} className="p-6">
+          ratings.map((rating) => (
+            <div key={`rating-${rating.id}`} className="p-6">
               <div className="flex space-x-3">
                 <div className="flex-shrink-0">
                   <div className="w-10 h-10 bg-light-accent dark:bg-dark-accent
                                 rounded-full flex items-center justify-center">
                     <span className="text-white font-medium">
-                      {comment.user?.name?.charAt(0) || 'U'}
+                      {rating.user.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 </div>
@@ -296,118 +192,18 @@ export default function CommentSection({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-2">
                     <span className="font-medium text-light-text dark:text-dark-text">
-                      {comment.user?.name || '匿名用户'}
+                      {rating.user.name}
                     </span>
+                    <StarRating rating={rating.rating} readonly size="sm" showText />
                     <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-                      {formatTime(comment.created_at)}
+                      {formatTime(rating.created_at)}
                     </span>
                   </div>
 
-                  <p className="text-light-text dark:text-dark-text mb-3 whitespace-pre-wrap">
-                    {comment.content}
-                  </p>
-
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => handleLikeComment(comment.id)}
-                      className={`flex items-center space-x-1 text-sm transition-colors ${
-                        comment.is_liked
-                          ? 'text-red-500'
-                          : 'text-light-text-secondary dark:text-dark-text-secondary hover:text-red-500'
-                      }`}
-                    >
-                      <svg className="w-4 h-4" fill={comment.is_liked ? "currentColor" : "none"}
-                           stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                      <span>{comment.likes_count}</span>
-                    </button>
-
-                    <button
-                      onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                      className="text-sm text-light-text-secondary dark:text-dark-text-secondary
-                               hover:text-light-accent dark:hover:text-dark-accent transition-colors"
-                    >
-                      回复
-                    </button>
-                  </div>
-
-                  {/* 回复框 */}
-                  {replyTo === comment.id && (
-                    <div className="mt-3 pl-4 border-l-2 border-light-border dark:border-dark-border">
-                      <textarea
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                        placeholder={`回复 ${comment.user?.name || '匿名用户'}...`}
-                        className="w-full p-2 border border-light-border dark:border-dark-border
-                                 rounded-md bg-light-bg dark:bg-dark-bg
-                                 text-light-text dark:text-dark-text
-                                 placeholder-light-text-secondary dark:placeholder-dark-text-secondary
-                                 focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent
-                                 resize-none text-sm"
-                        rows={2}
-                        maxLength={500}
-                      />
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-                          {replyContent.length}/500
-                        </span>
-                        <div className="space-x-2">
-                          <button
-                            onClick={() => {
-                              setReplyTo(null);
-                              setReplyContent('');
-                            }}
-                            className="px-3 py-1 text-sm text-light-text-secondary dark:text-dark-text-secondary
-                                     hover:text-light-text dark:hover:text-dark-text transition-colors"
-                          >
-                            取消
-                          </button>
-                          <button
-                            onClick={() => handleSubmitReply(comment.id)}
-                            disabled={isSubmitting || !replyContent.trim()}
-                            className="px-3 py-1 text-sm bg-light-accent hover:bg-light-accent-hover
-                                     dark:bg-dark-accent dark:hover:bg-dark-accent-hover
-                                     text-white rounded transition-colors
-                                     disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {isSubmitting ? '回复中...' : '回复'}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* 回复列表 */}
-                  {comment.replies && comment.replies.length > 0 && (
-                    <div className="mt-4 pl-4 border-l-2 border-light-border dark:border-dark-border space-y-3">
-                      {comment.replies.map((reply) => (
-                        <div key={reply.id} className="flex space-x-2">
-                          <div className="flex-shrink-0">
-                            <div className="w-8 h-8 bg-light-accent dark:bg-dark-accent
-                                          rounded-full flex items-center justify-center">
-                              <span className="text-white text-sm">
-                                {reply.user?.name?.charAt(0) || 'U'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="text-sm font-medium text-light-text dark:text-dark-text">
-                                {reply.user?.name || '匿名用户'}
-                              </span>
-                              <span className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-                                {formatTime(reply.created_at)}
-                              </span>
-                            </div>
-                            <p className="text-sm text-light-text dark:text-dark-text">
-                              {reply.content}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  {rating.review && (
+                    <p className="text-light-text dark:text-dark-text mb-3 whitespace-pre-wrap">
+                      {rating.review}
+                    </p>
                   )}
                 </div>
               </div>

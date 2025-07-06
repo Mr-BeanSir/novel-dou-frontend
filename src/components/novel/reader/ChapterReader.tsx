@@ -48,7 +48,13 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
         setError(null);
         console.log('Loading chapter content for:', novel.id, chapter.id);
 
-        const chapterContentResponse = await NovelService.getChapterContent(novel.id, chapter.id);
+        // 使用新的API路由
+        const response = await fetch(`/api/novels/${novel.id}/chapters/${chapter.id}`);
+        if (!response.ok) {
+          throw new Error('获取章节内容失败');
+        }
+
+        const chapterContentResponse = await response.json();
         setChapterContent(chapterContentResponse);
       } catch (err) {
         console.error('Failed to load chapter content:', err);
