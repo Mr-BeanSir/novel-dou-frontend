@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Novel, NovelCategory, NovelTag, UpdateNovelRequest } from '@/types/novel';
 import { updateNovel } from '@/services/user-novel';
-import { getCategories, getTags } from '@/services/novel';
 import { Save } from 'lucide-react';
 
 interface SettingsTabProps {
@@ -35,12 +34,22 @@ export function SettingsTab({ novel, onUpdate }: SettingsTabProps) {
 
   const loadCategoriesAndTags = async () => {
     try {
-      const [categoriesData, tagsData] = await Promise.all([
-        getCategories(),
-        getTags()
+      const [categoriesResponse, tagsResponse] = await Promise.all([
+        fetch('/api/categories'),
+        fetch('/api/tags')
       ]);
-      setCategories(categoriesData);
-      setTags(tagsData);
+
+      if (!categoriesResponse.ok || !tagsResponse.ok) {
+        throw new Error('获取数据失败');
+      }
+
+      const [categoriesData, tagsData] = await Promise.all([
+        categoriesResponse.json(),
+        tagsResponse.json()
+      ]);
+
+      setCategories(categoriesData.categories);
+      setTags(tagsData.tags);
     } catch (err) {
       setError('获取分类和标签失败');
     }

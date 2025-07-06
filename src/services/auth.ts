@@ -1,53 +1,53 @@
 // 认证相关服务
 
-import { get, post, setAuthToken, clearAuthToken } from '@/lib/api';
-import { API_CONFIG } from '@/config/api';
-import type {
-  User,
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  ApiResponse
-} from '@/types/user';
+import {get, post} from '@/lib/api';
+import {API_CONFIG} from '@/config/api';
+import type {ApiResponse, AuthResponse, LoginRequest, RegisterRequest, User} from '@/types/user';
 
 /**
  * 认证服务类
  */
 export class AuthService {
   /**
-   * 用户登录
+   * 用户登录 - 使用内部API路由
    */
-  static async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const response = await post<AuthResponse>(
-      API_CONFIG.ENDPOINTS.AUTH.LOGIN,
-      credentials,
-      false // 登录时不需要认证
-    );
+  static async login(credentials: LoginRequest): Promise<{ user: User; message: string }> {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
 
-    // 保存 token
-    if (response.token) {
-      setAuthToken(response.token);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '登录失败');
     }
 
-    return response;
+    const data = await response.json();
+    return data;
   }
 
   /**
-   * 用户注册
+   * 用户注册 - 使用内部API路由
    */
-  static async register(userData: RegisterRequest): Promise<AuthResponse> {
-    const response = await post<AuthResponse>(
-      API_CONFIG.ENDPOINTS.AUTH.REGISTER,
-      userData,
-      false // 注册时不需要认证
-    );
+  static async register(userData: RegisterRequest): Promise<{ user: User; message: string }> {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
 
-    // 保存 token
-    if (response.token) {
-      setAuthToken(response.token);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || '注册失败');
     }
 
-    return response;
+    const data = await response.json();
+    return data;
   }
 
   /**
@@ -68,16 +68,22 @@ export class AuthService {
   }
 
   /**
-   * 用户登出
+   * 用户登出 - 使用内部API路由
    */
   static async logout(): Promise<void> {
     try {
-      await post(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     } catch (error) {
       console.error('Logout error:', error);
-    } finally {
-      // 无论请求是否成功，都清除本地 token
-      clearAuthToken();
+    }
+    // 登出后刷新页面以清除客户端状态
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
     }
   }
 
@@ -86,51 +92,24 @@ export class AuthService {
    */
   static async refreshToken(): Promise<AuthResponse> {
     const response = await post<ApiResponse<AuthResponse>>(API_CONFIG.ENDPOINTS.AUTH.REFRESH);
-
-    // 更新 token
-    if (response.data.token) {
-      setAuthToken(response.data.token);
-    }
-
     return response.data;
   }
 
   /**
-   * 检查用户是否已登录
+   * 检查用户是否已登录 (仅用于客户端组件，服务端请使用 isServerAuthenticated)
    */
   static isAuthenticated(): boolean {
-    if (typeof window === 'undefined') return false;
-
-    try {
-      // 从 Zustand 持久化存储中获取
-      const userStorage = localStorage.getItem('user-storage');
-      if (userStorage) {
-        const parsed = JSON.parse(userStorage);
-        return !!(parsed.state?.token && parsed.state?.isAuthenticated);
-      }
-      return false;
-    } catch {
-      return false;
-    }
+    // 客户端认证检查现在通过服务端验证
+    // 这个方法主要用于兼容性，实际认证应该在服务端进行
+    return false;
   }
 
   /**
-   * 获取当前 token
+   * 获取当前 token (已废弃，token现在存储在httpOnly cookie中)
    */
   static getToken(): string | null {
-    if (typeof window === 'undefined') return null;
-
-    try {
-      // 从 Zustand 持久化存储中获取
-      const userStorage = localStorage.getItem('user-storage');
-      if (userStorage) {
-        const parsed = JSON.parse(userStorage);
-        return parsed.state?.token || null;
-      }
-      return null;
-    } catch {
-      return null;
-    }
+    // token现在存储在httpOnly cookie中，客户端无法直接访问
+    return null;
   }
 
   /**
@@ -187,10 +166,11 @@ export class AuthService {
   }
 
   /**
-   * 清除认证信息
+   * 清除认证信息 (已废弃，现在使用logout方法)
    */
   static clearAuth(): void {
-    clearAuthToken();
+    // 认证信息现在存储在httpOnly cookie中，需要通过logout API清除
+    console.warn('clearAuth is deprecated, use logout() instead');
   }
 }
 

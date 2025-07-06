@@ -1,60 +1,35 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useUser } from '@/stores/userSimple';
-import { PageAuthGuard } from '@/components/auth/PageAuthGuard';
+import { redirect } from 'next/navigation';
+import { getServerUser } from '@/lib/auth-server';
 import { ProfileLayout } from '@/components/profile/ProfileLayout';
 import { UserInfo } from '@/components/profile/UserInfo';
 import { MyNovels } from '@/components/profile/MyNovels';
 import { MyBookmarks } from '@/components/profile/MyBookmarks';
 import { ReadingHistory } from '@/components/profile/ReadingHistory';
 import { ReadingStatistics } from '@/components/profile/ReadingStatistics';
+import ProfileTabs from '@/components/profile/ProfileTabs';
 
 type TabType = 'novels' | 'bookmarks' | 'history' | 'statistics';
 
-export default function ProfilePage() {
-  const user = useUser();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabType>('novels');
-  const [isHydrated, setIsHydrated] = useState(false);
+interface ProfilePageProps {
+  searchParams: Promise<{
+    tab?: string;
+  }>;
+}
 
-  // 等待客户端 hydration 完成
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+export default async function ProfilePage({ searchParams }: ProfilePageProps) {
+  // 服务端认证检查
+  const user = await getServerUser();
+  if (!user) {
+    redirect('/login');
+  }
 
-  // 处理URL参数中的tab
-  useEffect(() => {
-    if (isHydrated) {
-      const tabParam = searchParams.get('tab') as TabType;
-      if (tabParam && ['novels', 'bookmarks', 'history', 'statistics'].includes(tabParam)) {
-        setActiveTab(tabParam);
-      }
-    }
-  }, [searchParams, isHydrated]);
-
-  const tabs = [
-    { id: 'novels' as TabType, label: '我的小说', icon: '📚' },
-    { id: 'bookmarks' as TabType, label: '我的收藏', icon: '⭐' },
-    { id: 'history' as TabType, label: '阅读历史', icon: '📖' },
-    { id: 'statistics' as TabType, label: '阅读统计', icon: '📊' },
-  ];
-
-  const handleTabChange = (tabId: TabType) => {
-    setActiveTab(tabId);
-    // 更新URL参数
-    const newSearchParams = new URLSearchParams(searchParams.toString());
-    if (tabId === 'novels') {
-      // 如果是默认标签页，移除tab参数
-      newSearchParams.delete('tab');
-    } else {
-      newSearchParams.set('tab', tabId);
-    }
-    const newUrl = newSearchParams.toString() ? `/profile?${newSearchParams.toString()}` : '/profile';
-    router.replace(newUrl);
-  };
+  // 从URL参数获取当前标签页
+  const { tab } = await searchParams;
+  const tabParam = tab as TabType;
+  const activeTab: TabType =
+    tabParam && ['novels', 'bookmarks', 'history', 'statistics'].includes(tabParam)
+      ? tabParam
+      : 'novels';
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -72,45 +47,23 @@ export default function ProfilePage() {
   };
 
   return (
-    <PageAuthGuard requireAuth={true} redirectTo="/">
-      <div className="min-h-screen bg-light-bg dark:bg-dark-bg">
-        <ProfileLayout>
-          <div className="max-w-6xl mx-auto px-4 py-8">
-            {/* 用户信息区域 */}
-            {user && <UserInfo user={user} />}
+    <div className="min-h-screen bg-light-bg dark:bg-dark-bg">
+      <ProfileLayout>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* 用户信息区域 */}
+          <UserInfo user={user} />
 
-            {/* 标签页导航 */}
-            <div className="mt-8">
-              <div className="border-b border-light-border dark:border-dark-border">
-                <nav className="-mb-px flex space-x-8">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => handleTabChange(tab.id)}
-                      className={`
-                        py-4 px-1 border-b-2 font-medium text-lg transition-colors duration-200
-                        ${
-                          activeTab === tab.id
-                            ? 'border-wood-primary text-wood-primary'
-                            : 'border-transparent text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text hover:border-light-border dark:hover:border-dark-border'
-                        }
-                      `}
-                    >
-                      <span className="mr-2">{tab.icon}</span>
-                      {tab.label}
-                    </button>
-                  ))}
-                </nav>
-              </div>
-            </div>
+          {/* 标签页导航 */}
+          <div className="mt-8">
+            <ProfileTabs activeTab={activeTab} user={user} />
 
             {/* 标签页内容 */}
             <div className="mt-8">
               {renderTabContent()}
             </div>
           </div>
-        </ProfileLayout>
-      </div>
-    </PageAuthGuard>
+        </div>
+      </ProfileLayout>
+    </div>
   );
 }

@@ -56,7 +56,7 @@ export function AdminNavigation({ user, children }: AdminNavigationProps) {
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-sm text-light-text dark:text-dark-text font-medium">
-                  {user.username}
+                  {user.name}
                 </p>
                 <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
                   {user.user_group?.name}

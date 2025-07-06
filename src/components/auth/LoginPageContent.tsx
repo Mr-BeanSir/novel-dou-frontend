@@ -136,16 +136,12 @@ export default function LoginPageContent() {
     setIsLoading(true);
 
     try {
-      const authResponse = await AuthService.login(loginForm);
-      const { user, token } = authResponse;
+      const response = await AuthService.login(loginForm);
+      const { user, message } = response;
 
-      // 更新用户状态
-      setUser(user);
-      setToken(token);
-      setAuthenticated(true);
-
-      showToast('登录成功', 'success');
-      router.push('/');
+      showToast(message || '登录成功', 'success');
+      // 登录成功后直接跳转，cookie已在服务端设置
+      window.location.href = '/';
     } catch (error) {
       showToast(
         error instanceof Error ? error.message : '登录失败，请检查邮箱和密码',
@@ -159,7 +155,7 @@ export default function LoginPageContent() {
   // 处理注册
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (registerForm.password !== registerForm.password_confirmation) {
       showToast('两次输入的密码不一致', 'error');
       return;
@@ -168,16 +164,12 @@ export default function LoginPageContent() {
     setIsLoading(true);
 
     try {
-      const authResponse = await AuthService.register(registerForm);
-      const { user, token } = authResponse;
+      const response = await AuthService.register(registerForm);
+      const { user, message } = response;
 
-      // 更新用户状态
-      setUser(user);
-      setToken(token);
-      setAuthenticated(true);
-
-      showToast('注册成功', 'success');
-      router.push('/');
+      showToast(message || '注册成功', 'success');
+      // 注册成功后直接跳转，cookie已在服务端设置
+      window.location.href = '/';
     } catch (error) {
       showToast(
         error instanceof Error ? error.message : '注册失败，请检查输入信息',

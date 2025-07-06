@@ -27,61 +27,12 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      // 首先验证localStorage中的user-storage数据
-      let shouldCallAPI = true;
-
-      if (typeof window !== 'undefined') {
-        try {
-          const userStorage = localStorage.getItem('user-storage');
-          if (!userStorage) {
-            console.log('Logout: No user-storage found in localStorage');
-            shouldCallAPI = false;
-          } else {
-            const parsed = JSON.parse(userStorage);
-            if (!parsed.state?.token || !parsed.state?.isAuthenticated) {
-              console.log('Logout: Invalid user-storage data - missing token or authentication status', {
-                hasToken: !!parsed.state?.token,
-                isAuthenticated: !!parsed.state?.isAuthenticated
-              });
-              shouldCallAPI = false;
-            }
-          }
-        } catch (parseError) {
-          console.error('Logout: Failed to parse user-storage data', parseError);
-          shouldCallAPI = false;
-        }
-      }
-
-      // 如果数据有效，调用后端退出登录API
-      if (shouldCallAPI) {
-        try {
-          await AuthService.logout();
-          console.log('Logout: Successfully called backend logout API');
-        } catch (apiError) {
-          console.error('Logout: Backend API call failed', apiError);
-          // API调用失败不影响本地清理
-        }
-      } else {
-        console.log('Logout: Skipping API call due to invalid local storage data');
-      }
-
-      // 清空本地状态
-      clearAuth();
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user-storage');
-      }
-
-      // 重定向到登录页面
-      router.push('/login');
+      // 调用新的登出API
+      await AuthService.logout();
     } catch (error) {
-      console.error('Logout: Unexpected error during logout process', error);
-
-      // 发生任何错误都要清空本地状态并重定向
-      clearAuth();
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user-storage');
-      }
-      router.push('/login');
+      console.error('Logout error:', error);
+      // 即使API调用失败，也要重定向到登录页面
+      window.location.href = '/login';
     } finally {
       setIsUserMenuOpen(false);
     }

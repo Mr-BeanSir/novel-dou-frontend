@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { CategoriesProvider } from "@/providers/CategoriesProvider";
 import { UserProvider } from "@/providers/UserProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
@@ -25,13 +24,11 @@ export default function RootLayout({
       <body className="antialiased min-h-screen font-serif">
         <ThemeProvider defaultTheme="system">
           <UserProvider>
-            <CategoriesProvider>
-              <ToastProvider>
-                <ConditionalLayout>
-                  {children}
-                </ConditionalLayout>
-              </ToastProvider>
-            </CategoriesProvider>
+            <ToastProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </ToastProvider>
           </UserProvider>
         </ThemeProvider>
       </body>

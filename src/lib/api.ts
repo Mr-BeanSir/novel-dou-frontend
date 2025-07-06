@@ -4,8 +4,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 
 // 获取存储的 token - 从 Zustand store 获取
 export function getAuthToken(): string | null {
-  if (typeof window === 'undefined') return null;
-
   try {
     const userStorage = localStorage.getItem('user-storage');
     if (userStorage) {
@@ -13,19 +11,12 @@ export function getAuthToken(): string | null {
       return parsed.state?.token || null;
     }
     return null;
-  } catch {
+  } catch (e) {
     return null;
   }
+
 }
 
-// 这些函数不再需要，由 Zustand store 管理
-export function setAuthToken(token: string): void {
-  // 由 Zustand store 管理
-}
-
-export function clearAuthToken(): void {
-  // 由 Zustand store 管理
-}
 
 // 创建请求头
 function createHeaders(includeAuth: boolean = true): HeadersInit {
@@ -34,12 +25,15 @@ function createHeaders(includeAuth: boolean = true): HeadersInit {
     'Accept': 'application/json',
   };
 
+
   if (includeAuth) {
     const token = getAuthToken();
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
   }
+
+  console.log(headers);
 
   return headers;
 }
@@ -60,6 +54,7 @@ async function request<T>(
     },
   };
 
+
   try {
     console.log('Making API request to:', url);
     const response = await fetch(url, config);
@@ -72,6 +67,22 @@ async function request<T>(
       });
 
       const errorData = await response.json().catch(() => ({}));
+
+      // 处理认证错误 (401/403)
+      if (response.status === 401 || response.status === 403) {
+        const errorMessage = errorData.message || 'Unauthenticated.';
+
+        // 清除本地认证信息
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user-storage');
+          console.log('Authentication failed, cleared user storage');
+
+          // 重定向到登录页面
+          window.location.href = '/login';
+        }
+
+        throw new Error(errorMessage);
+      }
 
       // 处理422验证错误
       if (response.status === 422 && errorData.errors) {
@@ -92,7 +103,9 @@ async function request<T>(
   } catch (error) {
     console.error('API request failed:', {
       url,
-      error: error instanceof Error ? error.message : error
+      error: error instanceof Error ? error.message : error,
+      includeAuth,
+      hasToken: !!getAuthToken()
     });
     throw error;
   }

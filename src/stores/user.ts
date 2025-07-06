@@ -52,11 +52,11 @@ export const useUserStore = create<UserState>()(
         set({ isLoading: true });
         try {
           const authResponse = await apiLogin(credentials);
-          const { user, token } = authResponse;
+          const { user } = authResponse;
 
           set({
             user,
-            token,
+            token: 'cookie-stored', // token现在存储在cookie中
             isAuthenticated: true,
             isLoading: false
           });
@@ -73,11 +73,11 @@ export const useUserStore = create<UserState>()(
         set({ isLoading: true });
         try {
           const authResponse = await apiRegister(userData);
-          const { user, token } = authResponse;
+          const { user } = authResponse;
 
           set({
             user,
-            token,
+            token: 'cookie-stored', // token现在存储在cookie中
             isAuthenticated: true,
             isLoading: false
           });

@@ -31,7 +31,7 @@ export class NovelService {
    */
   static async getNovels(params: NovelListParams = {}): Promise<PaginatedResponse<Novel>> {
     const queryString = buildQueryString(params);
-    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.LIST}${queryString}`, false);
+    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.LIST}${queryString}`);
 
     // 转换为标准的分页响应格式
     return {
@@ -49,7 +49,7 @@ export class NovelService {
    * 获取单部小说详情
    */
   static async getNovel(id: number): Promise<Novel> {
-    const response = await get<{ novel: Novel }>(API_CONFIG.ENDPOINTS.NOVELS.DETAIL(id), false);
+    const response = await get<{ novel: Novel }>(API_CONFIG.ENDPOINTS.NOVELS.DETAIL(id));
     return response.novel;
   }
 
@@ -58,7 +58,7 @@ export class NovelService {
    */
   static async getRecommendedNovels(perPage: number = 10): Promise<Novel[]> {
     const queryString = buildQueryString({ per_page: perPage });
-    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RECOMMENDED}${queryString}`, false);
+    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RECOMMENDED}${queryString}`);
     return response.novels;
   }
 
@@ -67,7 +67,7 @@ export class NovelService {
    */
   static async getPopularNovels(perPage: number = 10): Promise<Novel[]> {
     const queryString = buildQueryString({ per_page: perPage });
-    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.POPULAR}${queryString}`, false);
+    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.POPULAR}${queryString}`);
     return response.novels;
   }
 
@@ -76,7 +76,7 @@ export class NovelService {
    */
   static async getRecentNovels(perPage: number = 10): Promise<Novel[]> {
     const queryString = buildQueryString({ per_page: perPage });
-    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RECENT}${queryString}`, false);
+    const response = await get<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RECENT}${queryString}`);
     return response.novels;
   }
 
@@ -85,7 +85,7 @@ export class NovelService {
    */
   static async getRankingNovels(params: RankingParams): Promise<Novel[]> {
     const queryString = buildQueryString(params);
-    const response = await get<Novel[]>(`${API_CONFIG.ENDPOINTS.NOVELS.RANKING}${queryString}`, false);
+    const response = await get<Novel[]>(`${API_CONFIG.ENDPOINTS.NOVELS.RANKING}${queryString}`);
     return response;
   }
 
@@ -93,7 +93,7 @@ export class NovelService {
    * 获取分类列表
    */
   static async getCategories(): Promise<NovelCategory[]> {
-    const response = await get<{ categories: NovelCategory[] }>(API_CONFIG.ENDPOINTS.NOVELS.CATEGORIES, false);
+    const response = await get<{ categories: NovelCategory[] }>(API_CONFIG.ENDPOINTS.NOVELS.CATEGORIES);
     return response.categories;
   }
 
@@ -101,7 +101,7 @@ export class NovelService {
    * 获取标签列表
    */
   static async getTags(): Promise<NovelTag[]> {
-    const response = await get<{ tags: NovelTag[]; pagination?: any }>(API_CONFIG.ENDPOINTS.NOVELS.TAGS, false);
+    const response = await get<{ tags: NovelTag[]; pagination?: any }>(API_CONFIG.ENDPOINTS.NOVELS.TAGS);
     return response.tags;
   }
 
@@ -118,7 +118,7 @@ export class NovelService {
       chapters: NovelChapter[];
       pagination: any;
       novel: { id: number; title: string; author: string; }
-    }>(`${API_CONFIG.ENDPOINTS.NOVELS.CHAPTERS(novelId)}${queryString}`, false);
+    }>(`${API_CONFIG.ENDPOINTS.NOVELS.CHAPTERS(novelId)}${queryString}`);
 
     // 转换为标准的分页响应格式
     return {
@@ -226,7 +226,7 @@ export class NovelService {
     if (rating !== undefined) params.rating = rating;
 
     const queryString = buildQueryString(params);
-    const response = await get<{ ratings: NovelRating[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RATINGS(novelId)}${queryString}`, false);
+    const response = await get<{ ratings: NovelRating[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RATINGS(novelId)}${queryString}`);
 
     return {
       data: response.ratings,
@@ -243,7 +243,7 @@ export class NovelService {
    * 获取评分统计
    */
   static async getRatingStatistics(novelId: number): Promise<NovelRatingStatistics> {
-    const response = await get<{ statistics: NovelRatingStatistics }>(API_CONFIG.ENDPOINTS.NOVELS.RATING_STATISTICS(novelId), false);
+    const response = await get<{ statistics: NovelRatingStatistics }>(API_CONFIG.ENDPOINTS.NOVELS.RATING_STATISTICS(novelId));
     return response.statistics;
   }
 
@@ -276,7 +276,7 @@ export class NovelService {
     if (chapterId) params.chapter_id = chapterId;
 
     const queryString = buildQueryString(params);
-    const response = await get<{ comments: NovelComment[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.COMMENTS(novelId)}${queryString}`, false);
+    const response = await get<{ comments: NovelComment[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.COMMENTS(novelId)}${queryString}`);
 
     // 转换为标准的分页响应格式
     return {
