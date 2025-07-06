@@ -19,6 +19,9 @@ import type {
   PaginatedResponse,
   NovelListParams,
   RankingParams,
+  CategoryListParams,
+  TagListParams,
+  TagStatisticsResponse,
 } from '@/types/novel';
 
 /**
@@ -89,7 +92,7 @@ export class NovelService {
   }
 
   /**
-   * 获取分类列表
+   * 获取分类列表（不分页）
    */
   static async getCategories(): Promise<NovelCategory[]> {
     const response = await get<{ categories: NovelCategory[] }>(API_CONFIG.ENDPOINTS.NOVELS.CATEGORIES);
@@ -97,11 +100,57 @@ export class NovelService {
   }
 
   /**
-   * 获取标签列表
+   * 获取分类列表（分页）
+   */
+  static async getCategoriesPaginated(params: CategoryListParams = {}): Promise<PaginatedResponse<NovelCategory>> {
+    const queryString = buildQueryString(params);
+    const response = await get<{ categories: NovelCategory[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.CATEGORIES_LIST}${queryString}`);
+
+    // 转换为标准的分页响应格式
+    return {
+      data: response.categories,
+      current_page: response.pagination.current_page,
+      last_page: response.pagination.last_page,
+      per_page: response.pagination.per_page,
+      total: response.pagination.total,
+      from: response.pagination.from,
+      to: response.pagination.to,
+    };
+  }
+
+  /**
+   * 获取标签列表（不分页）
    */
   static async getTags(): Promise<NovelTag[]> {
     const response = await get<{ tags: NovelTag[]; pagination?: any }>(API_CONFIG.ENDPOINTS.NOVELS.TAGS);
     return response.tags;
+  }
+
+  /**
+   * 获取标签列表（分页）
+   */
+  static async getTagsPaginated(params: TagListParams = {}): Promise<PaginatedResponse<NovelTag>> {
+    const queryString = buildQueryString(params);
+    const response = await get<{ tags: NovelTag[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.TAGS_LIST}${queryString}`);
+
+    // 转换为标准的分页响应格式
+    return {
+      data: response.tags,
+      current_page: response.pagination.current_page,
+      last_page: response.pagination.last_page,
+      per_page: response.pagination.per_page,
+      total: response.pagination.total,
+      from: response.pagination.from,
+      to: response.pagination.to,
+    };
+  }
+
+  /**
+   * 获取标签统计信息
+   */
+  static async getTagsStatistics(): Promise<TagStatisticsResponse> {
+    const response = await get<TagStatisticsResponse>(API_CONFIG.ENDPOINTS.NOVELS.TAGS_STATISTICS);
+    return response;
   }
 
   /**
@@ -355,7 +404,10 @@ export const {
   getRecentNovels,
   getRankingNovels,
   getCategories,
+  getCategoriesPaginated,
   getTags,
+  getTagsPaginated,
+  getTagsStatistics,
   getNovelChapters,
   getChapterContent,
   bookmarkNovel,

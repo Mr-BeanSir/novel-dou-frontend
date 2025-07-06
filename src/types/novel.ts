@@ -13,6 +13,60 @@ export interface NovelCategory {
   updated_at: string;
 }
 
+// 分类统计信息类型（用于新的统计API）
+export interface CategoryStatistics {
+  id: number;
+  name: string;
+  novel_count: number;
+  last_updated_at: string;
+}
+
+// 分类统计API响应类型
+export interface CategoryStatisticsResponse {
+  statistics: CategoryStatistics[];
+}
+
+// 分类查询参数类型
+export interface CategoryListParams {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  sort_by?: 'name' | 'novel_count' | 'created_at' | 'updated_at';
+  sort_order?: 'asc' | 'desc';
+  include_inactive?: boolean;
+}
+
+// 标签查询参数类型
+export interface TagListParams {
+  page?: number;
+  per_page?: number;
+  search?: string;
+  min_novels?: number;
+  sort_by?: 'name' | 'novel_count' | 'created_at' | 'updated_at';
+  sort_order?: 'asc' | 'desc';
+  include_inactive?: boolean;
+}
+
+// 标签统计信息类型
+export interface TagStatistics {
+  total_tags: number;
+  active_tags: number;
+  tags_with_novels: number;
+  total_novel_tag_relations: string;
+  average_novels_per_tag: number;
+  most_popular_tag: {
+    id: number;
+    name: string;
+    novel_count: number;
+  };
+}
+
+// 标签统计API响应类型
+export interface TagStatisticsResponse {
+  statistics: TagStatistics;
+  last_updated_at: string;
+}
+
 export interface NovelTag {
   id: number;
   name: string;
