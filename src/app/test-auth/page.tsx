@@ -61,7 +61,7 @@ export default function TestAuthPage() {
                   用户权限
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {user.permissions.map((permission) => (
+                  {user.permissions.map((permission: any) => (
                     <div
                       key={permission.id}
                       className="p-2 bg-blue-100 dark:bg-blue-900 rounded text-sm"

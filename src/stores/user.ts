@@ -225,12 +225,6 @@ export const useUserStore = create<UserState>()(
         isAuthenticated: state.isAuthenticated
       }),
 
-      // 添加序列化选项以避免循环引用
-      serialize: {
-        stringify: JSON.stringify,
-        parse: JSON.parse,
-      },
-
       // 添加版本控制
       version: 1,
       migrate: (persistedState: any, version: number) => {

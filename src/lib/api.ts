@@ -140,6 +140,25 @@ export function del<T>(endpoint: string, includeAuth: boolean = true): Promise<T
   return request<T>(endpoint, { method: 'DELETE' }, includeAuth);
 }
 
+// DELETE 请求（带请求体）
+export function delWithBody<T>(
+  endpoint: string,
+  data?: any,
+  includeAuth: boolean = true
+): Promise<T> {
+  return request<T>(
+    endpoint,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    },
+    includeAuth
+  );
+}
+
 // PATCH 请求
 export function patch<T>(
   endpoint: string,

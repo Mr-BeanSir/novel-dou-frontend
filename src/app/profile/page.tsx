@@ -44,7 +44,7 @@ export default function ProfilePage() {
         <ProfileLayout>
           <div className="max-w-6xl mx-auto px-4 py-8">
             {/* 用户信息区域 */}
-            <UserInfo user={user} />
+            {user && <UserInfo user={user} />}
 
             {/* 标签页导航 */}
             <div className="mt-8">
