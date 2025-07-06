@@ -84,8 +84,8 @@ export class NovelService {
    */
   static async getRankingNovels(params: RankingParams): Promise<Novel[]> {
     const queryString = buildQueryString(params);
-    const response = await get<Novel[]>(`${API_CONFIG.ENDPOINTS.NOVELS.RANKING}${queryString}`);
-    return response;
+    const response = await get<{ novels: Novel[]; pagination?: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RANKING}${queryString}`);
+    return response.novels || response as any;
   }
 
   /**
