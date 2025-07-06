@@ -15,13 +15,18 @@
   --color-light-hover: rgba(196, 158, 101, 0.1);
 
   --color-dark-bg: #1a1a1a;
-  --color-dark-bg-secondary: #121212;
-  --color-dark-text: #eae3cc;
-  --color-dark-text-secondary: #d7d2c0;
-  --color-dark-accent: #89775f;
-  --color-dark-accent-hover: #5e503f;
-  --color-dark-border: #2d2d2d;
-  --color-dark-hover: rgba(137, 119, 95, 0.1);
+  --color-dark-bg-secondary: #2a2a2a;
+  --color-dark-text: #e0d5c7;
+  --color-dark-text-secondary: #c4b8a8;
+  --color-dark-accent: #a08b73;
+  --color-dark-accent-hover: #8a7660;
+  --color-dark-border: #3a3a3a;
+  --color-dark-hover: rgba(160, 139, 115, 0.1);
+
+  /* 暗色模式卡片颜色 */
+  --color-dark-card-bg: #2d2d2d;
+  --color-dark-card-border: #404040;
+  --color-dark-cover-bg: #3a3a3a;
 
   --color-cover-bg: #E5D5B7;
 
@@ -40,14 +45,19 @@
   --light-accent-hover: #a9744f;
   --light-border: #e5d5b7;
 
-  /* 暗色主题 */
+  /* 暗色主题 - 更柔和的颜色 */
   --dark-bg: #1a1a1a;
-  --dark-bg-secondary: #121212;
-  --dark-text: #eae3cc;
-  --dark-text-secondary: #d7d2c0;
-  --dark-accent: #89775f;
-  --dark-accent-hover: #5e503f;
-  --dark-border: #2d2d2d;
+  --dark-bg-secondary: #2a2a2a;
+  --dark-text: #e0d5c7;
+  --dark-text-secondary: #c4b8a8;
+  --dark-accent: #a08b73;
+  --dark-accent-hover: #8a7660;
+  --dark-border: #3a3a3a;
+
+  /* 暗色模式下的卡片颜色 */
+  --dark-card-bg: #2d2d2d;
+  --dark-card-border: #404040;
+  --dark-cover-bg: #3a3a3a;
 
   /* 悬停效果 */
   --light-hover: rgba(196, 158, 101, 0.1);
@@ -77,6 +87,9 @@ html.dark {
   --color-light-accent-hover: var(--dark-accent-hover);
   --color-light-border: var(--dark-border);
   --color-light-hover: var(--dark-hover);
+
+  /* 卡片专用颜色覆盖 */
+  --cover-bg: var(--dark-cover-bg);
 }
 
 
@@ -125,6 +138,48 @@ html.dark * {
   --light-accent-hover: var(--dark-accent-hover);
   --light-border: var(--dark-border);
   --light-hover: var(--dark-hover);
+}
+
+/* 暗色模式下的卡片优化 */
+html.dark .group {
+  /* 降低卡片阴影强度 */
+}
+
+html.dark .group:hover {
+  /* 暗色模式下的悬停效果更柔和 */
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 暗色模式下的标签颜色调整 */
+html.dark .group span[style*="background"] {
+  opacity: 0.8;
+  filter: brightness(0.9);
+}
+
+/* 暗色模式下的VIP和推荐标识优化 */
+html.dark .bg-yellow-500 {
+  background-color: #d4a574 !important;
+}
+
+html.dark .bg-red-500 {
+  background-color: #c47a7a !important;
+}
+
+/* 暗色模式下的状态颜色优化 */
+html.dark .text-green-600 {
+  color: #90c695 !important;
+}
+
+html.dark .text-blue-600 {
+  color: #7fb3d3 !important;
+}
+
+html.dark .text-yellow-600 {
+  color: #d4a574 !important;
+}
+
+html.dark .text-gray-500 {
+  color: #a0a0a0 !important;
 }
 
 /* 自定义文本截断类 */

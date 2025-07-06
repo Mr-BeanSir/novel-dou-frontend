@@ -37,11 +37,11 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
   return (
     <div className={`group ${className}`}>
       <Link href={`/novel/${novel.id}`}>
-        <div className="border border-[#E5D5B7] rounded-xl overflow-hidden hover:shadow-xl hover:shadow-theme-accent/10
+        <div className="border border-light-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-theme-accent/10
                         transition-all duration-300 hover:scale-[1.03]
                         group cursor-pointer">
           {/* 封面图片 */}
-          <div className="relative aspect-[3/4] overflow-hidden bg-[#E5D5B7]">
+          <div className="relative aspect-[3/4] overflow-hidden bg-cover-bg">
             {novel.cover_image ? (
               <Image
                 src={novel.cover_image}
@@ -96,7 +96,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
           </div>
 
           {/* 内容区域 */}
-          <div className="p-5 bg-[#F9F3D2]">
+          <div className="p-5 bg-light-bg-secondary">
             {/* 标题 */}
             <h3 className="font-bold text-lg text-theme-text line-clamp-2 mb-3
                          group-hover:text-theme-accent transition-theme leading-tight">
