@@ -1,22 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
   FolderOpen,
-  BookOpen,
-  ChevronLeft,
-  ChevronRight
+  BookOpen
 } from 'lucide-react';
 import { AdminCategory, AdminCategoryQuery, CreateCategoryData, UpdateCategoryData } from '@/types/admin';
 import { AdminService } from '@/services/admin';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
 import { useToast } from '@/providers/ToastProvider';
+import { Pagination } from '@/components/ui/Pagination';
 
 export function CategoryManagement() {
   const { showToast } = useToast();
@@ -286,37 +285,19 @@ export function CategoryManagement() {
       </div>
 
       {/* 分页 */}
-      {pagination.last_page > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-            显示 {((pagination.current_page - 1) * pagination.per_page) + 1} 到{' '}
-            {Math.min(pagination.current_page * pagination.per_page, pagination.total)} 条，
-            共 {pagination.total} 条记录
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handlePageChange(pagination.current_page - 1)}
-              disabled={pagination.current_page <= 1}
-              className="p-2 border border-light-border dark:border-dark-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary transition-colors"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            
-            <span className="px-4 py-2 text-sm">
-              {pagination.current_page} / {pagination.last_page}
-            </span>
-            
-            <button
-              onClick={() => handlePageChange(pagination.current_page + 1)}
-              disabled={pagination.current_page >= pagination.last_page}
-              className="p-2 border border-light-border dark:border-dark-border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary transition-colors"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        pagination={{
+          current_page: pagination.current_page,
+          last_page: pagination.last_page,
+          per_page: pagination.per_page,
+          total: pagination.total,
+          from: ((pagination.current_page - 1) * pagination.per_page) + 1,
+          to: Math.min(pagination.current_page * pagination.per_page, pagination.total)
+        }}
+        onPageChange={handlePageChange}
+        showQuickJump={true}
+        className="mt-6 p-4 border-t border-light-border dark:border-dark-border"
+      />
 
       {/* 创建分类模态框 */}
       {showCreateModal && (
