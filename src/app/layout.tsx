@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { UserProvider } from "@/providers/UserProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
+import ScrollToTop from "@/components/layout/ScrollToTop";
 
 export const metadata: Metadata = {
   title: "读书豆 - 优质小说阅读平台",
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ThemeProvider defaultTheme="system">
           <UserProvider>
             <ToastProvider>
+              <ScrollToTop />
               <ConditionalLayout>
                 {children}
               </ConditionalLayout>

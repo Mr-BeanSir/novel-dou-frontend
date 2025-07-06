@@ -49,18 +49,6 @@ export default function ReaderHeader({
 
           {/* 右侧：操作按钮 */}
           <div className="flex items-center space-x-2">
-            {/* 章节目录按钮 */}
-            <Link
-              href={`/novel/${novel.id}#chapters`}
-              className="flex items-center justify-center w-10 h-10 
-                       text-light-text dark:text-dark-text
-                       hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary
-                       rounded-md transition-colors duration-200"
-              title="章节目录"
-            >
-              <BookOpen className="w-5 h-5" />
-            </Link>
-
             {/* 设置按钮 */}
             <button
               onClick={onToggleControls}
