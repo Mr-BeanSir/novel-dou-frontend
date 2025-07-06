@@ -175,7 +175,7 @@ export default function Header() {
                                  hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
-                        个人资料
+                        个人中心
                       </Link>
                       <Link
                         href="/profile?tab=bookmarks"
@@ -192,6 +192,14 @@ export default function Header() {
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         阅读历史
+                      </Link>
+                      <Link
+                        href="/profile?tab=statistics"
+                        className="block px-4 py-2 text-sm text-light-text dark:text-dark-text
+                                 hover:bg-light-bg-secondary dark:hover:bg-dark-bg-secondary"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        阅读统计
                       </Link>
 
                       {/* 管理员入口 */}
