@@ -20,7 +20,7 @@ export function PageAuthGuard({
   children,
   requireAuth = true,
   requireAdmin = false,
-  redirectTo = '/',
+  redirectTo = '/login',
   loadingComponent
 }: PageAuthGuardProps) {
   const { isLoading, isAuthenticated, isAdmin } = usePageAuth({

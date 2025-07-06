@@ -26,7 +26,7 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}): UseAuthGuardRet
   const {
     requireAuth = true,
     requireAdmin = false,
-    redirectTo = '/'
+    redirectTo = '/login'
   } = options;
 
   const router = useRouter();
@@ -66,9 +66,9 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}): UseAuthGuardRet
           setIsAuthenticated(false);
           setIsUserAdmin(false);
 
-          // 如果需要认证但用户未登录，重定向到首页
+          // 如果需要认证但用户未登录，重定向到登录页面
           if (requireAuth) {
-            router.push(redirectTo);
+            router.push('/login');
           }
           return;
         }
@@ -104,9 +104,9 @@ export function useAuthGuard(options: UseAuthGuardOptions = {}): UseAuthGuardRet
         setIsAuthenticated(false);
         setIsUserAdmin(false);
 
-        // 如果需要认证但用户未登录，重定向到首页
+        // 如果需要认证但用户未登录，重定向到登录页面
         if (requireAuth) {
-          router.push(redirectTo);
+          router.push('/login');
         }
       } finally {
         setIsLoading(false);

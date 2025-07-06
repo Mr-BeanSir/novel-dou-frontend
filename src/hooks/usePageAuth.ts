@@ -70,7 +70,7 @@ export function usePageAuth(options: UsePageAuthOptions = {}): UsePageAuthReturn
             setIsUserAdmin(false);
             
             if (requireAuth) {
-              router.push(redirectTo);
+              router.push('/login');
             }
           }
           return;
@@ -118,7 +118,7 @@ export function usePageAuth(options: UsePageAuthOptions = {}): UsePageAuthReturn
             setIsUserAdmin(false);
 
             if (requireAuth) {
-              router.push(redirectTo);
+              router.push('/login');
             }
           } else {
             // 其他错误不清空存储，只设置加载状态

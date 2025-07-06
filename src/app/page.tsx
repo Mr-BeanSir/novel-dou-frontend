@@ -4,9 +4,17 @@ import { useState, useEffect } from 'react';
 import NovelCard from '@/components/novel/card/NovelCard';
 import { getRecommendedNovels, getPopularNovels, getRecentNovels } from '@/services/novel';
 import { cache } from '@/lib/cache';
+import { usePageAuth } from '@/hooks/usePageAuth';
+import LoadingSpinner from '@/components/layout/LoadingSpinner';
 import type { Novel } from '@/types/novel';
 
 export default function Home() {
+  // 认证检查
+  const { isLoading: authLoading, isAuthenticated } = usePageAuth({
+    requireAuth: true,
+    requireAdmin: false
+  });
+
   const [recommendedNovels, setRecommendedNovels] = useState<Novel[]>([]);
   const [popularNovels, setPopularNovels] = useState<Novel[]>([]);
   const [recentNovels, setRecentNovels] = useState<Novel[]>([]);
@@ -47,6 +55,20 @@ export default function Home() {
 
     fetchData();
   }, []);
+
+  // 如果正在进行认证检查，显示加载状态
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-light-bg dark:bg-dark-bg flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  // 如果未认证，不渲染内容（会被重定向）
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (isLoading) {
     return (
