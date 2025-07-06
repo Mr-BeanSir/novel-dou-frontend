@@ -262,11 +262,9 @@ export function CategoryManagement() {
                   </div>
                 </div>
 
-                {category.description && (
-                  <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mb-4 line-clamp-2">
-                    {category.description}
-                  </p>
-                )}
+                <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary mb-4 line-clamp-2">
+                  {category.description || '暂无描述'}
+                </p>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm text-light-text-secondary dark:text-dark-text-secondary">

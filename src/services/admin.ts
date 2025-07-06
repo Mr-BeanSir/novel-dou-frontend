@@ -175,8 +175,8 @@ export class AdminService {
    * 更新分类
    */
   static async updateCategory(id: number, data: UpdateCategoryData): Promise<AdminCategory> {
-    const response = await put<AdminCategory>(`${ADMIN_BASE_URL}/categories/${id}`, data);
-    return response;
+    const response = await put<{ message: string; category: AdminCategory }>(`${ADMIN_BASE_URL}/categories/${id}`, data);
+    return response.category;
   }
 
   /**
