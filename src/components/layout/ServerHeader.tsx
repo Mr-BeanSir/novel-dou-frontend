@@ -14,7 +14,7 @@ export default async function ServerHeader() {
   const navigationItems = [
     { name: '首页', href: '/' },
     { name: '分类', href: '/categories' },
-    { name: '作者', href: '/authors' },
+    // { name: '作者', href: '/authors' },
     { name: '标签', href: '/tags' },
     { name: '排行榜', href: '/rankings' },
   ];
