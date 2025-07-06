@@ -41,7 +41,7 @@ export default function ProfileTabs({ activeTab, user }: ProfileTabsProps) {
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+            className={`py-3 px-2 border-b-2 font-medium text-lg transition-colors duration-200 ${
               activeTab === tab.id
                 ? 'border-light-accent dark:border-dark-accent text-light-accent dark:text-dark-accent'
                 : 'border-transparent text-light-text-secondary dark:text-dark-text-secondary hover:text-light-text dark:hover:text-dark-text hover:border-light-border dark:hover:border-dark-border'

@@ -95,7 +95,7 @@ export function MyBookmarks() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {bookmarks && bookmarks.map((bookmark) => (
               <div
                 key={bookmark.id}
@@ -146,69 +146,44 @@ export function MyBookmarks() {
                 </div>
 
                 {/* 内容区域 */}
-                <div className="p-4">
+                <div className="p-3">
                   {/* 标题 */}
-                  <h3 className="font-bold text-lg text-light-text dark:text-dark-text mb-2 line-clamp-2">
+                  <h3 className="font-bold text-sm text-light-text dark:text-dark-text mb-1 line-clamp-2">
                     {bookmark.novel?.title}
                   </h3>
 
                   {/* 作者 */}
-                  <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm mb-2">
-                    作者：{bookmark.novel?.author}
+                  <p className="text-light-text-secondary dark:text-dark-text-secondary text-xs mb-2">
+                    {bookmark.novel?.author}
                   </p>
 
-                  {/* 分类 */}
-                  {bookmark.novel?.category && (
-                    <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm mb-3">
-                      分类：{bookmark.novel.category.name}
-                    </p>
-                  )}
-
                   {/* 阅读进度 */}
-                  <div className="mb-3">
-                    <div className="flex justify-between text-sm text-light-text-secondary dark:text-dark-text-secondary mb-1">
-                      <span>阅读进度</span>
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs text-light-text-secondary dark:text-dark-text-secondary mb-1">
+                      <span>进度</span>
                       <span>{bookmark.reading_progress}%</span>
                     </div>
-                    <div className="w-full bg-light-border dark:bg-dark-border rounded-full h-2">
+                    <div className="w-full bg-light-border dark:bg-dark-border rounded-full h-1.5">
                       <div
-                        className="bg-wood-primary h-2 rounded-full transition-all duration-300"
+                        className="bg-wood-primary h-1.5 rounded-full transition-all duration-300"
                         style={{ width: `${bookmark.reading_progress}%` }}
                       />
                     </div>
                   </div>
 
-                  {/* 最后阅读章节 */}
-                  {bookmark.last_read_chapter && (
-                    <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary mb-4">
-                      最后阅读：{bookmark.last_read_chapter.title}
-                    </p>
-                  )}
-
-                  {/* 统计信息 */}
-                  <div className="grid grid-cols-2 gap-2 text-sm text-light-text-secondary dark:text-dark-text-secondary mb-4">
-                    <div>字数：{bookmark.novel?.word_count_formatted}</div>
-                    <div>章节：{bookmark.novel?.chapter_count}</div>
-                    <div>阅读：{bookmark.novel?.view_count}</div>
-                    <div>评分：{bookmark.novel?.rating}</div>
-                  </div>
-
                   {/* 操作按钮 */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Link
                       href={`/novel/${bookmark.novel_id}`}
-                      className="flex-1 px-3 py-2 text-center text-white rounded-lg transition-colors text-sm"
-                      style={{ backgroundColor: '#C49E65' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#B8925C'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C49E65'}
+                      className="flex-1 px-2 py-1.5 text-center bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded text-xs transition-colors"
                     >
-                      继续阅读
+                      阅读
                     </Link>
                     <button
                       onClick={() => handleRemoveBookmark(bookmark.novel_id)}
-                      className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                      className="px-2 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs"
                     >
-                      取消收藏
+                      取消
                     </button>
                   </div>
                 </div>
