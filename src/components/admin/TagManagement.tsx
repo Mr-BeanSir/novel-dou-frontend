@@ -100,7 +100,7 @@ export function TagManagement() {
   };
 
   const handleDeleteTag = async (tag: AdminTag) => {
-    if (tag.novel_count > 0) {
+    if ((tag.novel_count ?? 0) > 0) {
       showToast('该标签下还有小说，无法删除', 'error');
       return;
     }
@@ -249,9 +249,9 @@ export function TagManagement() {
                       
                       <button
                         onClick={() => handleDeleteTag(tag)}
-                        disabled={tag.novel_count > 0}
+                        disabled={(tag.novel_count ?? 0) > 0}
                         className="p-1 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        title={tag.novel_count > 0 ? '该标签下有小说，无法删除' : '删除'}
+                        title={(tag.novel_count ?? 0) > 0 ? '该标签下有小说，无法删除' : '删除'}
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
@@ -267,7 +267,7 @@ export function TagManagement() {
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-1 text-light-text-secondary dark:text-dark-text-secondary">
                       <BookOpen className="w-3 h-3" />
-                      <span>{tag.novel_count} 本</span>
+                      <span>{tag.novel_count ?? 0} 本</span>
                     </div>
                     
                     <div className="flex items-center gap-1">
@@ -281,7 +281,7 @@ export function TagManagement() {
                   </div>
 
                   <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary mt-2 pt-2 border-t border-light-border dark:border-dark-border">
-                    {new Date(tag.created_at).toLocaleDateString()}
+                    {new Date(tag.created_at).toLocaleDateString('zh-CN')}
                   </div>
                 </div>
               ))}

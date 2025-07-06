@@ -217,16 +217,16 @@ export class AdminService {
    * 创建标签
    */
   static async createTag(data: CreateTagData): Promise<AdminTag> {
-    const response = await post<AdminTag>(`${ADMIN_BASE_URL}/tags`, data);
-    return response;
+    const response = await post<{ message: string; tag: AdminTag }>(`${ADMIN_BASE_URL}/tags`, data);
+    return response.tag;
   }
 
   /**
    * 更新标签
    */
   static async updateTag(id: number, data: UpdateTagData): Promise<AdminTag> {
-    const response = await put<AdminTag>(`${ADMIN_BASE_URL}/tags/${id}`, data);
-    return response;
+    const response = await put<{ message: string; tag: AdminTag }>(`${ADMIN_BASE_URL}/tags/${id}`, data);
+    return response.tag;
   }
 
   /**

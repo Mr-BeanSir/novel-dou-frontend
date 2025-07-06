@@ -94,8 +94,10 @@ export interface AdminCategory {
 export interface AdminTag {
   id: number;
   name: string;
-  description?: string;
-  novel_count: number;
+  slug?: string;
+  color?: string;
+  description?: string | null;
+  novel_count: number | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
