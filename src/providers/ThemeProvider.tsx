@@ -35,13 +35,21 @@ export function ThemeProvider({ children, defaultTheme = 'system' }: ThemeProvid
   };
 
   const contextValue = mounted ? themeHook : defaultContextValue;
-  const themeClass = mounted ? themeHook.resolvedTheme : 'light';
+
+  // 在客户端挂载后，强制重新渲染以确保主题正确应用
+  useEffect(() => {
+    if (mounted && themeHook.resolvedTheme) {
+      // 强制触发一次主题应用
+      const event = new CustomEvent('themeChange', {
+        detail: { theme: themeHook.resolvedTheme }
+      });
+      window.dispatchEvent(event);
+    }
+  }, [mounted, themeHook.resolvedTheme]);
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      <div className={themeClass}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }

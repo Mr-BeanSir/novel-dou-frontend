@@ -34,8 +34,24 @@ export function useTheme(): UseThemeReturn {
     if (typeof window === 'undefined') return;
 
     const root = document.documentElement;
+    const body = document.body;
+
+    // 移除所有主题类
     root.classList.remove('light', 'dark');
+    body.classList.remove('light', 'dark');
+
+    // 添加当前主题类
     root.classList.add(resolvedTheme);
+    body.classList.add(resolvedTheme);
+
+    // 设置数据属性，便于调试和CSS选择器
+    root.setAttribute('data-theme', resolvedTheme);
+    body.setAttribute('data-theme', resolvedTheme);
+
+    // 强制触发重绘
+    root.style.setProperty('--current-theme', resolvedTheme);
+
+    console.log('Theme applied:', resolvedTheme, 'HTML classes:', root.className, 'Body classes:', body.className);
   }, []);
 
   // 设置主题

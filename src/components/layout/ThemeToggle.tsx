@@ -1,22 +1,56 @@
 'use client';
 
 import { useTheme } from '@/hooks/useTheme';
+import { useState, useEffect } from 'react';
 
 export default function ThemeToggle() {
   const { resolvedTheme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // 防止 SSR 水合不匹配
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const handleClick = () => {
+    console.log('Theme toggle clicked, current theme:', resolvedTheme);
+    toggleTheme();
+  };
+
+  // 在客户端挂载前显示默认样式
+  if (!mounted) {
+    return (
+      <button
+        className="p-2 rounded-md border border-light-border bg-light-bg-secondary text-light-text transition-colors duration-200"
+        aria-label="切换主题"
+      >
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+          />
+        </svg>
+      </button>
+    );
+  }
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-md border border-light-border dark:border-dark-border 
-                 bg-light-bg-secondary dark:bg-dark-bg-secondary
-                 text-light-text dark:text-dark-text
-                 hover:bg-light-accent hover:dark:bg-dark-accent
-                 transition-colors duration-200"
+      onClick={handleClick}
+      className="p-2 rounded-md border border-light-border bg-light-bg-secondary text-light-text transition-colors duration-200"
       aria-label="切换主题"
+      title={`当前: ${resolvedTheme === 'light' ? '亮色' : '暗色'}模式`}
     >
       {resolvedTheme === 'light' ? (
-        // 月亮图标 (暗色模式)
+        // 月亮图标 (切换到暗色模式)
         <svg
           className="w-5 h-5"
           fill="none"
@@ -32,7 +66,7 @@ export default function ThemeToggle() {
           />
         </svg>
       ) : (
-        // 太阳图标 (亮色模式)
+        // 太阳图标 (切换到亮色模式)
         <svg
           className="w-5 h-5"
           fill="none"

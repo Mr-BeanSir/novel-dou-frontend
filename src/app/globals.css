@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  /* 启用暗色模式支持 */
+  --default-transition-duration: 300ms;
+
+  /* 自定义颜色 */
+  --color-light-bg: #fef8e7;
+  --color-light-bg-secondary: #f9f3d2;
+  --color-light-text: #4b3f2f;
+  --color-light-text-secondary: #3a2e1e;
+  --color-light-accent: #C49E65;
+  --color-light-accent-hover: #a9744f;
+  --color-light-border: #e5d5b7;
+  --color-light-hover: rgba(196, 158, 101, 0.1);
+
+  --color-dark-bg: #1a1a1a;
+  --color-dark-bg-secondary: #121212;
+  --color-dark-text: #eae3cc;
+  --color-dark-text-secondary: #d7d2c0;
+  --color-dark-accent: #89775f;
+  --color-dark-accent-hover: #5e503f;
+  --color-dark-border: #2d2d2d;
+  --color-dark-hover: rgba(137, 119, 95, 0.1);
+
+  --color-cover-bg: #E5D5B7;
+
+  /* 字体配置 */
+  --font-family-serif: 'SimSun', '宋体', 'Source Han Serif', serif;
+  --font-family-sans: 'PingFang SC', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', sans-serif;
+}
+
 :root {
   /* 亮色主题 - 阅读模式 */
   --light-bg: #fef8e7;
@@ -27,56 +57,74 @@
   --cover-bg: #E5D5B7;
 }
 
-@theme {
-  --color-light-bg: var(--light-bg);
-  --color-light-bg-secondary: var(--light-bg-secondary);
-  --color-light-text: var(--light-text);
-  --color-light-text-secondary: var(--light-text-secondary);
-  --color-light-accent: var(--light-accent);
-  --color-light-accent-hover: var(--light-accent-hover);
-  --color-light-border: var(--light-border);
-  --color-light-hover: var(--light-hover);
+/* 暗色模式下的 CSS 变量覆盖 */
+html.dark {
+  --light-bg: var(--dark-bg);
+  --light-bg-secondary: var(--dark-bg-secondary);
+  --light-text: var(--dark-text);
+  --light-text-secondary: var(--dark-text-secondary);
+  --light-accent: var(--dark-accent);
+  --light-accent-hover: var(--dark-accent-hover);
+  --light-border: var(--dark-border);
+  --light-hover: var(--dark-hover);
 
-  --color-dark-bg: var(--dark-bg);
-  --color-dark-bg-secondary: var(--dark-bg-secondary);
-  --color-dark-text: var(--dark-text);
-  --color-dark-text-secondary: var(--dark-text-secondary);
-  --color-dark-accent: var(--dark-accent);
-  --color-dark-accent-hover: var(--dark-accent-hover);
-  --color-dark-border: var(--dark-border);
-  --color-dark-hover: var(--dark-hover);
-
-  --color-cover-bg: var(--cover-bg);
-
-  --font-family-serif: 'SimSun', '宋体', 'Source Han Serif', serif;
-  --font-family-sans: 'PingFang SC', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', sans-serif;
-
-  --line-height-reading: 1.8;
-  --max-width-reading: 720px;
-
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-
-  /* Tailwind 字体配置 */
-  --font-serif: var(--font-family-serif);
-  --font-sans: var(--font-family-sans);
+  /* 同时更新 Tailwind 的颜色变量 */
+  --color-light-bg: var(--dark-bg);
+  --color-light-bg-secondary: var(--dark-bg-secondary);
+  --color-light-text: var(--dark-text);
+  --color-light-text-secondary: var(--dark-text-secondary);
+  --color-light-accent: var(--dark-accent);
+  --color-light-accent-hover: var(--dark-accent-hover);
+  --color-light-border: var(--dark-border);
+  --color-light-hover: var(--dark-hover);
 }
 
-/* 亮色主题样式 */
-.light {
+
+
+/* 基础样式 */
+html, body {
+  font-family: var(--font-family-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+/* 默认亮色主题样式 */
+html, body {
   background-color: var(--light-bg);
   color: var(--light-text);
 }
 
-/* 暗色主题样式 */
-.dark {
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
+/* 暗色主题样式 - 使用更高优先级 */
+html.dark,
+html.dark body,
+body.dark {
+  background-color: var(--dark-bg) !important;
+  color: var(--dark-text) !important;
 }
 
-body {
-  font-family: var(--font-family-sans);
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* 亮色主题样式（显式） */
+html.light,
+html.light body,
+body.light {
+  background-color: var(--light-bg) !important;
+  color: var(--light-text) !important;
+}
+
+/* 确保所有元素都能响应主题变化 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* 强制主题变量更新 */
+html.dark * {
+  --light-bg: var(--dark-bg);
+  --light-bg-secondary: var(--dark-bg-secondary);
+  --light-text: var(--dark-text);
+  --light-text-secondary: var(--dark-text-secondary);
+  --light-accent: var(--dark-accent);
+  --light-accent-hover: var(--dark-accent-hover);
+  --light-border: var(--dark-border);
+  --light-hover: var(--dark-hover);
 }
 
 /* 自定义文本截断类 */
