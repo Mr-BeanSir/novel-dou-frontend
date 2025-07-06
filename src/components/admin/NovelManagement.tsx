@@ -131,7 +131,8 @@ export function NovelManagement() {
       draft: { label: '草稿', color: 'gray' },
       published: { label: '已发布', color: 'green' },
       completed: { label: '已完结', color: 'blue' },
-      paused: { label: '暂停', color: 'yellow' }
+      paused: { label: '暂停', color: 'yellow' },
+      serializing: { label: '连载中', color: 'purple' }
     };
     
     const status = statusMap[novel.status] || statusMap.draft;
@@ -139,7 +140,8 @@ export function NovelManagement() {
       gray: 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400',
       green: 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400',
       blue: 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400',
-      yellow: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400'
+      yellow: 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400',
+      purple: 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400'
     };
 
     return (
@@ -216,6 +218,7 @@ export function NovelManagement() {
                 <option value="">全部状态</option>
                 <option value="draft">草稿</option>
                 <option value="published">已发布</option>
+                <option value="serializing">连载中</option>
                 <option value="completed">已完结</option>
                 <option value="paused">暂停</option>
               </select>

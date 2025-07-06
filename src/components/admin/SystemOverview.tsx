@@ -198,7 +198,7 @@ export function SystemOverview() {
                     <Eye className="w-4 h-4" />
                     <span>{novel.view_count}</span>
                     <Heart className="w-4 h-4" />
-                    <span>{novel.like_count}</span>
+                    <span>{novel.bookmark_count}</span>
                   </div>
                   <p className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
                     {new Date(novel.created_at).toLocaleDateString()}
