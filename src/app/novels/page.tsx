@@ -111,18 +111,18 @@ export default function NovelsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* 页面头部 */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-theme-text mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-light-text mb-2">
           {getPageTitle()}
         </h1>
-        <p className="text-lg text-theme-text-secondary">
+        <p className="text-lg text-light-text-secondary">
           {getPageDescription()}
         </p>
       </div>
 
       {/* 排序选项 */}
-      <div className="bg-[#F9F3D2] border border-[#E5D5B7] rounded-xl p-4 mb-6">
+      <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6 mb-8">
         <div className="flex items-center gap-4">
-          <span className="text-theme-text font-medium">排序方式：</span>
+          <span className="text-light-text font-medium">排序方式：</span>
           <div className="flex flex-wrap gap-2">
             {[
               { key: 'recent', label: '最新更新' },
@@ -133,15 +133,15 @@ export default function NovelsPage() {
               const isActive = sortBy === option.key;
               const newParams = new URLSearchParams(searchParams.toString());
               newParams.set('sort_by', option.key);
-              
+
               return (
                 <a
                   key={option.key}
                   href={`?${newParams.toString()}`}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition-colors
                     ${isActive
-                      ? 'bg-[#c49e65] text-white'
-                      : 'bg-white text-theme-text hover:bg-theme-accent/10 border border-theme-border'
+                      ? 'bg-light-accent text-white'
+                      : 'bg-light-bg text-light-text hover:bg-light-accent/10 border border-light-border'
                     }`}
                 >
                   {option.label}
@@ -155,16 +155,16 @@ export default function NovelsPage() {
       {/* 内容区域 */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-theme-accent"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-light-accent"></div>
         </div>
       ) : error ? (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">😞</div>
-          <h3 className="text-xl font-bold text-theme-text mb-2">加载失败</h3>
-          <p className="text-theme-text-secondary mb-4">{error}</p>
+          <h3 className="text-xl font-bold text-light-text mb-2">加载失败</h3>
+          <p className="text-light-text-secondary mb-4">{error}</p>
           <button
             onClick={() => loadNovels()}
-            className="px-6 py-2 bg-theme-accent text-white rounded-lg hover:bg-theme-accent-hover transition-colors"
+            className="px-6 py-2 bg-light-accent text-white rounded-lg hover:bg-light-accent-hover transition-colors"
           >
             重试
           </button>
@@ -184,26 +184,26 @@ export default function NovelsPage() {
               <button
                 onClick={() => handlePageChange(pagination.current_page - 1)}
                 disabled={pagination.current_page <= 1}
-                className="px-4 py-2 bg-white border border-theme-border rounded-lg
+                className="px-4 py-2 bg-light-bg border border-light-border rounded-lg
                          disabled:opacity-50 disabled:cursor-not-allowed
-                         hover:bg-theme-accent/10 transition-colors"
+                         hover:bg-light-accent/10 transition-colors"
               >
                 上一页
               </button>
-              
+
               <div className="flex items-center gap-1">
                 {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
                   const page = i + 1;
                   const isActive = page === pagination.current_page;
-                  
+
                   return (
                     <button
                       key={page}
                       onClick={() => handlePageChange(page)}
                       className={`w-10 h-10 rounded-lg font-medium transition-colors
-                        ${isActive 
-                          ? 'bg-theme-accent text-white' 
-                          : 'bg-white border border-theme-border hover:bg-theme-accent/10'
+                        ${isActive
+                          ? 'bg-light-accent text-white'
+                          : 'bg-light-bg border border-light-border hover:bg-light-accent/10'
                         }`}
                     >
                       {page}
@@ -215,9 +215,9 @@ export default function NovelsPage() {
               <button
                 onClick={() => handlePageChange(pagination.current_page + 1)}
                 disabled={pagination.current_page >= pagination.last_page}
-                className="px-4 py-2 bg-white border border-theme-border rounded-lg
+                className="px-4 py-2 bg-light-bg border border-light-border rounded-lg
                          disabled:opacity-50 disabled:cursor-not-allowed
-                         hover:bg-theme-accent/10 transition-colors"
+                         hover:bg-light-accent/10 transition-colors"
               >
                 下一页
               </button>
@@ -227,8 +227,8 @@ export default function NovelsPage() {
       ) : (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">📚</div>
-          <h3 className="text-xl font-bold text-theme-text mb-2">暂无小说</h3>
-          <p className="text-theme-text-secondary">
+          <h3 className="text-xl font-bold text-light-text mb-2">暂无小说</h3>
+          <p className="text-light-text-secondary">
             {search ? '没有找到相关的小说' : '该分类下暂无小说'}
           </p>
         </div>
