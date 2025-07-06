@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getServerUser } from '@/lib/auth-server';
 import ClientHeader from './ClientHeader';
 import ThemeToggle from './ThemeToggle';
+import HeaderSearch from './HeaderSearch';
 import { Shield } from 'lucide-react';
 
 export default async function ServerHeader() {
@@ -50,6 +51,9 @@ export default async function ServerHeader() {
 
           {/* 右侧区域 */}
           <div className="flex items-center space-x-4">
+            {/* 搜索框 */}
+            <HeaderSearch />
+
             {/* 主题切换 */}
             <ThemeToggle />
 

@@ -139,8 +139,8 @@ export default function NovelsPage() {
                   key={option.key}
                   href={`?${newParams.toString()}`}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition-colors
-                    ${isActive 
-                      ? 'bg-theme-accent text-white' 
+                    ${isActive
+                      ? 'bg-[#c49e65] text-white'
                       : 'bg-white text-theme-text hover:bg-theme-accent/10 border border-theme-border'
                     }`}
                 >

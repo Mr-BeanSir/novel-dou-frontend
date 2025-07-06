@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUser, useIsAuthenticated, useClearAuth } from '@/stores/userSimple';
 import { AuthService, isAdmin } from '@/services/auth';
 import ThemeToggle from './ThemeToggle';
+import HeaderSearch from './HeaderSearch';
 import { Shield } from 'lucide-react';
 
 export default function Header() {
@@ -123,6 +124,9 @@ export default function Header() {
 
             {/* 右侧操作区 */}
             <div className="flex items-center space-x-4">
+              {/* 搜索框 */}
+              <HeaderSearch />
+
               {/* 主题切换 */}
               <ThemeToggle />
 
