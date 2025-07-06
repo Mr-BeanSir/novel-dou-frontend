@@ -41,7 +41,7 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
                         transition-all duration-300 hover:scale-[1.03]
                         group cursor-pointer">
           {/* 封面图片 */}
-          <div className="relative aspect-[3/4] overflow-hidden bg-cover-bg">
+          <div className="relative aspect-[3/4] overflow-hidden bg-light-border">
             {novel.cover_image ? (
               <Image
                 src={novel.cover_image}

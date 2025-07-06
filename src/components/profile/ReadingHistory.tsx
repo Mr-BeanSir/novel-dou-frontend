@@ -148,7 +148,7 @@ export function ReadingHistory() {
               >
                 <div className="flex items-start space-x-4">
                   {/* 小说封面 */}
-                  <div className="w-16 h-20 bg-cover-bg rounded flex-shrink-0 overflow-hidden">
+                  <div className="w-16 h-20 bg-light-border rounded flex-shrink-0 overflow-hidden">
                     {record.novel.cover_image ? (
                       <img
                         src={record.novel.cover_image}
@@ -156,8 +156,28 @@ export function ReadingHistory() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-2xl">📖</div>
+                      <div className="w-full h-full bg-gradient-to-br from-light-border to-light-bg-secondary
+                                    flex items-center justify-center relative overflow-hidden">
+                        {/* 背景装饰 */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-light-accent/5 to-transparent"></div>
+                        <div className="absolute top-1 right-1 w-2 h-2 bg-light-accent/10 rounded-full"></div>
+                        <div className="absolute bottom-1 left-1 w-1 h-1 bg-light-accent/20 rounded-full"></div>
+
+                        <div className="relative z-10">
+                          <svg
+                            className="w-6 h-6 text-light-text-secondary/60"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={1.5}
+                              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                            />
+                          </svg>
+                        </div>
                       </div>
                     )}
                   </div>
