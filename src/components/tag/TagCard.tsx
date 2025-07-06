@@ -41,21 +41,21 @@ export default function TagCard({ tag, className = '' }: TagCardProps) {
                 className="w-4 h-4 rounded-full flex-shrink-0"
                 style={{ backgroundColor: tagColor }}
               ></div>
-              <h3 className="font-bold text-lg text-theme-text
-                           group-hover:text-theme-accent transition-theme leading-tight">
+              <h3 className="font-bold text-lg text-light-text
+                           group-hover:text-light-accent transition-colors duration-200 leading-tight">
                 {tag.name}
               </h3>
             </div>
 
             {/* 描述 */}
             {tag.description && (
-              <p className="text-sm text-theme-text-secondary line-clamp-2 mb-4 leading-relaxed">
+              <p className="text-sm text-light-text-secondary line-clamp-2 mb-4 leading-relaxed">
                 {tag.description}
               </p>
             )}
 
             {/* 统计信息 */}
-            <div className="flex items-center justify-between text-sm text-theme-text-secondary">
+            <div className="flex items-center justify-between text-sm text-light-text-secondary">
               <div className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -65,7 +65,7 @@ export default function TagCard({ tag, className = '' }: TagCardProps) {
               </div>
 
               <div className="flex items-center gap-1">
-                <svg className="w-4 h-4 fill-current text-theme-accent" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 fill-current text-light-accent" viewBox="0 0 24 24">
                   <path d="M9 5l7 7-7 7" />
                 </svg>
               </div>

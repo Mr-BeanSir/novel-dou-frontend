@@ -66,16 +66,16 @@ export default function CategoryCard({ category, className = '' }: CategoryCardP
           </div>
 
           {/* 内容区域 */}
-          <div className="p-5 bg-[#F9F3D2]">
+          <div className="p-5 bg-light-bg-secondary">
             {/* 分类名称 */}
-            <h3 className="font-bold text-xl text-theme-text mb-3
-                         group-hover:text-theme-accent transition-theme leading-tight">
+            <h3 className="font-bold text-xl text-light-text mb-3
+                         group-hover:text-light-accent transition-colors duration-200 leading-tight">
               {category.name}
             </h3>
 
             {/* 描述 */}
             {category.description && (
-              <p className="text-sm text-theme-text-secondary line-clamp-2 mb-4 leading-relaxed">
+              <p className="text-sm text-light-text-secondary line-clamp-2 mb-4 leading-relaxed">
                 {category.description}
               </p>
             )}

@@ -138,31 +138,31 @@ export default async function AuthorsPage() {
       </div>
 
       {/* 统计信息 */}
-      <div className="bg-[#F9F3D2] border border-[#E5D5B7] rounded-xl p-6 mb-8">
+      <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
           <div>
-            <div className="text-3xl font-bold text-theme-accent mb-2">
+            <div className="text-3xl font-bold text-light-accent mb-2">
               {authors.length}
             </div>
-            <div className="text-theme-text-secondary">位作者</div>
+            <div className="text-light-text-secondary">位作者</div>
           </div>
           <div>
             <div className="text-3xl font-bold text-green-600 mb-2">
               {prolificAuthors.length}
             </div>
-            <div className="text-theme-text-secondary">多产作者</div>
+            <div className="text-light-text-secondary">多产作者</div>
           </div>
           <div>
             <div className="text-3xl font-bold text-blue-600 mb-2">
               {activeAuthors.length}
             </div>
-            <div className="text-theme-text-secondary">活跃作者</div>
+            <div className="text-light-text-secondary">活跃作者</div>
           </div>
           <div>
             <div className="text-3xl font-bold text-purple-600 mb-2">
               {newAuthors.length}
             </div>
-            <div className="text-theme-text-secondary">新人作者</div>
+            <div className="text-light-text-secondary">新人作者</div>
           </div>
         </div>
       </div>

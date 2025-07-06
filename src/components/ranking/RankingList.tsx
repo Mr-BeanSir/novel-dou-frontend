@@ -45,8 +45,8 @@ export default function RankingList({
   return (
     <div className="space-y-6">
       {/* 排行榜类型选择 */}
-      <div className="bg-[#F9F3D2] border border-[#E5D5B7] rounded-xl p-6">
-        <h2 className="text-2xl font-bold text-theme-text mb-4">排行榜</h2>
+      <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6">
+        <h2 className="text-2xl font-bold text-light-text mb-4">排行榜</h2>
         
         {/* 类型选择 */}
         <div className="flex flex-wrap gap-3 mb-4">
@@ -56,8 +56,8 @@ export default function RankingList({
               onClick={() => handleTypeChange(type.key)}
               className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2
                 ${activeType === type.key
-                  ? 'bg-[#c49e65] text-white shadow-md'
-                  : 'bg-white text-theme-text hover:bg-theme-accent/10 border border-theme-border'
+                  ? 'bg-light-accent text-white shadow-md'
+                  : 'bg-light-bg text-light-text hover:bg-light-accent/10 border border-light-border'
                 }`}
             >
               <span>{type.icon}</span>
@@ -74,8 +74,8 @@ export default function RankingList({
               onClick={() => handlePeriodChange(period.key)}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200
                 ${activePeriod === period.key
-                  ? 'bg-[#c49e65] text-white'
-                  : 'bg-white text-theme-text-secondary hover:bg-theme-text/10 border border-theme-border'
+                  ? 'bg-light-accent text-white'
+                  : 'bg-light-bg text-light-text-secondary hover:bg-light-text/10 border border-light-border'
                 }`}
             >
               {period.label}
@@ -88,14 +88,14 @@ export default function RankingList({
       <div className="space-y-6">
         {loading ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-theme-accent"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-light-accent"></div>
           </div>
         ) : (
           <>
             {/* 前三名特殊展示 */}
             {initialNovels.length > 0 && (
-              <div className="bg-[#F9F3D2] border border-[#E5D5B7] rounded-xl p-6">
-                <h3 className="text-xl font-bold text-theme-text mb-4 flex items-center gap-2">
+              <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6">
+                <h3 className="text-xl font-bold text-light-text mb-4 flex items-center gap-2">
                   <svg className="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
@@ -118,12 +118,12 @@ export default function RankingList({
 
             {/* 完整排行榜 */}
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-theme-text">完整排行</h3>
+              <h3 className="text-xl font-bold text-light-text">完整排行</h3>
               
               {initialNovels.length > 0 ? (
                 <div className="space-y-3">
                   {initialNovels.map((novel, index) => (
-                    <div key={novel.id} className="bg-[#F9F3D2] border border-[#E5D5B7] rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div key={novel.id} className="bg-light-bg-secondary border border-light-border rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-4">
                         {/* 排名 */}
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
@@ -131,7 +131,7 @@ export default function RankingList({
                             ? index === 0 ? 'bg-yellow-500 text-white' 
                               : index === 1 ? 'bg-gray-400 text-white'
                               : 'bg-orange-500 text-white'
-                            : 'bg-theme-bg-secondary text-theme-text-secondary'
+                            : 'bg-light-bg-secondary text-light-text-secondary'
                           }`}>
                           {index + 1}
                         </div>
@@ -140,16 +140,16 @@ export default function RankingList({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-4">
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-theme-text line-clamp-1 mb-1">
+                              <h4 className="font-bold text-light-text line-clamp-1 mb-1">
                                 {novel.title}
                               </h4>
-                              <p className="text-sm text-theme-text-secondary">
+                              <p className="text-sm text-light-text-secondary">
                                 {novel.author}
                               </p>
                             </div>
 
                             {/* 统计数据 */}
-                            <div className="flex items-center gap-6 text-sm text-theme-text-secondary">
+                            <div className="flex items-center gap-6 text-sm text-light-text-secondary">
                               {activeType === 'view' && (
                                 <div className="flex items-center gap-1">
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,7 +186,7 @@ export default function RankingList({
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-theme-text-secondary">暂无排行数据</p>
+                  <p className="text-light-text-secondary">暂无排行数据</p>
                 </div>
               )}
             </div>
