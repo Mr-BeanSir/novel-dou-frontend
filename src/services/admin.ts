@@ -167,8 +167,8 @@ export class AdminService {
    * 创建分类
    */
   static async createCategory(data: CreateCategoryData): Promise<AdminCategory> {
-    const response = await post<AdminCategory>(`${ADMIN_BASE_URL}/categories`, data);
-    return response;
+    const response = await post<{ message: string; category: AdminCategory }>(`${ADMIN_BASE_URL}/categories`, data);
+    return response.category;
   }
 
   /**

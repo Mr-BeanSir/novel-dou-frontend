@@ -81,8 +81,11 @@ export interface AdminUser {
 export interface AdminCategory {
   id: number;
   name: string;
-  description?: string;
-  novel_count: number;
+  slug?: string;
+  description?: string | null;
+  cover_image?: string | null;
+  novel_count: number | null;
+  sort_order?: number | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;

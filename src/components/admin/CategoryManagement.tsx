@@ -102,7 +102,7 @@ export function CategoryManagement() {
   };
 
   const handleDeleteCategory = async (category: AdminCategory) => {
-    if (category.novel_count > 0) {
+    if ((category.novel_count ?? 0) > 0) {
       showToast('该分类下还有小说，无法删除', 'error');
       return;
     }
@@ -253,9 +253,9 @@ export function CategoryManagement() {
                     
                     <button
                       onClick={() => handleDeleteCategory(category)}
-                      disabled={category.novel_count > 0}
+                      disabled={(category.novel_count ?? 0) > 0}
                       className="p-1.5 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      title={category.novel_count > 0 ? '该分类下有小说，无法删除' : '删除'}
+                      title={(category.novel_count ?? 0) > 0 ? '该分类下有小说，无法删除' : '删除'}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -271,11 +271,11 @@ export function CategoryManagement() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-sm text-light-text-secondary dark:text-dark-text-secondary">
                     <BookOpen className="w-4 h-4" />
-                    <span>{category.novel_count} 本小说</span>
+                    <span>{category.novel_count ?? 0} 本小说</span>
                   </div>
-                  
+
                   <div className="text-xs text-light-text-secondary dark:text-dark-text-secondary">
-                    {new Date(category.created_at).toLocaleDateString()}
+                    {new Date(category.created_at).toLocaleDateString('zh-CN')}
                   </div>
                 </div>
               </div>
