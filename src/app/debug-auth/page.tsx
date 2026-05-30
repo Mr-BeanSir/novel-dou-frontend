@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAuthToken } from '@/lib/api';
 import { getCurrentUserLatest } from '@/services/auth';
 
 export default function DebugAuth() {
@@ -11,14 +10,10 @@ export default function DebugAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // 检查localStorage
-        const userStorage = localStorage.getItem('user-storage');
-        const token = getAuthToken();
-        
         let userInfo = null;
         let apiError = null;
-        
-        // 尝试调用API
+
+        // 尝试调用API（cookie 自动携带）
         try {
           userInfo = await getCurrentUserLatest();
         } catch (error) {
@@ -26,8 +21,6 @@ export default function DebugAuth() {
         }
 
         setAuthInfo({
-          localStorage: userStorage ? JSON.parse(userStorage) : null,
-          token,
           userInfo,
           apiError,
           timestamp: new Date().toISOString()
@@ -52,7 +45,7 @@ export default function DebugAuth() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">认证状态调试</h1>
-      
+
       <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
         <pre className="text-sm overflow-auto">
           {JSON.stringify(authInfo, null, 2)}
@@ -67,9 +60,9 @@ export default function DebugAuth() {
           }}
           className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
         >
-          清除认证信息
+          清除本地状态
         </button>
-        
+
         <button
           onClick={() => {
             window.location.href = '/login';

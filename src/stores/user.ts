@@ -8,7 +8,6 @@ import {
   logout as apiLogout,
   getCurrentUser,
   getCurrentUserLatest,
-  isAuthenticated,
   isAdmin as checkIsAdmin
 } from '@/services/auth';
 import type { User, LoginRequest, RegisterRequest } from '@/types/user';
@@ -16,7 +15,6 @@ import type { User, LoginRequest, RegisterRequest } from '@/types/user';
 interface UserState {
   // 状态
   user: User | null;
-  token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
 
@@ -26,7 +24,6 @@ interface UserState {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   setUser: (user: User | null) => void;
-  setToken: (token: string | null) => void;
   setLoading: (loading: boolean) => void;
   initialize: () => Promise<void>;
 
@@ -43,7 +40,6 @@ export const useUserStore = create<UserState>()(
     (set, get) => ({
       // 初始状态
       user: null,
-      token: null,
       isLoading: false,
       isAuthenticated: false,
 
@@ -56,12 +52,9 @@ export const useUserStore = create<UserState>()(
 
           set({
             user,
-            token: 'cookie-stored', // token现在存储在cookie中
             isAuthenticated: true,
             isLoading: false
           });
-
-
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -77,12 +70,9 @@ export const useUserStore = create<UserState>()(
 
           set({
             user,
-            token: 'cookie-stored', // token现在存储在cookie中
             isAuthenticated: true,
             isLoading: false
           });
-
-
         } catch (error) {
           set({ isLoading: false });
           throw error;
@@ -99,19 +89,16 @@ export const useUserStore = create<UserState>()(
         } finally {
           set({
             user: null,
-            token: null,
             isAuthenticated: false,
             isLoading: false
           });
-
-
         }
       },
 
       // 刷新用户信息
       refreshUser: async () => {
-        const { token } = get();
-        if (!token || !isAuthenticated()) {
+        const { isAuthenticated: isAuth } = get();
+        if (!isAuth) {
           set({ user: null, isAuthenticated: false });
           return;
         }
@@ -124,23 +111,15 @@ export const useUserStore = create<UserState>()(
           console.error('Failed to refresh user:', error);
           set({
             user: null,
-            token: null,
             isAuthenticated: false,
             isLoading: false
           });
-
         }
       },
 
       // 设置用户
       setUser: (user: User | null) => {
         set({ user });
-      },
-
-      // 设置 token
-      setToken: (token: string | null) => {
-        set({ token, isAuthenticated: !!token });
-
       },
 
       // 设置加载状态
@@ -150,26 +129,19 @@ export const useUserStore = create<UserState>()(
 
       // 初始化
       initialize: async () => {
-        const { token, user, isAuthenticated } = get();
-
-        if (token && isAuthenticated && !user) {
-          // 如果有token且标记为已认证，但没有用户信息，则重新获取
+        const { isAuthenticated: isAuth } = get();
+        if (isAuth) {
           try {
-            const userData = await getCurrentUser();
-            set({ user: userData });
+            const user = await getCurrentUserLatest();
+            set({ user, isAuthenticated: true });
           } catch (error) {
             console.error('Failed to initialize user:', error);
-            // token 无效，清除状态
-            set({
-              user: null,
-              token: null,
-              isAuthenticated: false
-            });
+            set({ user: null, isAuthenticated: false });
           }
         }
       },
 
-      // 权限检查方法
+      // 权限检查
       hasPermission: (permission: string) => {
         const { user } = get();
         if (!user || !user.permissions) return false;
@@ -192,10 +164,10 @@ export const useUserStore = create<UserState>()(
         );
       },
 
-      // 检查是否为管理员
       isAdmin: () => {
         const { user } = get();
-        return checkIsAdmin(user);
+        if (!user || !user.user_group) return false;
+        return user.user_group.name === '管理员' || user.user_group.name === 'admin';
       },
 
       // 使用 me 接口刷新用户信息
@@ -205,10 +177,8 @@ export const useUserStore = create<UserState>()(
           set({ user: userData });
         } catch (error) {
           console.error('Failed to refresh user with latest data:', error);
-          // 如果获取失败，清除认证状态
           set({
             user: null,
-            token: null,
             isAuthenticated: false
           });
           throw error;
@@ -221,23 +191,19 @@ export const useUserStore = create<UserState>()(
 
       partialize: (state) => ({
         user: state.user,
-        token: state.token,
         isAuthenticated: state.isAuthenticated
       }),
 
-      // 添加版本控制
-      version: 1,
+      // 版本控制
+      version: 2,
       migrate: (persistedState: any, version: number) => {
-        // 如果版本为 0 或未定义，说明是旧版本或首次加载
-        if (version === 0 || version === undefined) {
-          // 返回当前版本的默认状态
+        // 从旧版本迁移：移除 token 字段
+        if (version < 2) {
           return {
             user: persistedState?.user || null,
-            token: persistedState?.token || null,
-            isAuthenticated: !!(persistedState?.token || persistedState?.isAuthenticated)
+            isAuthenticated: !!persistedState?.isAuthenticated
           };
         }
-        // 如果版本匹配，直接返回持久化状态
         return persistedState;
       },
     }
@@ -247,18 +213,3 @@ export const useUserStore = create<UserState>()(
 // 便捷的 hooks
 export const useUser = () => useUserStore((state) => state.user);
 export const useIsAuthenticated = () => useUserStore((state) => state.isAuthenticated);
-export const useIsLoading = () => useUserStore((state) => state.isLoading);
-
-// 单独导出每个action
-export const useLogin = () => useUserStore((state) => state.login);
-export const useRegister = () => useUserStore((state) => state.register);
-export const useLogout = () => useUserStore((state) => state.logout);
-export const useRefreshUser = () => useUserStore((state) => state.refreshUser);
-export const useRefreshUserLatest = () => useUserStore((state) => state.refreshUserLatest);
-export const useInitialize = () => useUserStore((state) => state.initialize);
-
-// 权限检查 hooks
-export const useHasPermission = () => useUserStore((state) => state.hasPermission);
-export const useHasAnyPermission = () => useUserStore((state) => state.hasAnyPermission);
-export const useHasAllPermissions = () => useUserStore((state) => state.hasAllPermissions);
-export const useIsAdmin = () => useUserStore((state) => state.isAdmin);

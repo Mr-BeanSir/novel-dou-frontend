@@ -39,7 +39,7 @@ const preloadImage = (src: string): Promise<void> => {
 export default function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setUser, setToken, setAuthenticated } = useUserStore();
+  const { setUser, setAuthenticated } = useUserStore();
   const { showToast } = useToast();
   const { theme, toggleTheme } = useTheme();
 
@@ -139,8 +139,11 @@ export default function LoginPageContent() {
       const response = await AuthService.login(loginForm);
       const { user, message } = response;
 
+      // 保存用户信息到客户端状态（cookie由后端自动设置）
+      setUser(user);
+      setAuthenticated(true);
+
       showToast(message || '登录成功', 'success');
-      // 登录成功后直接跳转，cookie已在服务端设置
       window.location.href = '/';
     } catch (error) {
       showToast(
@@ -167,8 +170,11 @@ export default function LoginPageContent() {
       const response = await AuthService.register(registerForm);
       const { user, message } = response;
 
+      // 保存用户信息到客户端状态（cookie由后端自动设置）
+      setUser(user);
+      setAuthenticated(true);
+
       showToast(message || '注册成功', 'success');
-      // 注册成功后直接跳转，cookie已在服务端设置
       window.location.href = '/';
     } catch (error) {
       showToast(

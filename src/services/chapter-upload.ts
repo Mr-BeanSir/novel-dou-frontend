@@ -1,6 +1,5 @@
 // 章节上传服务
 
-import { getAuthToken } from '@/lib/api';
 import { API_CONFIG } from '@/config/api';
 import type {
   NovelChapter,
@@ -8,29 +7,10 @@ import type {
   BatchUploadResponse,
 } from '@/types/novel';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
-
 /**
  * 章节上传服务类
  */
 export class ChapterUploadService {
-  /**
-   * 创建请求头（用于文件上传）
-   */
-  private static createUploadHeaders(): HeadersInit {
-    const headers: HeadersInit = {
-      'Accept': 'application/json',
-    };
-
-    const token = getAuthToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // 注意：不要设置 Content-Type，让浏览器自动设置 multipart/form-data
-    return headers;
-  }
-
   /**
    * 单个章节上传
    */
@@ -41,7 +21,7 @@ export class ChapterUploadService {
     const formData = new FormData();
     formData.append('title', chapterData.title);
     formData.append('file', chapterData.file);
-    
+
     if (chapterData.is_vip !== undefined) {
       formData.append('is_vip', chapterData.is_vip.toString());
     }
@@ -52,12 +32,15 @@ export class ChapterUploadService {
       formData.append('chapter_number', chapterData.chapter_number.toString());
     }
 
-    const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_UPLOAD(novelId)}`;
-    
+    const url = API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_UPLOAD(novelId);
+
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: this.createUploadHeaders(),
+        headers: {
+          'Accept': 'application/json',
+        },
+        credentials: 'same-origin',
         body: formData,
       });
 
@@ -87,12 +70,15 @@ export class ChapterUploadService {
       formData.append('files[]', file);
     });
 
-    const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_BATCH_UPLOAD(novelId)}`;
-    
+    const url = API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_BATCH_UPLOAD(novelId);
+
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: this.createUploadHeaders(),
+        headers: {
+          'Accept': 'application/json',
+        },
+        credentials: 'same-origin',
         body: formData,
       });
 
@@ -114,12 +100,15 @@ export class ChapterUploadService {
    * 从temp目录导入章节
    */
   static async importFromTemp(novelId: number): Promise<BatchUploadResponse> {
-    const url = `${API_BASE_URL}${API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_IMPORT_TEMP(novelId)}`;
-    
+    const url = API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_IMPORT_TEMP(novelId);
+
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: this.createUploadHeaders(),
+        headers: {
+          'Accept': 'application/json',
+        },
+        credentials: 'same-origin',
       });
 
       if (!response.ok) {

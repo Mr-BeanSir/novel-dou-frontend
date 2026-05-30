@@ -1,9 +1,12 @@
 // 服务端认证工具函数
+// 服务端需要完整 URL 直连后端（nginx 代理只对浏览器生效）
+// Node.js fetch 不会自动携带 cookie，需手动从 cookie 读取 token 注入 Authorization 头
 
 import { getAuthCookie } from './cookies';
 import type { User } from '@/types/user';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
+// 服务端专用的后端 API 地址（SSR 时 fetch 需要完整 URL）
+const SERVER_API_BASE_URL = process.env.SERVER_API_BASE_URL || 'http://localhost:8000/api';
 
 /**
  * 服务端API请求函数
@@ -11,21 +14,18 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8
 async function serverRequest<T>(
   endpoint: string,
   options: RequestInit = {},
-  includeAuth: boolean = true
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
+  const url = `${SERVER_API_BASE_URL}${endpoint}`;
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     ...(options.headers as Record<string, string>),
   };
 
-  if (includeAuth) {
-    const token = await getAuthCookie();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+  // 从 httpOnly cookie 读取 token，手动注入 Authorization 头
+  const token = await getAuthCookie();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   const config: RequestInit = {
@@ -35,7 +35,7 @@ async function serverRequest<T>(
 
   try {
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`HTTP ${response.status}: ${errorText}`);
@@ -54,11 +54,6 @@ async function serverRequest<T>(
  */
 export async function getServerUser(): Promise<User | null> {
   try {
-    const token = await getAuthCookie();
-    if (!token) {
-      return null;
-    }
-
     const response = await serverRequest<{ user: User }>('/users/me');
     return response.user;
   } catch (error) {

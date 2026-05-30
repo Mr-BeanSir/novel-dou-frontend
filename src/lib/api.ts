@@ -1,64 +1,28 @@
 // API 请求封装
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
-
-// 获取存储的 token - 从 Zustand store 获取
-export function getAuthToken(): string | null {
-  try {
-    const userStorage = localStorage.getItem('user-storage');
-    if (userStorage) {
-      const parsed = JSON.parse(userStorage);
-      return parsed.state?.token || null;
-    }
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-
-// 创建请求头
-function createHeaders(includeAuth: boolean = true): HeadersInit {
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
-
-
-  if (includeAuth) {
-    const token = getAuthToken();
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-  }
-
-  return headers;
-}
+// 所有请求通过 nginx 反代走同域名，cookie 自动携带
 
 // 通用请求函数
 async function request<T>(
   endpoint: string,
   options: RequestInit = {},
-  includeAuth: boolean = true
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-
   const config: RequestInit = {
     ...options,
     headers: {
-      ...createHeaders(includeAuth),
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
       ...options.headers,
     },
+    credentials: 'same-origin', // 同域名自动携带 cookie
   };
 
-
   try {
-    console.log('Making API request to:', url);
-    const response = await fetch(url, config);
+    console.log('Making API request to:', endpoint);
+    const response = await fetch(endpoint, config);
 
     if (!response.ok) {
       console.error('API request failed:', {
-        url,
+        url: endpoint,
         status: response.status,
         statusText: response.statusText
       });
@@ -69,12 +33,10 @@ async function request<T>(
       if (response.status === 401 || response.status === 403) {
         const errorMessage = errorData.message || 'Unauthenticated.';
 
-        // 清除本地认证信息
+        // 清除本地认证状态
         if (typeof window !== 'undefined') {
           localStorage.removeItem('user-storage');
           console.log('Authentication failed, cleared user storage');
-
-          // 重定向到登录页面
           window.location.href = '/login';
         }
 
@@ -83,7 +45,6 @@ async function request<T>(
 
       // 处理422验证错误
       if (response.status === 422 && errorData.errors) {
-        // 提取第一个验证错误信息
         const firstError = Object.values(errorData.errors)[0];
         const errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
         throw new Error(errorMessage || errorData.message || '验证失败');
@@ -95,29 +56,26 @@ async function request<T>(
     }
 
     const data = await response.json();
-    console.log('API request successful:', url);
+    console.log('API request successful:', endpoint);
     return data;
   } catch (error) {
     console.error('API request failed:', {
-      url,
+      url: endpoint,
       error: error instanceof Error ? error.message : error,
-      includeAuth,
-      hasToken: !!getAuthToken()
     });
     throw error;
   }
 }
 
 // GET 请求
-export function get<T>(endpoint: string, includeAuth: boolean = true): Promise<T> {
-  return request<T>(endpoint, { method: 'GET' }, includeAuth);
+export function get<T>(endpoint: string): Promise<T> {
+  return request<T>(endpoint, { method: 'GET' });
 }
 
 // POST 请求
 export function post<T>(
   endpoint: string,
   data?: any,
-  includeAuth: boolean = true
 ): Promise<T> {
   return request<T>(
     endpoint,
@@ -125,7 +83,6 @@ export function post<T>(
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
     },
-    includeAuth
   );
 }
 
@@ -133,7 +90,6 @@ export function post<T>(
 export function put<T>(
   endpoint: string,
   data?: any,
-  includeAuth: boolean = true
 ): Promise<T> {
   return request<T>(
     endpoint,
@@ -141,20 +97,18 @@ export function put<T>(
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
     },
-    includeAuth
   );
 }
 
 // DELETE 请求
-export function del<T>(endpoint: string, includeAuth: boolean = true): Promise<T> {
-  return request<T>(endpoint, { method: 'DELETE' }, includeAuth);
+export function del<T>(endpoint: string): Promise<T> {
+  return request<T>(endpoint, { method: 'DELETE' });
 }
 
 // DELETE 请求（带请求体）
 export function delWithBody<T>(
   endpoint: string,
   data?: any,
-  includeAuth: boolean = true
 ): Promise<T> {
   return request<T>(
     endpoint,
@@ -165,7 +119,6 @@ export function delWithBody<T>(
       },
       body: data ? JSON.stringify(data) : undefined,
     },
-    includeAuth
   );
 }
 
@@ -173,7 +126,6 @@ export function delWithBody<T>(
 export function patch<T>(
   endpoint: string,
   data?: any,
-  includeAuth: boolean = true
 ): Promise<T> {
   return request<T>(
     endpoint,
@@ -181,6 +133,5 @@ export function patch<T>(
       method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,
     },
-    includeAuth
   );
 }
