@@ -1,8 +1,8 @@
-import { redirect } from 'next/navigation';
 import AuthorCard from '@/components/author/AuthorCard';
 import { serverGet } from '@/lib/auth-server';
-import { getServerUser } from '@/lib/auth-server';
 import type { Novel } from '@/types/novel';
+
+export const dynamic = 'force-dynamic';
 
 // 作者统计接口
 interface AuthorStats {
@@ -110,12 +110,6 @@ async function getAuthorsData(): Promise<AuthorStats[]> {
 }
 
 export default async function AuthorsPage() {
-  // 服务端认证检查
-  const user = await getServerUser();
-  if (!user) {
-    redirect('/login');
-  }
-
   // 服务端获取数据
   const authors = await getAuthorsData();
 

@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { getServerUser, isServerAdmin } from '@/lib/auth-server';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 
+export const dynamic = 'force-dynamic';
+
 interface AdminLayoutProps {
   children: React.ReactNode;
 }

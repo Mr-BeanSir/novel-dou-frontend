@@ -1,86 +1,44 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { serverGet } from '@/lib/auth-server';
+import { API_CONFIG } from '@/config/api';
 import TagCard from '@/components/tag/TagCard';
-import { getTagsPaginated, getTagsStatistics } from '@/services/novel';
 import { Pagination } from '@/components/ui/Pagination';
-import { useUserStore } from '@/stores/user';
-import type { NovelTag, TagListParams, PaginatedResponse, TagStatisticsResponse } from '@/types/novel';
+import type { NovelTag, TagStatisticsResponse } from '@/types/novel';
 
-export default function TagsPage() {
-  const router = useRouter();
-  const { user, isLoading: authLoading, isAuthenticated } = useUserStore();
+export const dynamic = 'force-dynamic';
 
-  // 状态管理
-  const [tags, setTags] = useState<NovelTag[]>([]);
-  const [pagination, setPagination] = useState<PaginatedResponse<NovelTag> | null>(null);
-  const [statistics, setStatistics] = useState<TagStatisticsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // 查询参数
-  const [query, setQuery] = useState<TagListParams>({
-    page: 1,
-    per_page: 24,
-    sort_by: 'novel_count',
-    sort_order: 'desc',
-  });
-
-  // 认证检查
-  useEffect(() => {
-    if (!authLoading && (!user || !isAuthenticated)) {
-      router.push('/login');
-    }
-  }, [user, authLoading, isAuthenticated, router]);
-
-  // 获取标签数据
-  const fetchTags = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // 并行获取标签列表和统计信息
-      const [tagsResponse, statsResponse] = await Promise.all([
-        getTagsPaginated(query),
-        getTagsStatistics()
-      ]);
-
-      setTags(tagsResponse.data);
-      setPagination(tagsResponse);
-      setStatistics(statsResponse);
-    } catch (err) {
-      console.error('Failed to fetch tags:', err);
-      setError('获取标签列表失败');
-    } finally {
-      setLoading(false);
-    }
+interface TagsResponse {
+  tags: NovelTag[];
+  pagination: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
   };
+}
 
-  useEffect(() => {
-    if (user && isAuthenticated) {
-      fetchTags();
-    }
-  }, [query, user, isAuthenticated]);
+export default async function TagsPage() {
+  // 服务端获取数据
+  let tags: NovelTag[] = [];
+  let pagination = null;
+  let statistics: TagStatisticsResponse | null = null;
 
-  // 页面变更处理
-  const handlePageChange = (page: number) => {
-    setQuery(prev => ({ ...prev, page }));
-  };
-
-  // 分组标签
-  const hotTags = tags.filter(tag => tag.novel_count >= 50);
-
-  if (authLoading || !user || !isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-light-accent mx-auto mb-4"></div>
-          <p className="text-light-text-secondary">加载中...</p>
-        </div>
-      </div>
-    );
+  try {
+    const [tagsResponse, statsResponse] = await Promise.all([
+      serverGet<TagsResponse>(
+        `${API_CONFIG.ENDPOINTS.NOVELS.TAGS_LIST}?page=1&per_page=24&sort_by=novel_count&sort_order=desc`
+      ),
+      serverGet<TagStatisticsResponse>(API_CONFIG.ENDPOINTS.NOVELS.TAGS_STATISTICS),
+    ]);
+    tags = tagsResponse.tags;
+    pagination = tagsResponse.pagination;
+    statistics = statsResponse;
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
   }
+
+  const hotTags = tags.filter(tag => tag.novel_count >= 50);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -96,7 +54,7 @@ export default function TagsPage() {
       </div>
 
       {/* 统计信息 */}
-      {!loading && statistics && (
+      {statistics && (
         <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div>
@@ -122,96 +80,64 @@ export default function TagsPage() {
         </div>
       )}
 
-      {/* 加载状态 */}
-      {loading && (
-        <div className="text-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-light-accent mx-auto mb-4"></div>
-          <p className="text-light-text-secondary">加载标签列表中...</p>
-        </div>
-      )}
-
-      {/* 错误状态 */}
-      {error && (
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">❌</div>
-          <h3 className="text-xl font-bold text-light-text mb-2">加载失败</h3>
-          <p className="text-light-text-secondary mb-4">{error}</p>
-          <button
-            onClick={fetchTags}
-            className="px-4 py-2 bg-light-accent text-white rounded-lg hover:bg-light-accent-hover transition-colors"
-          >
-            重试
-          </button>
-        </div>
-      )}
-
       {/* 标签内容 */}
-      {!loading && !error && (
+      {tags.length > 0 ? (
         <div className="space-y-12">
-          {tags.length > 0 ? (
-            <>
-              {/* 热门标签 */}
-              {hotTags.length > 0 && (
-                <section>
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-light-text mb-2 flex items-center gap-2">
-                        <span className="text-red-500">🔥</span>
-                        热门标签
-                      </h2>
-                      <p className="text-light-text-secondary">作品数量超过50部的热门标签</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {hotTags.map((tag) => (
-                      <TagCard key={tag.id} tag={tag} />
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* 所有标签 */}
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-bold text-light-text mb-2">
-                      所有标签
-                    </h2>
-                    <p className="text-light-text-secondary">浏览全部小说标签</p>
-                  </div>
-                  {pagination && (
-                    <div className="text-sm text-light-text-secondary">
-                      显示 {pagination.from}-{pagination.to} / 共 {pagination.total} 个标签
-                    </div>
-                  )}
+          {/* 热门标签 */}
+          {hotTags.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-light-text mb-2 flex items-center gap-2">
+                    <span className="text-red-500">🔥</span>
+                    热门标签
+                  </h2>
+                  <p className="text-light-text-secondary">作品数量超过50部的热门标签</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {tags.map((tag) => (
-                    <TagCard key={tag.id} tag={tag} />
-                  ))}
-                </div>
-              </section>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {hotTags.map((tag) => (
+                  <TagCard key={tag.id} tag={tag} />
+                ))}
+              </div>
+            </section>
+          )}
 
-              {/* 分页控件 */}
-              {pagination && pagination.last_page > 1 && (
-                <div className="flex justify-center">
-                  <Pagination
-                    pagination={pagination}
-                    onPageChange={handlePageChange}
-                    showPageInfo={true}
-                  />
+          {/* 所有标签 */}
+          <section>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-light-text mb-2">所有标签</h2>
+                <p className="text-light-text-secondary">浏览全部小说标签</p>
+              </div>
+              {pagination && (
+                <div className="text-sm text-light-text-secondary">
+                  显示 {pagination.from}-{pagination.to} / 共 {pagination.total} 个标签
                 </div>
               )}
-            </>
-          ) : (
-            <div className="text-center py-16">
-              <div className="text-6xl mb-4">🏷️</div>
-              <h3 className="text-xl font-bold text-light-text mb-2">暂无标签</h3>
-              <p className="text-light-text-secondary">
-                目前还没有可用的小说标签
-              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {tags.map((tag) => (
+                <TagCard key={tag.id} tag={tag} />
+              ))}
+            </div>
+          </section>
+
+          {pagination && pagination.last_page > 1 && (
+            <div className="flex justify-center">
+              <Pagination
+                pagination={pagination}
+                onPageChange={() => {}}
+                showPageInfo={true}
+              />
             </div>
           )}
+        </div>
+      ) : (
+        <div className="text-center py-16">
+          <div className="text-6xl mb-4">🏷️</div>
+          <h3 className="text-xl font-bold text-light-text mb-2">暂无标签</h3>
+          <p className="text-light-text-secondary">目前还没有可用的小说标签</p>
         </div>
       )}
     </div>

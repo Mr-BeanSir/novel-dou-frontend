@@ -1,12 +1,13 @@
-import { redirect } from 'next/navigation';
-import { getServerUser } from '@/lib/auth-server';
 import { ProfileLayout } from '@/components/profile/ProfileLayout';
+import { getServerUser } from '@/lib/auth-server';
 import { UserInfo } from '@/components/profile/UserInfo';
 import { MyNovels } from '@/components/profile/MyNovels';
 import { MyBookmarks } from '@/components/profile/MyBookmarks';
 import { ReadingHistory } from '@/components/profile/ReadingHistory';
 import { ReadingStatistics } from '@/components/profile/ReadingStatistics';
 import ProfileTabs from '@/components/profile/ProfileTabs';
+
+export const dynamic = 'force-dynamic';
 
 type TabType = 'novels' | 'bookmarks' | 'history' | 'statistics';
 
@@ -17,11 +18,8 @@ interface ProfilePageProps {
 }
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
-  // 服务端认证检查
-  const user = await getServerUser();
-  if (!user) {
-    redirect('/login');
-  }
+  // 获取用户信息用于页面显示（认证由 proxy 统一处理，此处一定有值）
+  const user = (await getServerUser())!;
 
   // 从URL参数获取当前标签页
   const { tab } = await searchParams;

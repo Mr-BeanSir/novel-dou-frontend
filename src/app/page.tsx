@@ -1,9 +1,9 @@
-import { redirect } from 'next/navigation';
 import NovelCard from '@/components/novel/card/NovelCard';
 import SearchForm from '@/components/home/SearchForm';
 import { serverGet } from '@/lib/auth-server';
-import { getServerUser } from '@/lib/auth-server';
 import type { Novel } from '@/types/novel';
+
+export const dynamic = 'force-dynamic';
 
 // 服务端获取数据
 async function getHomeData() {
@@ -31,12 +31,6 @@ async function getHomeData() {
 }
 
 export default async function Home() {
-  // 服务端认证检查
-  const user = await getServerUser();
-  if (!user) {
-    redirect('/login');
-  }
-
   // 服务端获取数据
   const { recommendedNovels, popularNovels, recentNovels } = await getHomeData();
 

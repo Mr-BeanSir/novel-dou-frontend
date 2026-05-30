@@ -1,11 +1,14 @@
 // API 请求封装
-// 所有请求通过 nginx 反代走同域名，cookie 自动携带
+// 客户端请求通过 nginx 反代，自动加上 /api 前缀
+
+const CLIENT_API_PREFIX = '/api';
 
 // 通用请求函数
 async function request<T>(
   endpoint: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const url = `${CLIENT_API_PREFIX}${endpoint}`;
   const config: RequestInit = {
     ...options,
     headers: {
@@ -17,12 +20,12 @@ async function request<T>(
   };
 
   try {
-    console.log('Making API request to:', endpoint);
-    const response = await fetch(endpoint, config);
+    console.log('Making API request to:', url);
+    const response = await fetch(url, config);
 
     if (!response.ok) {
       console.error('API request failed:', {
-        url: endpoint,
+        url,
         status: response.status,
         statusText: response.statusText
       });
@@ -56,11 +59,11 @@ async function request<T>(
     }
 
     const data = await response.json();
-    console.log('API request successful:', endpoint);
+    console.log('API request successful:', url);
     return data;
   } catch (error) {
     console.error('API request failed:', {
-      url: endpoint,
+      url,
       error: error instanceof Error ? error.message : error,
     });
     throw error;

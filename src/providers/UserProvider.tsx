@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, ReactNode } from 'react';
-// UserProvider 暂时不需要初始化，因为简化版store不需要复杂的初始化逻辑
+import { useUserStore } from '@/stores/user';
 
 interface UserContextType {
   // 这个 Provider 主要用于初始化，不需要额外的 context 值
@@ -10,7 +10,12 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
-  // 简化版store不需要复杂的初始化逻辑
+  const initialize = useUserStore((state) => state.initialize);
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
   return (
     <UserContext.Provider value={{}}>
       {children}

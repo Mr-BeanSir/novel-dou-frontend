@@ -1,74 +1,24 @@
-'use client';
+import { serverGet } from '@/lib/auth-server';
+import { API_CONFIG } from '@/config/api';
+import RankingPageContent from '@/components/ranking/RankingPageContent';
+import type { Novel } from '@/types/novel';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import RankingList from '@/components/ranking/RankingList';
-import { NovelService } from '@/services/novel';
-import type { Novel, RankingParams } from '@/types/novel';
+export const dynamic = 'force-dynamic';
 
-export default function RankingsPage() {
-  const router = useRouter();
-  const [novels, setNovels] = useState<Novel[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface RankingResponse {
+  novels: Novel[];
+}
 
-  // 默认排行榜参数
-  const [rankingParams, setRankingParams] = useState<RankingParams>({
-    type: 'view',
-    period: 'all',
-    per_page: 50
-  });
-
-  // 加载排行榜数据
-  const loadRankingData = async (params: RankingParams) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const data = await NovelService.getRankingNovels(params);
-      setNovels(data);
-    } catch (err) {
-      console.error('Failed to load ranking data:', err);
-      setError(err instanceof Error ? err.message : '加载排行榜失败');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 处理排行榜类型和时间段变化
-  const handleRankingChange = (type: string, period: string) => {
-    const newParams: RankingParams = {
-      type: type as 'view' | 'bookmark' | 'rating',
-      period: period as 'all' | 'week' | 'month',
-      per_page: 50
-    };
-    
-    setRankingParams(newParams);
-    loadRankingData(newParams);
-  };
-
-  // 初始加载
-  useEffect(() => {
-    loadRankingData(rankingParams);
-  }, []);
-
-  // 错误处理
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center py-16">
-          <div className="text-6xl mb-4">😞</div>
-          <h3 className="text-xl font-bold text-light-text mb-2">加载失败</h3>
-          <p className="text-light-text-secondary mb-4">{error}</p>
-          <button
-            onClick={() => loadRankingData(rankingParams)}
-            className="px-6 py-2 bg-light-accent text-white rounded-lg hover:bg-light-accent-hover transition-colors"
-          >
-            重试
-          </button>
-        </div>
-      </div>
+export default async function RankingsPage() {
+  // 服务端获取初始排行榜数据
+  let initialNovels: Novel[] = [];
+  try {
+    const response = await serverGet<RankingResponse>(
+      `${API_CONFIG.ENDPOINTS.NOVELS.RANKING}?type=view&period=all&per_page=50`
     );
+    initialNovels = response.novels || [];
+  } catch (error) {
+    console.error('Failed to load ranking data:', error);
   }
 
   return (
@@ -88,38 +38,22 @@ export default function RankingsPage() {
       <div className="bg-light-bg-secondary border border-light-border rounded-xl p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           <div className="space-y-2">
-            <div className="text-2xl font-bold text-light-accent">
-              📊 浏览排行
-            </div>
-            <div className="text-sm text-light-text-secondary">
-              根据小说浏览量排序
-            </div>
+            <div className="text-2xl font-bold text-light-accent">📊 浏览排行</div>
+            <div className="text-sm text-light-text-secondary">根据小说浏览量排序</div>
           </div>
           <div className="space-y-2">
-            <div className="text-2xl font-bold text-light-accent">
-              ❤️ 收藏排行
-            </div>
-            <div className="text-sm text-light-text-secondary">
-              根据收藏数量排序
-            </div>
+            <div className="text-2xl font-bold text-light-accent">❤️ 收藏排行</div>
+            <div className="text-sm text-light-text-secondary">根据收藏数量排序</div>
           </div>
           <div className="space-y-2">
-            <div className="text-2xl font-bold text-light-accent">
-              ⭐ 评分排行
-            </div>
-            <div className="text-sm text-light-text-secondary">
-              根据用户评分排序
-            </div>
+            <div className="text-2xl font-bold text-light-accent">⭐ 评分排行</div>
+            <div className="text-sm text-light-text-secondary">根据用户评分排序</div>
           </div>
         </div>
       </div>
 
-      {/* 排行榜内容 */}
-      <RankingList
-        initialNovels={novels}
-        onTypeChange={handleRankingChange}
-        loading={loading}
-      />
+      {/* 排行榜内容（客户端交互组件） */}
+      <RankingPageContent initialNovels={initialNovels} />
 
       {/* 说明信息 */}
       <div className="mt-12 bg-light-bg-secondary border border-light-border rounded-xl p-6">
@@ -138,22 +72,12 @@ export default function RankingsPage() {
             <p>根据用户评分的平均值排序，反映小说的质量水平。</p>
           </div>
         </div>
-
         <div className="mt-6 pt-4 border-t border-light-border">
           <h4 className="font-medium text-light-text mb-2">🕒 时间段说明</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-light-text-secondary">
-            <div>
-              <span className="font-medium text-light-text">总榜：</span>
-              统计所有时间的数据
-            </div>
-            <div>
-              <span className="font-medium text-light-text">月榜：</span>
-              统计最近30天的数据
-            </div>
-            <div>
-              <span className="font-medium text-light-text">周榜：</span>
-              统计最近7天的数据
-            </div>
+            <div><span className="font-medium text-light-text">总榜：</span>统计所有时间的数据</div>
+            <div><span className="font-medium text-light-text">月榜：</span>统计最近30天的数据</div>
+            <div><span className="font-medium text-light-text">周榜：</span>统计最近7天的数据</div>
           </div>
         </div>
       </div>

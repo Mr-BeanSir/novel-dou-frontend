@@ -97,12 +97,6 @@ export const useUserStore = create<UserState>()(
 
       // 刷新用户信息
       refreshUser: async () => {
-        const { isAuthenticated: isAuth } = get();
-        if (!isAuth) {
-          set({ user: null, isAuthenticated: false });
-          return;
-        }
-
         set({ isLoading: true });
         try {
           const user = await getCurrentUser();
@@ -127,17 +121,15 @@ export const useUserStore = create<UserState>()(
         set({ isLoading });
       },
 
-      // 初始化
+      // 初始化 - 始终用 cookie 向后端验证，不依赖 localStorage
       initialize: async () => {
-        const { isAuthenticated: isAuth } = get();
-        if (isAuth) {
-          try {
-            const user = await getCurrentUserLatest();
-            set({ user, isAuthenticated: true });
-          } catch (error) {
-            console.error('Failed to initialize user:', error);
-            set({ user: null, isAuthenticated: false });
-          }
+        set({ isLoading: true });
+        try {
+          const user = await getCurrentUserLatest();
+          set({ user, isAuthenticated: true, isLoading: false });
+        } catch (error) {
+          console.error('Failed to initialize user:', error);
+          set({ user: null, isAuthenticated: false, isLoading: false });
         }
       },
 

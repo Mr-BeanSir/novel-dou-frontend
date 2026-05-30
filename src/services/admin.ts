@@ -23,7 +23,7 @@ import {
   AssignPermissionsData
 } from '@/types/admin';
 
-const ADMIN_BASE_URL = '/admin';
+const ADMIN_BASE_URL = '/api/admin';
 
 /**
  * 管理员API服务

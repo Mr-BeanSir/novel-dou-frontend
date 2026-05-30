@@ -1,7 +1,9 @@
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import ChapterReader from '@/components/novel/reader/ChapterReader';
-import { serverGet, getServerUser } from '@/lib/auth-server';
+import { serverGet } from '@/lib/auth-server';
 import type { Novel, NovelChapter } from '@/types/novel';
+
+export const dynamic = 'force-dynamic';
 
 interface ChapterPageProps {
   params: Promise<{
@@ -11,12 +13,6 @@ interface ChapterPageProps {
 }
 
 export default async function ChapterPage({ params }: ChapterPageProps) {
-  // 服务端认证检查
-  const user = await getServerUser();
-  if (!user) {
-    redirect('/login');
-  }
-
   const { id, chapterId } = await params;
   const novelId = parseInt(id);
   const chapterIdNum = parseInt(chapterId);

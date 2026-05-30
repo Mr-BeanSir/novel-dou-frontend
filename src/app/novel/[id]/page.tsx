@@ -1,7 +1,9 @@
-import { redirect, notFound } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import NovelDetail from '@/components/novel/detail/NovelDetail';
-import { serverGet, getServerUser } from '@/lib/auth-server';
+import { serverGet } from '@/lib/auth-server';
 import type { Novel } from '@/types/novel';
+
+export const dynamic = 'force-dynamic';
 
 interface NovelPageProps {
   params: Promise<{
@@ -10,12 +12,6 @@ interface NovelPageProps {
 }
 
 export default async function NovelPage({ params }: NovelPageProps) {
-  // 服务端认证检查
-  const user = await getServerUser();
-  if (!user) {
-    redirect('/login');
-  }
-
   const { id } = await params;
   const novelId = parseInt(id);
   if (isNaN(novelId)) {
