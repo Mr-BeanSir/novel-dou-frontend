@@ -1,32 +1,34 @@
 'use client';
 
-import { createContext, useContext, useEffect, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 import { useUserStore } from '@/stores/user';
+import type { User } from '@/types/user';
 
-interface UserContextType {
-  // 这个 Provider 主要用于初始化，不需要额外的 context 值
+interface UserProviderProps {
+  children: ReactNode;
+  /** 服务端预获取的用户数据，由 layout 传入 */
+  serverUser?: User | null;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export function UserProvider({ children }: { children: ReactNode }) {
-  const initialize = useUserStore((state) => state.initialize);
+/**
+ * 用户状态 Provider
+ * 接收服务端传来的用户数据，直接注入 store。
+ * 不做任何客户端 API 请求 — 认证由 proxy + 服务端 layout 处理。
+ */
+export function UserProvider({ children, serverUser }: UserProviderProps) {
+  const setUser = useUserStore((s) => s.setUser);
+  const setAuthenticated = useUserStore((s) => s.setAuthenticated);
+  const hydrated = useRef(false);
 
   useEffect(() => {
-    initialize();
-  }, [initialize]);
+    if (hydrated.current) return;
+    hydrated.current = true;
 
-  return (
-    <UserContext.Provider value={{}}>
-      {children}
-    </UserContext.Provider>
-  );
-}
+    if (serverUser) {
+      setUser(serverUser);
+      setAuthenticated(true);
+    }
+  }, [serverUser, setUser, setAuthenticated]);
 
-export function useUserContext() {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error('useUserContext must be used within a UserProvider');
-  }
-  return context;
+  return <>{children}</>;
 }

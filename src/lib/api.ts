@@ -38,16 +38,9 @@ async function request<T>(
       const errorData = await response.json().catch(() => ({}));
 
       // 处理认证错误 (401/403)
+      // 认证跳转由 proxy.ts 统一处理，客户端只抛错
       if (response.status === 401 || response.status === 403) {
         const errorMessage = errorData.message || 'Unauthenticated.';
-
-        // 清除本地认证状态
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('user-storage');
-          console.log('Authentication failed, cleared user storage');
-          window.location.href = '/login';
-        }
-
         throw new Error(errorMessage);
       }
 

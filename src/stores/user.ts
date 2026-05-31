@@ -25,6 +25,7 @@ interface UserState {
   refreshUser: () => Promise<void>;
   setUser: (user: User | null) => void;
   setLoading: (loading: boolean) => void;
+  setAuthenticated: (isAuthenticated: boolean) => void;
   initialize: () => Promise<void>;
 
   // 权限检查
@@ -119,6 +120,11 @@ export const useUserStore = create<UserState>()(
       // 设置加载状态
       setLoading: (isLoading: boolean) => {
         set({ isLoading });
+      },
+
+      // 设置认证状态
+      setAuthenticated: (isAuthenticated: boolean) => {
+        set({ isAuthenticated });
       },
 
       // 初始化 - 始终用 cookie 向后端验证，不依赖 localStorage

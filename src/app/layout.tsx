@@ -5,6 +5,7 @@ import { UserProvider } from "@/providers/UserProvider";
 import { ToastProvider } from "@/providers/ToastProvider";
 import ConditionalLayout from "@/components/layout/ConditionalLayout";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import { getServerUser } from "@/lib/auth-server";
 
 export const metadata: Metadata = {
   title: "读书豆 - 优质小说阅读平台",
@@ -12,11 +13,13 @@ export const metadata: Metadata = {
   keywords: "小说,阅读,在线小说,免费小说,小说网站",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getServerUser();
+
   return (
     <html lang="zh-CN">
       <head>
@@ -24,7 +27,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen font-serif">
         <ThemeProvider defaultTheme="system">
-          <UserProvider>
+          <UserProvider serverUser={user}>
             <ToastProvider>
               <ScrollToTop />
               <ConditionalLayout>
