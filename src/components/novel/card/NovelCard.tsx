@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import type { Novel } from '@/types/novel';
 
@@ -43,12 +42,10 @@ export default function NovelCard({ novel, className = '' }: NovelCardProps) {
           {/* 封面图片 */}
           <div className="relative aspect-[3/4] overflow-hidden bg-light-border">
             {novel.cover_image ? (
-              <Image
+              <img
                 src={novel.cover_image}
                 alt={novel.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-200"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-light-border to-light-bg-secondary

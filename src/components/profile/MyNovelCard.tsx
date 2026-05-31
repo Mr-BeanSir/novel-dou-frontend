@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { Novel } from '@/types/novel';
-import { ChapterUploadModal } from '@/components/profile/ChapterUploadModal';
 
 interface MyNovelCardProps {
   novel: Novel;
@@ -11,7 +9,6 @@ interface MyNovelCardProps {
 }
 
 export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
-  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const getStatusColor = (status: Novel['status']) => {
     switch (status) {
@@ -133,18 +130,6 @@ export function MyNovelCard({ novel, onUpdate }: MyNovelCardProps) {
           </div>
         </div>
       </div>
-
-      {/* 章节上传模态框 */}
-      {showUploadModal && (
-        <ChapterUploadModal
-          novel={novel}
-          onClose={() => setShowUploadModal(false)}
-          onSuccess={() => {
-            setShowUploadModal(false);
-            onUpdate();
-          }}
-        />
-      )}
     </>
   );
 }

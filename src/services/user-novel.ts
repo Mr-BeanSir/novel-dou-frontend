@@ -23,7 +23,37 @@ export class UserNovelService {
   /**
    * 创建新小说
    */
-  static async createNovel(novelData: CreateNovelRequest): Promise<Novel> {
+  static async createNovel(novelData: CreateNovelRequest, coverFile?: File): Promise<Novel> {
+    // 如果有封面文件，使用 FormData
+    if (coverFile) {
+      const formData = new FormData();
+
+      // 添加所有小说数据（跳过 cover_image，后面单独添加文件）
+      Object.entries(novelData).forEach(([key, value]) => {
+        // 跳过 cover_image 字段，避免重复
+        if (key === 'cover_image') return;
+
+        if (key === 'tag_ids' && Array.isArray(value)) {
+          // 处理标签数组
+          value.forEach((tagId, index) => {
+            formData.append(`tag_ids[${index}]`, tagId.toString());
+          });
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+
+      // 添加封面文件
+      formData.append('cover_image', coverFile);
+
+      const response = await post<{ message: string; novel: Novel }>(
+        API_CONFIG.ENDPOINTS.USER.CREATE,
+        formData
+      );
+      return response.novel;
+    }
+
+    // 没有封面文件，使用普通 JSON 请求
     const response = await post<{ message: string; novel: Novel }>(
       API_CONFIG.ENDPOINTS.USER.CREATE,
       novelData

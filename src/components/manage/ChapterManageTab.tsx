@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { NovelChapter, PaginatedResponse } from '@/types/novel';
-import { getUserNovelChapters } from '@/services/user-novel';
-import { Plus, Eye, Calendar, FileText, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Novel, NovelChapter, PaginatedResponse } from '@/types/novel';
+import { getUserNovelChapters, getUserNovelDetail } from '@/services/user-novel';
+import { Plus, Upload, Eye, Calendar, FileText, ChevronRight, ChevronLeft } from 'lucide-react';
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
+import { ChapterUploadModal } from '@/components/profile/ChapterUploadModal';
 
 interface ChapterManageTabProps {
   novelId: number;
@@ -13,8 +14,10 @@ interface ChapterManageTabProps {
 
 export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
   const [chapters, setChapters] = useState<NovelChapter[]>([]);
+  const [novel, setNovel] = useState<Novel | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [pagination, setPagination] = useState<{
     current_page: number;
     last_page: number;
@@ -52,8 +55,20 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
   };
 
   useEffect(() => {
-    loadChapters();
+    loadData();
   }, [novelId]);
+
+  const loadData = async () => {
+    try {
+      const [novelData] = await Promise.all([
+        getUserNovelDetail(novelId),
+        loadChapters()
+      ]);
+      setNovel(novelData);
+    } catch (err) {
+      console.error('Failed to load data:', err);
+    }
+  };
 
   const handlePageChange = (page: number) => {
     loadChapters(page);
@@ -89,13 +104,22 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
           )}
         </div>
 
-        <Link
-          href={`/manage/${novelId}/publish`}
-          className="flex items-center gap-2 px-4 py-2 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
-        >
-          <Plus className="w-4 h-4" />
-          发布新章节
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowUploadModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors font-medium"
+          >
+            <Upload className="w-4 h-4" />
+            批量上传
+          </button>
+          <Link
+            href={`/manage/${novelId}/publish`}
+            className="flex items-center gap-2 px-4 py-2 bg-light-accent hover:bg-light-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-white rounded-lg transition-colors font-medium"
+          >
+            <Plus className="w-4 h-4" />
+            发布新章节
+          </Link>
+        </div>
       </div>
 
       {/* 错误提示 */}
@@ -255,6 +279,18 @@ export function ChapterManageTab({ novelId }: ChapterManageTabProps) {
             </div>
           )}
         </>
+      )}
+
+      {/* 批量上传模态框 */}
+      {showUploadModal && novel && (
+        <ChapterUploadModal
+          novel={novel}
+          onClose={() => setShowUploadModal(false)}
+          onSuccess={() => {
+            setShowUploadModal(false);
+            loadChapters();
+          }}
+        />
       )}
     </div>
   );

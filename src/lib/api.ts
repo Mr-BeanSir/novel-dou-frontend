@@ -9,10 +9,15 @@ async function request<T>(
   options: RequestInit = {},
 ): Promise<T> {
   const url = `${CLIENT_API_PREFIX}${endpoint}`;
+
+  // 判断是否是 FormData（文件上传）
+  const isFormData = options.body instanceof FormData;
+
   const config: RequestInit = {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      // FormData 时不设置 Content-Type，让浏览器自动设置
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       'Accept': 'application/json',
       ...options.headers,
     },
@@ -80,11 +85,14 @@ export function post<T>(
   endpoint: string,
   data?: any,
 ): Promise<T> {
+  // 如果是 FormData，直接传递；否则 JSON.stringify
+  const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
+
   return request<T>(
     endpoint,
     {
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
+      body,
     },
   );
 }

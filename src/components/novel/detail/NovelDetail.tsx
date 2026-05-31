@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+
 import Link from 'next/link';
 import type { Novel, NovelChapter, NovelRating, NovelRatingStatistics } from '@/types/novel';
 import { NovelService } from '@/services/novel';
@@ -159,12 +159,10 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
           <div className="flex-shrink-0 lg:self-stretch">
             <div className="relative w-56 h-72 lg:h-full mx-auto lg:mx-0">
               {novel.cover_image ? (
-                <Image
+                <img
                   src={novel.cover_image}
                   alt={novel.title}
-                  fill
-                  className="object-cover rounded-lg"
-                  sizes="(max-width: 768px) 192px, 192px"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               ) : (
                 <div className="w-full h-full bg-light-border dark:bg-dark-border

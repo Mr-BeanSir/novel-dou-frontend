@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Novel, NovelCategory, NovelTag, CreateNovelRequest } from '@/types/novel';
 import { createNovel } from '@/services/user-novel';
 import { getCategories, getTags } from '@/services/novel';
@@ -30,6 +30,9 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,7 +53,7 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim()) {
       setError('请输入小说标题');
       return;
@@ -68,9 +71,11 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
       const novelData: CreateNovelRequest = {
         ...formData,
         tag_ids: selectedTags,
+        // 如果有封面文件，先不传 cover_image，让后端处理
+        cover_image: coverFile ? '' : formData.cover_image,
       };
 
-      const newNovel = await createNovel(novelData);
+      const newNovel = await createNovel(novelData, coverFile || undefined);
       onSuccess(newNovel);
     } catch (err) {
       setError(err instanceof Error ? err.message : '创建小说失败');
@@ -80,11 +85,46 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
   };
 
   const handleTagToggle = (tagId: number) => {
-    setSelectedTags(prev => 
-      prev.includes(tagId) 
+    setSelectedTags(prev =>
+      prev.includes(tagId)
         ? prev.filter(id => id !== tagId)
         : [...prev, tagId]
     );
+  };
+
+  const handleCoverSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 验证文件类型
+    if (!file.type.startsWith('image/')) {
+      setError('请选择图片文件');
+      return;
+    }
+
+    // 验证文件大小（最大5MB）
+    if (file.size > 5 * 1024 * 1024) {
+      setError('图片大小不能超过5MB');
+      return;
+    }
+
+    // 保存文件对象
+    setCoverFile(file);
+
+    // 显示预览
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setCoverPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveCover = () => {
+    setCoverFile(null);
+    setCoverPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -147,15 +187,48 @@ export function CreateNovelModal({ onClose, onSuccess }: CreateNovelModalProps) 
 
               <div>
                 <label className="block text-sm font-medium text-light-text dark:text-dark-text mb-2">
-                  封面图片URL
+                  封面图片
                 </label>
-                <input
-                  type="url"
-                  value={formData.cover_image}
-                  onChange={(e) => setFormData(prev => ({ ...prev, cover_image: e.target.value }))}
-                  className="w-full px-4 py-2 border border-light-border dark:border-dark-border rounded-lg bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent"
-                  placeholder="请输入封面图片URL"
-                />
+                <div className="space-y-3">
+                  {/* 上传按钮 */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                      onChange={handleCoverSelect}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 border border-light-border dark:border-dark-border rounded-lg text-light-text dark:text-dark-text hover:bg-light-hover dark:hover:bg-dark-hover transition-colors"
+                    >
+                      选择图片
+                    </button>
+                    <span className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
+                      支持 JPG, PNG, GIF, WebP，最大 5MB
+                    </span>
+                  </div>
+
+                  {/* 预览 */}
+                  {coverPreview && (
+                    <div className="relative inline-block">
+                      <img
+                        src={coverPreview}
+                        alt="封面预览"
+                        className="w-32 h-44 object-cover rounded-lg border border-light-border dark:border-dark-border"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemoveCover}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm hover:bg-red-600 transition-colors"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

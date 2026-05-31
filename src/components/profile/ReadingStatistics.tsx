@@ -180,10 +180,10 @@ export function ReadingStatistics() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h4 className="font-medium text-light-text dark:text-dark-text">
-                      {rating.novel.title}
+                      {rating.novel?.title || '未知小说'}
                     </h4>
                     <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-                      {rating.novel.author} · {rating.novel.category.name}
+                      {rating.novel?.author || '未知作者'} · {rating.novel?.category?.name || '未分类'}
                     </p>
                     {rating.review && (
                       <p className="text-sm text-light-text dark:text-dark-text mt-2">

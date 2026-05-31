@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import type { NovelCategory } from '@/types/novel';
 
@@ -27,12 +26,10 @@ export default function CategoryCard({ category, className = '' }: CategoryCardP
           {/* 封面图片 */}
           <div className="relative aspect-[4/3] overflow-hidden bg-[#E5D5B7]">
             {category.cover_image ? (
-              <Image
+              <img
                 src={category.cover_image}
                 alt={category.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-200"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-theme-border to-theme-bg-secondary

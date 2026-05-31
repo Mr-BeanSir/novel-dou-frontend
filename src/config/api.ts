@@ -43,9 +43,6 @@ export const API_CONFIG = {
       RATING_STATISTICS: (id: number) => `/novels/${id}/ratings/statistics`,
       CHAPTERS: (id: number) => `/novels/${id}/chapters`,
       CHAPTER_CONTENT: (novelId: number, chapterId: number) => `/novels/${novelId}/chapters/${chapterId}`,
-      CHAPTER_UPLOAD: (novelId: number) => `/novels/${novelId}/chapters/upload`,
-      CHAPTER_BATCH_UPLOAD: (novelId: number) => `/novels/${novelId}/chapters/batch-upload`,
-      CHAPTER_IMPORT_TEMP: (novelId: number) => `/novels/${novelId}/chapters/import-from-temp`,
       READING_HISTORY: '/novels/reading-history',
       READING_STATISTICS: '/novels/reading-statistics',
       RATING_HISTORY: '/novels/rating-history',
@@ -65,6 +62,7 @@ export const API_CONFIG = {
       CHAPTER_TEXT_CREATE: (novelId: number) => `/users/novels/${novelId}/chapters/text`,
       CHAPTER_UPDATE: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
       CHAPTER_DELETE: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
+      CHAPTER_BATCH_UPLOAD: (novelId: number) => `/users/novels/${novelId}/chapters/batch-upload`,
     },
 
     // 管理员相关
