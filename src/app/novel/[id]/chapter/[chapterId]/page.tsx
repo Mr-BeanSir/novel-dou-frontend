@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import ChapterReader from '@/components/novel/reader/ChapterReader';
 import { serverGet } from '@/lib/auth-server';
+import { API_CONFIG } from '@/config/api';
 import type { Novel, NovelChapter } from '@/types/novel';
 
 export const dynamic = 'force-dynamic';
@@ -28,8 +29,8 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
   try {
     // 获取小说信息和章节内容
     const [novelResponse, chapterResponse] = await Promise.all([
-      serverGet<{ novel: Novel }>(`/novels/${novelId}`),
-      serverGet(`/novels/${novelId}/chapters/${chapterIdNum}`)
+      serverGet<{ novel: Novel }>(API_CONFIG.ENDPOINTS.NOVELS.DETAIL(novelId)),
+      serverGet(API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_CONTENT(novelId, chapterIdNum))
     ]);
 
     novel = novelResponse.novel;

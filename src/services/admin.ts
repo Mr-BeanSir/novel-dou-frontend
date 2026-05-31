@@ -1,4 +1,5 @@
 import { get, post, put, patch, del, delWithBody } from '@/lib/api';
+import { API_CONFIG } from '@/config/api';
 import { ApiResponse } from '@/types/user';
 import {
   AdminNovel,
@@ -23,7 +24,7 @@ import {
   AssignPermissionsData
 } from '@/types/admin';
 
-const ADMIN_BASE_URL = '/api/admin';
+const ADMIN = API_CONFIG.ENDPOINTS.ADMIN;
 
 /**
  * 管理员API服务
@@ -43,7 +44,7 @@ export class AdminService {
       }
     });
 
-    const url = `${ADMIN_BASE_URL}/novels${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `${ADMIN.NOVELS}${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await get<AdminNovelListResponse>(url);
     return response;
   }
@@ -52,7 +53,7 @@ export class AdminService {
    * 获取小说详情
    */
   static async getNovel(id: number): Promise<AdminNovel> {
-    const response = await get<AdminNovel>(`${ADMIN_BASE_URL}/novels/${id}`);
+    const response = await get<AdminNovel>(ADMIN.NOVEL_DETAIL(id));
     return response;
   }
 
@@ -60,7 +61,7 @@ export class AdminService {
    * 创建小说
    */
   static async createNovel(data: CreateNovelData): Promise<AdminNovel> {
-    const response = await post<AdminNovel>(`${ADMIN_BASE_URL}/novels`, data);
+    const response = await post<AdminNovel>(ADMIN.NOVELS, data);
     return response;
   }
 
@@ -68,7 +69,7 @@ export class AdminService {
    * 更新小说
    */
   static async updateNovel(id: number, data: UpdateNovelData): Promise<AdminNovel> {
-    const response = await put<AdminNovel>(`${ADMIN_BASE_URL}/novels/${id}`, data);
+    const response = await put<AdminNovel>(ADMIN.NOVEL_DETAIL(id), data);
     return response;
   }
 
@@ -76,14 +77,14 @@ export class AdminService {
    * 删除小说
    */
   static async deleteNovel(id: number): Promise<void> {
-    await del(`${ADMIN_BASE_URL}/novels/${id}`);
+    await del(ADMIN.NOVEL_DETAIL(id));
   }
 
   /**
    * 切换小说启用状态
    */
   static async toggleNovelStatus(id: number): Promise<AdminNovel> {
-    const response = await patch<{ novel: AdminNovel }>(`${ADMIN_BASE_URL}/novels/${id}/toggle-status`);
+    const response = await patch<{ novel: AdminNovel }>(ADMIN.NOVEL_TOGGLE_STATUS(id));
     return response.novel;
   }
 
@@ -91,7 +92,7 @@ export class AdminService {
    * 切换小说推荐状态
    */
   static async toggleNovelRecommend(id: number): Promise<AdminNovel> {
-    const response = await patch<{ novel: AdminNovel }>(`${ADMIN_BASE_URL}/novels/${id}/toggle-recommend`);
+    const response = await patch<{ novel: AdminNovel }>(ADMIN.NOVEL_TOGGLE_RECOMMEND(id));
     return response.novel;
   }
 
@@ -109,7 +110,7 @@ export class AdminService {
       }
     });
 
-    const url = `${ADMIN_BASE_URL}/users${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `${ADMIN.USERS}${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await get<AdminUserListResponse>(url);
     return response;
   }
@@ -118,7 +119,7 @@ export class AdminService {
    * 切换用户状态
    */
   static async toggleUserStatus(id: number): Promise<AdminUser> {
-    const response = await patch<{ user: AdminUser }>(`${ADMIN_BASE_URL}/users/${id}/toggle-status`);
+    const response = await patch<{ user: AdminUser }>(ADMIN.USER_TOGGLE_STATUS(id));
     return response.user;
   }
 
@@ -126,14 +127,14 @@ export class AdminService {
    * 分配权限
    */
   static async assignPermissions(id: number, data: AssignPermissionsData): Promise<void> {
-    await post(`${ADMIN_BASE_URL}/users/${id}/assign-permissions`, data);
+    await post(ADMIN.USER_ASSIGN_PERMISSIONS(id), data);
   }
 
   /**
    * 撤销权限
    */
   static async revokePermissions(id: number, data: AssignPermissionsData): Promise<void> {
-    await delWithBody(`${ADMIN_BASE_URL}/users/${id}/revoke-permissions`, data);
+    await delWithBody(ADMIN.USER_REVOKE_PERMISSIONS(id), data);
   }
 
   // ==================== 分类管理 ====================
@@ -150,7 +151,7 @@ export class AdminService {
       }
     });
 
-    const url = `${ADMIN_BASE_URL}/categories${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `${ADMIN.CATEGORIES}${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await get<AdminCategoryListResponse>(url);
     return response;
   }
@@ -159,7 +160,7 @@ export class AdminService {
    * 获取分类详情
    */
   static async getCategory(id: number): Promise<AdminCategory> {
-    const response = await get<AdminCategory>(`${ADMIN_BASE_URL}/categories/${id}`);
+    const response = await get<AdminCategory>(ADMIN.CATEGORY_DETAIL(id));
     return response;
   }
 
@@ -167,7 +168,7 @@ export class AdminService {
    * 创建分类
    */
   static async createCategory(data: CreateCategoryData): Promise<AdminCategory> {
-    const response = await post<{ message: string; category: AdminCategory }>(`${ADMIN_BASE_URL}/categories`, data);
+    const response = await post<{ message: string; category: AdminCategory }>(ADMIN.CATEGORIES, data);
     return response.category;
   }
 
@@ -175,7 +176,7 @@ export class AdminService {
    * 更新分类
    */
   static async updateCategory(id: number, data: UpdateCategoryData): Promise<AdminCategory> {
-    const response = await put<{ message: string; category: AdminCategory }>(`${ADMIN_BASE_URL}/categories/${id}`, data);
+    const response = await put<{ message: string; category: AdminCategory }>(ADMIN.CATEGORY_DETAIL(id), data);
     return response.category;
   }
 
@@ -183,7 +184,7 @@ export class AdminService {
    * 删除分类
    */
   static async deleteCategory(id: number): Promise<void> {
-    await del(`${ADMIN_BASE_URL}/categories/${id}`);
+    await del(ADMIN.CATEGORY_DETAIL(id));
   }
 
   // ==================== 标签管理 ====================
@@ -200,7 +201,7 @@ export class AdminService {
       }
     });
 
-    const url = `${ADMIN_BASE_URL}/tags${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `${ADMIN.TAGS}${params.toString() ? `?${params.toString()}` : ''}`;
     const response = await get<AdminTagListResponse>(url);
     return response;
   }
@@ -209,7 +210,7 @@ export class AdminService {
    * 获取标签详情
    */
   static async getTag(id: number): Promise<AdminTag> {
-    const response = await get<AdminTag>(`${ADMIN_BASE_URL}/tags/${id}`);
+    const response = await get<AdminTag>(ADMIN.TAG_DETAIL(id));
     return response;
   }
 
@@ -217,7 +218,7 @@ export class AdminService {
    * 创建标签
    */
   static async createTag(data: CreateTagData): Promise<AdminTag> {
-    const response = await post<{ message: string; tag: AdminTag }>(`${ADMIN_BASE_URL}/tags`, data);
+    const response = await post<{ message: string; tag: AdminTag }>(ADMIN.TAGS, data);
     return response.tag;
   }
 
@@ -225,7 +226,7 @@ export class AdminService {
    * 更新标签
    */
   static async updateTag(id: number, data: UpdateTagData): Promise<AdminTag> {
-    const response = await put<{ message: string; tag: AdminTag }>(`${ADMIN_BASE_URL}/tags/${id}`, data);
+    const response = await put<{ message: string; tag: AdminTag }>(ADMIN.TAG_DETAIL(id), data);
     return response.tag;
   }
 
@@ -233,7 +234,7 @@ export class AdminService {
    * 删除标签
    */
   static async deleteTag(id: number): Promise<void> {
-    await del(`${ADMIN_BASE_URL}/tags/${id}`);
+    await del(ADMIN.TAG_DETAIL(id));
   }
 
   // ==================== 系统统计 ====================
@@ -242,7 +243,7 @@ export class AdminService {
    * 获取系统统计数据
    */
   static async getStats(): Promise<AdminStats> {
-    const response = await get<AdminStats>(`${ADMIN_BASE_URL}/stats`);
+    const response = await get<AdminStats>(ADMIN.STATS);
     return response;
   }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { API_CONFIG } from '@/config/api';
 
 // 不需要认证的路径
 const PUBLIC_PATHS = ['/login', '/register'];
@@ -17,7 +18,7 @@ export async function proxy(request: NextRequest) {
   let isValidToken = false;
   if (token) {
     try {
-      const res = await fetch(`${SERVER_API_BASE_URL}/users/me`, {
+      const res = await fetch(`${SERVER_API_BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.ME}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',

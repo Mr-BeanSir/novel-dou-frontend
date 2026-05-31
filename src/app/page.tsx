@@ -1,6 +1,7 @@
 import NovelCard from '@/components/novel/card/NovelCard';
 import SearchForm from '@/components/home/SearchForm';
 import { serverGet } from '@/lib/auth-server';
+import { API_CONFIG } from '@/config/api';
 import type { Novel } from '@/types/novel';
 
 export const dynamic = 'force-dynamic';
@@ -10,9 +11,9 @@ async function getHomeData() {
   try {
     // 并行获取所有数据
     const [recommendedResponse, popularResponse, recentResponse] = await Promise.all([
-      serverGet<{ novels: Novel[]; pagination: any }>('/novels/recommended?per_page=8'),
-      serverGet<{ novels: Novel[]; pagination: any }>('/novels/popular?per_page=8'),
-      serverGet<{ novels: Novel[]; pagination: any }>('/novels/recent?per_page=8'),
+      serverGet<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RECOMMENDED}?per_page=8`),
+      serverGet<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.POPULAR}?per_page=8`),
+      serverGet<{ novels: Novel[]; pagination: any }>(`${API_CONFIG.ENDPOINTS.NOVELS.RECENT}?per_page=8`),
     ]);
 
     return {

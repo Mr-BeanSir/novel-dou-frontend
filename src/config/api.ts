@@ -66,6 +66,42 @@ export const API_CONFIG = {
       CHAPTER_UPDATE: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
       CHAPTER_DELETE: (novelId: number, chapterId: number) => `/users/novels/${novelId}/chapters/${chapterId}`,
     },
+
+    // 管理员相关
+    ADMIN: {
+      // 小说管理
+      NOVELS: '/admin/novels',
+      NOVEL_DETAIL: (id: number) => `/admin/novels/${id}`,
+      NOVEL_TOGGLE_STATUS: (id: number) => `/admin/novels/${id}/toggle-status`,
+      NOVEL_TOGGLE_RECOMMEND: (id: number) => `/admin/novels/${id}/toggle-recommend`,
+
+      // 用户管理
+      USERS: '/admin/users',
+      USER_TOGGLE_STATUS: (id: number) => `/admin/users/${id}/toggle-status`,
+      USER_ASSIGN_PERMISSIONS: (id: number) => `/admin/users/${id}/assign-permissions`,
+      USER_REVOKE_PERMISSIONS: (id: number) => `/admin/users/${id}/revoke-permissions`,
+
+      // 用户组管理
+      USER_GROUPS: '/admin/user-groups',
+      USER_GROUP_DETAIL: (id: number) => `/admin/user-groups/${id}`,
+      USER_GROUP_ASSIGN_PERMISSIONS: (id: number) => `/admin/user-groups/${id}/assign-permissions`,
+      USER_GROUP_REVOKE_PERMISSIONS: (id: number) => `/admin/user-groups/${id}/revoke-permissions`,
+
+      // 权限管理
+      PERMISSIONS: '/admin/permissions',
+      PERMISSIONS_ALL: '/admin/permissions-all',
+
+      // 分类管理
+      CATEGORIES: '/admin/categories',
+      CATEGORY_DETAIL: (id: number) => `/admin/categories/${id}`,
+
+      // 标签管理
+      TAGS: '/admin/tags',
+      TAG_DETAIL: (id: number) => `/admin/tags/${id}`,
+
+      // 统计
+      STATS: '/admin/stats',
+    },
   },
 } as const;
 

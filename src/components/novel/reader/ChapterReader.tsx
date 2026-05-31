@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Novel, NovelChapter, ChapterContentResponse } from '@/types/novel';
 import { NovelService } from '@/services/novel';
+import { get } from '@/lib/api';
+import { API_CONFIG } from '@/config/api';
 import ReaderHeader from './ReaderHeader';
 import ReaderContent from './ReaderContent';
 import ChapterNavigation from './ChapterNavigation';
@@ -48,13 +50,9 @@ export default function ChapterReader({ novel, chapter }: ChapterReaderProps) {
         setError(null);
         console.log('Loading chapter content for:', novel.id, chapter.id);
 
-        // 使用新的API路由
-        const response = await fetch(`/api/novels/${novel.id}/chapters/${chapter.id}`);
-        if (!response.ok) {
-          throw new Error('获取章节内容失败');
-        }
-
-        const chapterContentResponse = await response.json();
+        // 使用统一的API配置
+        const endpoint = API_CONFIG.ENDPOINTS.NOVELS.CHAPTER_CONTENT(novel.id, chapter.id);
+        const chapterContentResponse = await get<ChapterContentResponse>(endpoint);
         setChapterContent(chapterContentResponse);
       } catch (err) {
         console.error('Failed to load chapter content:', err);

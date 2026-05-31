@@ -3,6 +3,7 @@
 // Node.js fetch 不会自动携带 cookie，需手动从 cookie 读取 token 注入 Authorization 头
 
 import { getAuthCookie } from './cookies';
+import { API_CONFIG } from '@/config/api';
 import type { User } from '@/types/user';
 
 // 服务端专用的后端 API 地址（SSR 时 fetch 需要完整 URL）
@@ -54,7 +55,7 @@ async function serverRequest<T>(
  */
 export async function getServerUser(): Promise<User | null> {
   try {
-    const response = await serverRequest<{ user: User }>('/users/me');
+    const response = await serverRequest<{ user: User }>(API_CONFIG.ENDPOINTS.AUTH.ME);
     return response.user;
   } catch (error) {
     console.error('Failed to get server user:', error);
