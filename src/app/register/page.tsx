@@ -1,15 +1,8 @@
-'use client';
+import RegisterContent from '@/components/auth/RegisterContent';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// 强制动态渲染，因为根布局使用了 cookies
+export const dynamic = 'force-dynamic';
 
 export default function Register() {
-  const router = useRouter();
-
-  useEffect(() => {
-    // 重定向到登录页面的注册模式
-    router.replace('/login?mode=register');
-  }, [router]);
-
-  return null;
+  return <RegisterContent />;
 }

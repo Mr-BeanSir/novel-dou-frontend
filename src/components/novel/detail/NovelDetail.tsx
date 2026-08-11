@@ -219,7 +219,7 @@ export default function NovelDetail({ novel }: NovelDetailProps) {
                 <div className="flex flex-wrap items-center gap-4">
                   {novel.category && (
                     <Link
-                      href={`/category/${novel.category.slug}`}
+                      href={`/novels?category_id=${novel.category.id}`}
                       className="px-3 py-1 bg-light-accent/20 dark:bg-dark-accent/20
                                text-light-accent dark:text-dark-accent rounded-md
                                hover:bg-light-accent/30 dark:hover:bg-dark-accent/30

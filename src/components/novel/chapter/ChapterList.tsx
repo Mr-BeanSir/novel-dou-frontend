@@ -39,11 +39,11 @@ export default function ChapterList({ novelId, chapters: initialChapters }: Chap
     }
   };
 
-  // 处理排序切换
+  // 处理排序切换 - 纯前端排序，不请求后端
   const handleSortToggle = () => {
     const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newOrder);
-    loadChapters(1, newOrder);
+    setChapters(prev => [...prev].reverse());
   };
 
   // 处理分页
